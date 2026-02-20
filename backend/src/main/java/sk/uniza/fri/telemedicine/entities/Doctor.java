@@ -16,6 +16,6 @@ public class Doctor {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(length = 20, nullable = false)
     private Specialization specialization;
 }

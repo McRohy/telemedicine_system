@@ -15,7 +15,7 @@ public class MeasurementRecord {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "id_type_measurement", nullable = false)
+    @JoinColumn(name = "type_of_measurement_id", nullable = false)
     private TypeOfMeasurement typeOfMeasurement;
 
     @Id

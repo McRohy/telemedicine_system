@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import sk.uniza.fri.telemedicine.enums.Role;
 
 @Entity
@@ -14,20 +15,23 @@ public class PersonalData {
     private String email;
 
     @NotBlank
+    @Size(max = 50)
     @Column(length = 50, nullable = false)
     private String firstName;
 
     @NotBlank
+    @Size(max = 50)
     @Column(length = 50, nullable = false)
     private String lastName;
 
     @NotBlank
+    @Size(max = 30)
     @Column(length = 30, nullable = false)
     private String password;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(length = 15, nullable = false)
     private Role role;
 }
 

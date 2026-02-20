@@ -12,7 +12,7 @@ public class MeasurementFrequency {
     private Integer frequencyId;
 
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(length = 30, nullable = false, unique = true)
     private String description;
 
     @NotNull

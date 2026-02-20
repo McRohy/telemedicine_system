@@ -2,7 +2,7 @@ package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import sk.uniza.fri.telemedicine.entities.idHelpers.ArticleId;
 import java.time.LocalDateTime;
 
@@ -18,10 +18,11 @@ public class Article {
     private Doctor doctor;
 
     @NotBlank
-    @Column(nullable = false)
+    @Size(max = 100)
+    @Column(length = 100, nullable = false)
     private String title;
 
-    @NotNull
-    @Column(nullable = false)
+    @NotBlank
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 }

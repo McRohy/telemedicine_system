@@ -12,7 +12,7 @@ public class TypeOfMeasurement {
     private Integer typeId;
 
     @NotBlank
-    @Column(nullable = false, unique = true)
+    @Column(length = 30, nullable = false, unique = true)
     private String typeName;
 
     @NotBlank
