@@ -3,8 +3,11 @@ package sk.uniza.fri.telemedicine.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 @Entity
+@Setter @Getter @NoArgsConstructor
 public class TypeOfMeasurement {
 
     @Id
@@ -16,8 +19,9 @@ public class TypeOfMeasurement {
     private String typeName;
 
     @NotBlank
+    @Size(max = 4)
     @Column(length = 4, nullable = false)
-    private Character unit;
+    private String units;
 
     @NotNull
     @Column( nullable = false)
