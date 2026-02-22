@@ -24,6 +24,10 @@ public class PersonalDataService {
 
     @Transactional
     public PersonalData createPersonalData(PersonalDataRequest request) {
+        if (personalDataRepository.existsById(request.getEmail())){
+            throw new RuntimeException("Personal data already exists");
+        }
+
         PersonalData personalData = new PersonalData();
         personalData.setEmail(request.getEmail());
         personalData.setFirstName(request.getFirstName());

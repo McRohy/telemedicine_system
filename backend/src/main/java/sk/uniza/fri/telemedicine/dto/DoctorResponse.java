@@ -9,7 +9,8 @@ import lombok.Getter;
 @Getter //for Json serialization
 @AllArgsConstructor
 public class DoctorResponse {
-        @Valid @NotNull PersonalDataResponse personalData;
+        @NotNull
+        PersonalDataResponse personalData;
 
         @NotBlank
         private String specialization;
