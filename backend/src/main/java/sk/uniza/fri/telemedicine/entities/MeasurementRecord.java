@@ -2,12 +2,16 @@ package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import sk.uniza.fri.telemedicine.entities.idHelpers.MeasurementRecordId;
 
 import java.time.LocalDateTime;
 
 @Entity
 @IdClass(MeasurementRecordId.class)
+@Setter @Getter @NoArgsConstructor
 public class MeasurementRecord {
 
     @Id

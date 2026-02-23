@@ -56,6 +56,19 @@ public class PatientService {
                 .toList();
     }
 
+    public Patient getPatientByPersonalNumber(Integer personalNumber){
+        return patientRepository.findById(personalNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Patient with personal number: " + personalNumber + " not exists"));
+    }
+
+    public String getCareProviderEmailByPatientPersonalNumber(Integer personalNumber) {
+        return patientRepository.findCareProviderEmailByPatientPersonalNumber(personalNumber).orElseThrow();
+    }
+
+    public String getPatientFullNameByPersonalNumber(Integer personalNumber) {
+        return patientRepository.findFullNameByPernosalNumber(personalNumber);
+    }
+
     private PatientResponse mapToPatientResponse(Patient patient) {
         return new PatientResponse(new PersonalDataResponse(patient.getPersonalData().getEmail(),
                 patient.getPersonalData().getFirstName(), patient.getPersonalData().getLastName()), patient.getPersonalNumber());

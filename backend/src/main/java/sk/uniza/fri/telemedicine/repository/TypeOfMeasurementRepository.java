@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TypeOfMeasurementRepository extends JpaRepository<TypeOfMeasurement, Integer> {
