@@ -1,8 +1,8 @@
 package sk.uniza.fri.telemedicine.dto;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import sk.uniza.fri.telemedicine.enums.StatusOfMeasurementRecord;
 
 import java.time.LocalDateTime;
 
@@ -13,5 +13,5 @@ public class MeasurementRecordResponse {
         private Integer value;
         private String units;
         private LocalDateTime timeOfMeasurement;
-        private String status;
+        private StatusOfMeasurementRecord status;
 }

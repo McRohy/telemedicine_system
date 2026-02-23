@@ -4,12 +4,11 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.MeasurementRecordRequest;
 import sk.uniza.fri.telemedicine.dto.MeasurementRecordResponse;
-import sk.uniza.fri.telemedicine.entities.MeasurementPlan;
 import sk.uniza.fri.telemedicine.entities.MeasurementRecord;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
+import sk.uniza.fri.telemedicine.enums.StatusOfMeasurementRecord;
 import sk.uniza.fri.telemedicine.helpers.EmailSender;
-import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementRecordRepository;
 
 import java.time.LocalDateTime;
@@ -44,14 +43,11 @@ public class MeasurementRecordService {
         measurementRecord.setNote(request.getNote());
         measurementRecordRepository.save(measurementRecord);
 
-        String status = "meranie v poriadku";
+        StatusOfMeasurementRecord status = StatusOfMeasurementRecord.STATUS_OK;
         if (!checkIfRecordIsInRange(request.getValue(), typeOfMeasurement)){
-            emailSender.sendMail(patientService.getCareProviderEmailByPatientPersonalNumber(patient.getPersonalNumber()),
-                    "Telemedicina - upozornenie na meranie pacienta",
-                    "Pacient: " + patientService.getPatientFullNameByPersonalNumber(patient.getPersonalNumber()) +
-                            " s hodnotou " + request.getValue() + " " + typeOfMeasurement.getUnits() + " je mimo povoleny rozsah");
-
-            status = "meranie mimo rozsah - upozornenie odoslane lekarovi";
+            status = StatusOfMeasurementRecord.STATUS_DOCTOR_INFORMED;
+            emailSender.sendMeasurementRecordAlert(patientService.getCareProviderEmailByPatientPersonalNumber(patient.getPersonalNumber()),
+                    patientService.getPatientFullNameByPersonalNumber(patient.getPersonalNumber()), request.getValue(), typeOfMeasurement.getUnits());
         }
 
         return new MeasurementRecordResponse(typeOfMeasurement.getTypeName(), measurementRecord.getValue(),

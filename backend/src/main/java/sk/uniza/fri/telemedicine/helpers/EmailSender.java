@@ -1,9 +1,9 @@
 package sk.uniza.fri.telemedicine.helpers;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
+import sk.uniza.fri.telemedicine.enums.EmailText;
 
 @Component
 public class EmailSender {
@@ -14,7 +14,7 @@ public class EmailSender {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendMail(String to, String subject, String content)
+    private void sendMail(String to, String subject, String content)
     {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
@@ -28,5 +28,13 @@ public class EmailSender {
         }
     }
 
+    public void sendMeasurementRecordAlert(String careProviderEmail, String patientFullName, Integer value, String units) {
+        sendMail(careProviderEmail, EmailText.SUBJECT_ALERT_RECORD.getText(),
+                EmailText.CONTENT_ALERT_RECORD.getText().formatted(patientFullName, value, units));
+    }
 
+    public void sendEmailWithPassword(String to, String temporaryPassword) {
+        sendMail(to, EmailText.SUBJECT_ACCOUNT_PASSWORD.getText(),
+                EmailText.CONTENT_ACCOUNT_PASSWORD.getText().formatted(temporaryPassword));
+    }
 }

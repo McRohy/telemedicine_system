@@ -36,7 +36,7 @@ public class PersonalDataService {
 
         String temporary_password = generateRandomPassword();
         personalData.setPassword(generateRandomPassword());
-        emailSender.sendMail(request.getEmail(), "Telemedicina - ucet vytvoreny", "Vase docasne heslo je: " + temporary_password);
+        emailSender.sendEmailWithPassword(request.getEmail(), temporary_password);
 
         return personalDataRepository.save(personalData);
     }
