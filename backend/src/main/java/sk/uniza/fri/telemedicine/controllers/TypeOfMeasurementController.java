@@ -1,6 +1,7 @@
 package sk.uniza.fri.telemedicine.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.services.TypeOfMeasurementService;
@@ -18,11 +19,13 @@ public class TypeOfMeasurementController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<TypeOfMeasurement> getAllTypesOfMeasurement() {
         return typeOfMeasurementService.getAllTypesOfMeasurement();
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public TypeOfMeasurement createTypeOfMeasurement(@Valid @RequestBody TypeOfMeasurement request) {
         return typeOfMeasurementService.createTypeOfMeasurement(request.getTypeName(), request.getUnits(),
                 request.getMinValue(), request.getMaxValue());

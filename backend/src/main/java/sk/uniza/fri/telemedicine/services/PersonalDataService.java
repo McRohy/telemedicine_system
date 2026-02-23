@@ -1,11 +1,13 @@
 package sk.uniza.fri.telemedicine.services;
 
 import jakarta.transaction.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.PersonalDataRequest;
 import sk.uniza.fri.telemedicine.dto.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.Role;
+import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
 import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
@@ -25,7 +27,7 @@ public class PersonalDataService {
     @Transactional
     public PersonalData createPersonalData(PersonalDataRequest request) {
         if (personalDataRepository.existsById(request.getEmail())){
-            throw new RuntimeException("Personal data already exists");
+            throw new DataIntegrityViolationException("Personal data with this email already exists");
         }
 
         PersonalData personalData = new PersonalData();
@@ -55,7 +57,7 @@ public class PersonalDataService {
     }
 
     public PersonalDataResponse getPersonalDataByEmail(String email) {
-        PersonalData personalData = personalDataRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Personal data not found"));
+        PersonalData personalData = personalDataRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("Personal data not found with email:" + email));
         return new PersonalDataResponse(personalData.getEmail(), personalData.getFirstName(), personalData.getLastName());
     }
 }

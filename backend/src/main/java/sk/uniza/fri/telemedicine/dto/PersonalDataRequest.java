@@ -9,14 +9,15 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PersonalDataRequest {
     @Email
+    @NotBlank(message = "Email is mandatory")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "First name is mandatory")
     private String firstName;
 
-    @NotBlank
+    @NotBlank(message = "Last name is mandatory")
     private String lastName;
 
-    @NotBlank
+    @NotBlank(message = "Role is mandatory")
     private String role;
 }

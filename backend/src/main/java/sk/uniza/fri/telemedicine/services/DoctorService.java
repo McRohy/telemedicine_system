@@ -8,6 +8,7 @@ import sk.uniza.fri.telemedicine.dto.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.Specialization;
+import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
 import sk.uniza.fri.telemedicine.repository.DoctorRepository;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
@@ -30,7 +31,7 @@ public class DoctorService {
     @Transactional
     public Doctor createDoctor(DoctorRequest request) {
         PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData());
-        personalDataRepository.findById(personalData.getEmail()).orElseThrow(() -> new RuntimeException("Personal data not found"));
+        personalDataRepository.findById(personalData.getEmail()).orElseThrow(() -> new ResourceNotFoundException("Personal data not found"));
 
         Doctor doctor = new Doctor();
         doctor.setPanNumber(request.getPanNumber());
