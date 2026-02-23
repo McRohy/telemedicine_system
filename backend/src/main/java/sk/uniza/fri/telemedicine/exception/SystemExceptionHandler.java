@@ -10,15 +10,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class SystemExceptionHandler {
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ExceptionHandler(DuplicateException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+    public ErrorResponse handleDuplicate(DuplicateException ex) {
         return new ErrorResponse(409,  ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
-        return new ErrorResponse(404,  ex.getFieldError().getDefaultMessage());
+        return new ErrorResponse(400,  ex.getFieldError().getDefaultMessage());
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFound(ResourceNotFoundException ex) {
+        return new ErrorResponse(404,  ex.getMessage());
     }
 }

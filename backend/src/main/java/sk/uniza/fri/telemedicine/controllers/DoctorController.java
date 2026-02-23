@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.DoctorResponse;
-import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.services.DoctorService;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class DoctorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Doctor createdoctor(@Valid @RequestBody DoctorRequest request) {
+    public DoctorResponse createDoctor(@Valid @RequestBody DoctorRequest request) {
         return doctorService.createDoctor(request);
     }
 
