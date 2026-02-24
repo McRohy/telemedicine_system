@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.DoctorResponse;
+import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.services.DoctorService;
 
 import java.util.List;
@@ -30,4 +31,11 @@ public class DoctorController {
     public List<DoctorResponse> getAllDoctors() {
         return doctorService.getAllDoctors();
     }
+
+    @GetMapping("/{panNumber}")
+    @ResponseStatus(HttpStatus.OK)
+    public Doctor getDoctorByPanNumber(@PathVariable Integer panNumber) {
+        return doctorService.findByPanNumber(panNumber);
+    }
 }
+

@@ -31,7 +31,7 @@ public class MeasurementRecordService {
 
     @Transactional
     public MeasurementRecordResponse trackNewMeasurement(MeasurementRecordRequest request) {
-        Patient patient = patientService.getPatientByPersonalNumber(request.getPersonalNumber());
+        Patient patient = patientService.findByPersonalNumber(request.getPersonalNumber());
         TypeOfMeasurement typeOfMeasurement = typeOfMeasurementService.findTypeOfMeasurementById(request.getTypeOfMeasurementId());
 
         MeasurementRecord measurementRecord = new MeasurementRecord();

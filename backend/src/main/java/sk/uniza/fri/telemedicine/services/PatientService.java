@@ -56,7 +56,7 @@ public class PatientService {
                 .toList();
     }
 
-    public Patient getPatientByPersonalNumber(Integer personalNumber){
+    public Patient findByPersonalNumber(Integer personalNumber){
         return patientRepository.findById(personalNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Patient with personal number: " + personalNumber + " not exists"));
     }

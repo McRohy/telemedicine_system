@@ -51,6 +51,11 @@ public class DoctorService {
                 .toList();
     }
 
+    public Doctor findByPanNumber(Integer panNumber) {
+        return doctorRepository.findById(panNumber).orElseThrow(
+                () -> new ResourceNotFoundException("Doctor with PAN number not found"));
+    }
+
     private DoctorResponse mapToDoctorResponse(Doctor doctor) {
         return new DoctorResponse(new PersonalDataResponse(doctor.getPersonalData().getEmail(),
                 doctor.getPersonalData().getFirstName(), doctor.getPersonalData().getLastName()),

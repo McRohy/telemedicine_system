@@ -1,8 +1,16 @@
 package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import sk.uniza.fri.telemedicine.enums.Frequency;
+
+import java.time.LocalTime;
 
 @Entity
+@Getter @Setter @NoArgsConstructor
 public class MeasurementPlan {
 
     @Id
