@@ -18,9 +18,4 @@ public class MeasurementPlanComponent {
     @ManyToOne
     @JoinColumn(name = "plan_id")
     private MeasurementPlan measurementPlan;
-
-    @NotNull
-    @Column(nullable = false)
-    private LocalTime timeOfPlannedMeasurement;
-
 }

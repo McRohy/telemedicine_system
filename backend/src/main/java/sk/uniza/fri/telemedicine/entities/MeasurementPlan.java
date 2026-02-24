@@ -17,7 +17,10 @@ public class MeasurementPlan {
     @JoinColumn(name = "pan_number", nullable = false)
     private Doctor doctor;
 
-    @ManyToOne
-    @JoinColumn(name = "id_frequency", nullable = false)
-    private MeasurementFrequency measurementFrequency;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private Frequency frequency;
+
+    @NotNull
+    private LocalTime timeOfPlannedMeasurement;
 }
