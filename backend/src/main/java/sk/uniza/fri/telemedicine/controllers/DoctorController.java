@@ -3,11 +3,9 @@ package sk.uniza.fri.telemedicine.controllers;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import sk.uniza.fri.telemedicine.dto.DoctorRequest;
-import sk.uniza.fri.telemedicine.dto.DoctorResponse;
-import sk.uniza.fri.telemedicine.entities.Doctor;
+import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
+import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
 import sk.uniza.fri.telemedicine.services.DoctorService;
-
 import java.util.List;
 
 @RestController
@@ -34,8 +32,8 @@ public class DoctorController {
 
     @GetMapping("/{panNumber}")
     @ResponseStatus(HttpStatus.OK)
-    public Doctor getDoctorByPanNumber(@PathVariable Integer panNumber) {
-        return doctorService.findByPanNumber(panNumber);
+    public DoctorResponse findByPanNumber(@PathVariable Integer panNumber) {
+        return doctorService.findDoctorByPanNumberResponse(panNumber);
     }
 }
 

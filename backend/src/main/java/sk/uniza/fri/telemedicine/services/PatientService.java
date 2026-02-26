@@ -1,9 +1,10 @@
 package sk.uniza.fri.telemedicine.services;
 
 import jakarta.transaction.Transactional;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import sk.uniza.fri.telemedicine.dto.*;
+import sk.uniza.fri.telemedicine.dto.request.PatientRequest;
+import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
+import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
@@ -11,9 +12,6 @@ import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
 import sk.uniza.fri.telemedicine.repository.DoctorRepository;
 import sk.uniza.fri.telemedicine.repository.PatientRepository;
-import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -70,7 +68,7 @@ public class PatientService {
     }
 
     private PatientResponse mapToPatientResponse(Patient patient) {
-        return new PatientResponse(new PersonalDataResponse(patient.getPersonalData().getEmail(),
-                patient.getPersonalData().getFirstName(), patient.getPersonalData().getLastName()), patient.getPersonalNumber());
+        return new PatientResponse(patient.getPersonalNumber(), new PersonalDataResponse(patient.getPersonalData().getEmail(),
+                patient.getPersonalData().getFirstName(), patient.getPersonalData().getLastName()), patient.getDoctor().getPanNumber());
     }
 }

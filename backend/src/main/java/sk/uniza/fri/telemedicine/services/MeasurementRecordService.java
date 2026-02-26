@@ -2,8 +2,8 @@ package sk.uniza.fri.telemedicine.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import sk.uniza.fri.telemedicine.dto.MeasurementRecordRequest;
-import sk.uniza.fri.telemedicine.dto.MeasurementRecordResponse;
+import sk.uniza.fri.telemedicine.dto.request.MeasurementRecordRequest;
+import sk.uniza.fri.telemedicine.dto.response.MeasurementRecordResponse;
 import sk.uniza.fri.telemedicine.entities.MeasurementRecord;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;

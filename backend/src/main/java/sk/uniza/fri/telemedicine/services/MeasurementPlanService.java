@@ -2,12 +2,17 @@ package sk.uniza.fri.telemedicine.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import sk.uniza.fri.telemedicine.dto.MeasurementPlanRequest;
+import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
+import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.entities.MeasurementPlan;
 import sk.uniza.fri.telemedicine.entities.MeasurementPlanTypes;
+import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.enums.Frequency;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanTypesRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class MeasurementPlanService {
@@ -22,7 +27,7 @@ public class MeasurementPlanService {
 
     public MeasurementPlanService(MeasurementPlanRepository measurementPlanRepository,
                                   TypeOfMeasurementService typeOfMeasurementService,
-                                    MeasurementPlanTypesRepository measurementPlanTypesRepository,
+                                  MeasurementPlanTypesRepository measurementPlanTypesRepository,
                                   DoctorService doctorService, PatientService patientService) {
         this.measurementPlanRepository = measurementPlanRepository;
         this.typeOfMeasurementService = typeOfMeasurementService;
@@ -32,8 +37,7 @@ public class MeasurementPlanService {
     }
 
     @Transactional
-    public MeasurementPlan createMeasurementPlan(MeasurementPlanRequest request) {
-
+    public MeasurementPlanResponse createMeasurementPlan(MeasurementPlanRequest request) {
         MeasurementPlan plan = new MeasurementPlan();
         plan.setPatient(patientService.findByPersonalNumber(request.getPersonalNumber()));
         plan.setDoctor(doctorService.findByPanNumber(request.getPanNumber()));
@@ -41,13 +45,17 @@ public class MeasurementPlanService {
         plan.setTimeOfPlannedMeasurement(request.getTimeOfPlannedMeasurements());
         measurementPlanRepository.save(plan);
 
+        List<String> typeNames = new ArrayList<>();
         request.getTypeOfMeasurementIds().forEach(t -> {
+            TypeOfMeasurement type = typeOfMeasurementService.findTypeOfMeasurementById(t);
             MeasurementPlanTypes measurementPlanTypes = new MeasurementPlanTypes();
             measurementPlanTypes.setMeasurementPlan(plan);
-            measurementPlanTypes.setTypeOfMeasurement(typeOfMeasurementService.findTypeOfMeasurementById(t));
+            measurementPlanTypes.setTypeOfMeasurement(type);
             measurementPlanTypesRepository.save(measurementPlanTypes);
+            typeNames.add(type.getTypeName());
         });
 
-        return plan;
+        return new MeasurementPlanResponse(plan.getPlanId(), request.getPersonalNumber(),
+                plan.getTimeOfPlannedMeasurement().toString(), plan.getFrequency(), typeNames);
     }
 }

@@ -1,4 +1,4 @@
-package sk.uniza.fri.telemedicine.dto;
+package sk.uniza.fri.telemedicine.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

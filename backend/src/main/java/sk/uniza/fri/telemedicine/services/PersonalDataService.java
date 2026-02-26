@@ -2,7 +2,7 @@ package sk.uniza.fri.telemedicine.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import sk.uniza.fri.telemedicine.dto.PersonalDataRequest;
+import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.Role;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;

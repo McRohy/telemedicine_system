@@ -3,8 +3,8 @@ package sk.uniza.fri.telemedicine.controllers;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import sk.uniza.fri.telemedicine.dto.PatientRequest;
-import sk.uniza.fri.telemedicine.dto.PatientResponse;
+import sk.uniza.fri.telemedicine.dto.request.PatientRequest;
+import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
 import sk.uniza.fri.telemedicine.services.PatientService;
 
 import java.util.List;

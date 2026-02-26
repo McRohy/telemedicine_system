@@ -1,4 +1,4 @@
-package sk.uniza.fri.telemedicine.dto;
+package sk.uniza.fri.telemedicine.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -10,12 +10,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class DoctorRequest {
-    @Valid @NotNull
-    private PersonalDataRequest personalData;
 
-    @NotNull
+    @NotNull(message = "Personal number is mandatory")
     private Integer panNumber;
 
-    @NotBlank
+    @Valid
+    @NotNull(message = "Personal data is mandatory")
+    private PersonalDataRequest personalData;
+
+    @NotBlank(message = "Specialization is mandatory")
     private String specialization;
 }

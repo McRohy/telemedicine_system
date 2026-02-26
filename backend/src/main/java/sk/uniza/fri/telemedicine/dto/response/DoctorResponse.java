@@ -1,4 +1,4 @@
-package sk.uniza.fri.telemedicine.dto;
+package sk.uniza.fri.telemedicine.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter //for Json serialization
 @AllArgsConstructor
 public class DoctorResponse {
-        PersonalDataResponse personalData;
+        private Integer panNumber;
+        private PersonalDataResponse personalData;
         private String specialization;
 }

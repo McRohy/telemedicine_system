@@ -1,20 +1,16 @@
 package sk.uniza.fri.telemedicine.services;
 
 import jakarta.transaction.Transactional;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import sk.uniza.fri.telemedicine.dto.DoctorRequest;
-import sk.uniza.fri.telemedicine.dto.DoctorResponse;
-import sk.uniza.fri.telemedicine.dto.PersonalDataResponse;
+import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
+import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
+import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.Specialization;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
 import sk.uniza.fri.telemedicine.repository.DoctorRepository;
-import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -56,9 +52,12 @@ public class DoctorService {
                 () -> new ResourceNotFoundException("Doctor with PAN number not found"));
     }
 
+    public DoctorResponse findDoctorByPanNumberResponse(Integer panNumber) {
+        return mapToDoctorResponse(findByPanNumber(panNumber));
+    }
+
     private DoctorResponse mapToDoctorResponse(Doctor doctor) {
-        return new DoctorResponse(new PersonalDataResponse(doctor.getPersonalData().getEmail(),
-                doctor.getPersonalData().getFirstName(), doctor.getPersonalData().getLastName()),
-                doctor.getSpecialization().toString());
+        return new DoctorResponse(doctor.getPanNumber(), new PersonalDataResponse(doctor.getPersonalData().getEmail(),
+                        doctor.getPersonalData().getFirstName(), doctor.getPersonalData().getLastName()), doctor.getSpecialization().toString());
     }
 }

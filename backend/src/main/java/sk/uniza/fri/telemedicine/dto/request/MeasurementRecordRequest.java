@@ -1,4 +1,4 @@
-package sk.uniza.fri.telemedicine.dto;
+package sk.uniza.fri.telemedicine.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

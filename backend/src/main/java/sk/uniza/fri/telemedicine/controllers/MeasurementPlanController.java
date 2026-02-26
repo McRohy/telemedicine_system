@@ -3,8 +3,8 @@ package sk.uniza.fri.telemedicine.controllers;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import sk.uniza.fri.telemedicine.dto.MeasurementPlanRequest;
-import sk.uniza.fri.telemedicine.entities.MeasurementPlan;
+import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
+import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.services.MeasurementPlanService;
 
 @RestController
@@ -19,8 +19,7 @@ public class MeasurementPlanController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MeasurementPlan createMeasurementPlan(@Valid @RequestBody MeasurementPlanRequest request) {
+    public MeasurementPlanResponse createMeasurementPlan(@Valid @RequestBody MeasurementPlanRequest request) {
         return measurementPlanService.createMeasurementPlan(request);
     }
-
 }
