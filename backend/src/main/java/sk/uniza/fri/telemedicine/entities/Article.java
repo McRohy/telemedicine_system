@@ -3,14 +3,19 @@ package sk.uniza.fri.telemedicine.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import sk.uniza.fri.telemedicine.entities.idHelpers.ArticleId;
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@IdClass(ArticleId.class)
+@Getter @Setter
 public class Article {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
     private LocalDateTime date;
 
     @ManyToOne
