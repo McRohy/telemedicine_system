@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.ArticleRequest;
 import sk.uniza.fri.telemedicine.dto.response.ArticleResponse;
 import sk.uniza.fri.telemedicine.entities.Article;
+import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
 import sk.uniza.fri.telemedicine.repository.ArticleRepository;
 
@@ -24,9 +25,11 @@ public class ArticleService {
 
     @Transactional
     public ArticleResponse createArticle(ArticleRequest request) {
-        Article article = mapToArticle(request);
+        Doctor doctor = doctorService.findByPanNumber(request.getPanNumber());
+        Article article = mapToArticle(request, doctor);
         articleRepository.save(article);
-        return mapToArticleResponse(article, request.getPanNumber().toString());
+        String author = doctorService.getFullNameByPanNumber(request.getPanNumber());
+        return mapToArticleResponse(article, author);
     }
 
     public List<ArticleResponse> findAllArticlesByPanNumber(Integer panNumber) {
@@ -44,10 +47,10 @@ public class ArticleService {
         articleRepository.delete(article);
     }
 
-    private Article mapToArticle(ArticleRequest request) {
+    private Article mapToArticle(ArticleRequest request, Doctor doctor) {
         Article article = new Article();
         article.setDate(LocalDateTime.now());
-        article.setDoctor(doctorService.findByPanNumber(request.getPanNumber()));
+        article.setDoctor(doctor);
         article.setTitle(request.getTitle());
         article.setContent(request.getContent());
         return article;

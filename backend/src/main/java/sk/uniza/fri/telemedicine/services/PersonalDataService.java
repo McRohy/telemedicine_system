@@ -3,8 +3,9 @@ package sk.uniza.fri.telemedicine.services;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
+import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
-import sk.uniza.fri.telemedicine.enums.Role;
+import sk.uniza.fri.telemedicine.enums.constrains.Role;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
@@ -27,17 +28,10 @@ public class PersonalDataService {
         if (personalDataRepository.existsById(request.getEmail())){
             throw new DuplicateException("Personal data with this email already exists");
         }
-
-        PersonalData personalData = new PersonalData();
-        personalData.setEmail(request.getEmail());
-        personalData.setFirstName(request.getFirstName());
-        personalData.setLastName(request.getLastName());
-        personalData.setRole(Role.valueOf(request.getRole().toUpperCase()));
-
+        PersonalData personalData = this.mapToPersonalData(request);
         String temporary_password = generateRandomPassword();
-        personalData.setPassword(generateRandomPassword());
+        personalData.setPassword(temporary_password);
         emailSender.sendEmailWithPassword(request.getEmail(), temporary_password);
-
         return personalDataRepository.save(personalData);
     }
 
@@ -52,5 +46,19 @@ public class PersonalDataService {
             }
         }
         return password.toString();
+    }
+
+    private PersonalData mapToPersonalData(PersonalDataRequest request) {
+        PersonalData personalData = new PersonalData();
+        personalData.setEmail(request.getEmail());
+        personalData.setFirstName(request.getFirstName());
+        personalData.setLastName(request.getLastName());
+        personalData.setRole(Role.valueOf(request.getRole().toUpperCase()));
+        return personalData;
+    }
+
+    public PersonalDataResponse mapToPersonalDataResponse(PersonalData personalData) {
+        return new PersonalDataResponse(personalData.getEmail(), personalData.getFirstName(),
+                personalData.getLastName());
     }
 }

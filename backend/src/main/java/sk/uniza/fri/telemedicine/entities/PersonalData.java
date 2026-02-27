@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sk.uniza.fri.telemedicine.enums.Role;
+import sk.uniza.fri.telemedicine.enums.constrains.Role;
 
 @Entity
 @Setter @Getter @NoArgsConstructor

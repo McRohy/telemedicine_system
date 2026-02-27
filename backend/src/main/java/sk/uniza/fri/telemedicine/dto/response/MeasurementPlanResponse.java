@@ -2,7 +2,7 @@ package sk.uniza.fri.telemedicine.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.Frequency;
+import sk.uniza.fri.telemedicine.enums.constrains.Frequency;
 
 import java.util.List;
 
@@ -11,7 +11,8 @@ import java.util.List;
 public class MeasurementPlanResponse {
     private Integer id;
     private Integer personalNumber;
+    private Integer panNumber;
     private String timeOfPlannedMeasurements;
     private Frequency frequency;
-    private List<String> typesOfMeasurements;
+    private List<MeasurementPlanTypesResponse> typesOfMeasurements;
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sk.uniza.fri.telemedicine.enums.Specialization;
+import sk.uniza.fri.telemedicine.enums.constrains.Specialization;
 
 @Entity
 @Setter @Getter @NoArgsConstructor

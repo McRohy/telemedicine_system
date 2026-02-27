@@ -1,4 +1,4 @@
-package sk.uniza.fri.telemedicine.enums;
+package sk.uniza.fri.telemedicine.enums.others;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

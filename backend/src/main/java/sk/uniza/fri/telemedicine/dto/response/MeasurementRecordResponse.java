@@ -2,7 +2,7 @@ package sk.uniza.fri.telemedicine.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.StatusOfMeasurementRecord;
+import sk.uniza.fri.telemedicine.enums.others.StatusOfMeasurementRecord;
 
 import java.time.LocalDateTime;
 

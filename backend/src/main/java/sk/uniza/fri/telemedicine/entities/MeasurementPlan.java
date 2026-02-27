@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sk.uniza.fri.telemedicine.enums.Frequency;
+import sk.uniza.fri.telemedicine.enums.constrains.Frequency;
 
 import java.time.LocalTime;
 

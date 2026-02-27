@@ -3,7 +3,7 @@ package sk.uniza.fri.telemedicine.helpers;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-import sk.uniza.fri.telemedicine.enums.EmailText;
+import sk.uniza.fri.telemedicine.enums.others.EmailText;
 
 @Component
 public class EmailSender {
