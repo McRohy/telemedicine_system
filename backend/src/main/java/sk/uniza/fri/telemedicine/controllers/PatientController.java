@@ -27,7 +27,7 @@ public class PatientController {
 
     @GetMapping("/{panNumber}")
     @ResponseStatus(HttpStatus.OK)
-    public List<PatientResponse> getPatientByPanNumber(@PathVariable Integer panNumber) {
+    public List<PatientResponse> getPatientByPanNumber(@PathVariable String panNumber) {
         return patientService.getAllByDoctorsPanNumber(panNumber);
     }
 }

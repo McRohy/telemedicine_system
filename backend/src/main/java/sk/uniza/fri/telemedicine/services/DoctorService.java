@@ -25,7 +25,7 @@ public class DoctorService {
 
     @Transactional
     public DoctorResponse createDoctor(DoctorRequest request) {
-        if (doctorRepository.existsById(request.getPanNumber())) {
+        if (doctorRepository.existsByPanNumber(request.getPanNumber())) {
             throw new DuplicateException("Doctor with this PAN number already exists");
         }
         PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData());
@@ -41,16 +41,16 @@ public class DoctorService {
                 .toList();
     }
 
-    public Doctor findByPanNumber(Integer panNumber) {
-        return doctorRepository.findById(panNumber).orElseThrow(
+    public Doctor findByPanNumber(String panNumber) {
+        return doctorRepository.findByPanNumber(panNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Doctor with PAN number not found"));
     }
 
-    public DoctorResponse findDoctorByPanNumberResponse(Integer panNumber) {
+    public DoctorResponse findDoctorByPanNumberResponse(String panNumber) {
         return mapToDoctorResponse(findByPanNumber(panNumber));
     }
 
-    public String getFullNameByPanNumber(Integer panNumber) {
+    public String getFullNameByPanNumber(String panNumber) {
         return doctorRepository.findFullNameByPanNumber(panNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Doctor with PAN number not found"));
     }

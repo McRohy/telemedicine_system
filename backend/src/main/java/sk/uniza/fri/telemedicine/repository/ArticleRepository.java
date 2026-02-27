@@ -9,5 +9,5 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("SELECT a FROM Article a WHERE a.doctor.PanNumber = :panNumber")
-    List<Article> findAllByDoctorPanNumber(Integer panNumber);
+    List<Article> findAllByDoctorPanNumber(String panNumber);
 }

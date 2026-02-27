@@ -10,7 +10,7 @@ import lombok.Setter;
 public class Patient {
 
     @Id
-    private Integer personalNumber;
+    private String personalNumber;
 
     @OneToOne
     @JoinColumn(name = "email", nullable = false)

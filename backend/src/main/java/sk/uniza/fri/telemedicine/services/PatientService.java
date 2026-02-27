@@ -27,7 +27,7 @@ public class PatientService {
 
     @Transactional
     public PatientResponse createPatient(PatientRequest request) {
-        if (patientRepository.existsById(request.getPersonalNumber())) {
+        if (patientRepository.existsByPersonalNumber(request.getPersonalNumber())) {
             throw new DuplicateException("Patient with this personal number already exists");
         }
         PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData());
@@ -37,25 +37,25 @@ public class PatientService {
         return mapToPatientResponse(patient);
     }
 
-    public List<PatientResponse> getAllByDoctorsPanNumber(Integer panNumber) {
+    public List<PatientResponse> getAllByDoctorsPanNumber(String panNumber) {
         return patientRepository.findAllByPanNumber(panNumber)
                 .stream()
                 .map(p -> mapToPatientResponse(p))
                 .toList();
     }
 
-    public Patient findByPersonalNumber(Integer personalNumber){
-        return patientRepository.findById(personalNumber).orElseThrow(
+    public Patient findByPersonalNumber(String personalNumber){
+        return patientRepository.findByPersonalNumber(personalNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Patient with personal number: " + personalNumber + " not exists"));
     }
 
-    public String getCareProviderEmailByPatientPersonalNumber(Integer personalNumber) {
+    public String getCareProviderEmailByPatientPersonalNumber(String personalNumber) {
         return patientRepository.findCareProviderEmailByPatientPersonalNumber(personalNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Patient with personal number: " + personalNumber + " not exists")
         );
     }
 
-    public String getPatientFullNameByPersonalNumber(Integer personalNumber) {
+    public String getPatientFullNameByPersonalNumber(String personalNumber) {
         return patientRepository.findFullNameByPernosalNumber(personalNumber);
     }
 

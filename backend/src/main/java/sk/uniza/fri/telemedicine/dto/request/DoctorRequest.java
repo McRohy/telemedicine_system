@@ -12,7 +12,7 @@ import lombok.Getter;
 public class DoctorRequest {
 
     @NotNull(message = "Personal number is mandatory")
-    private Integer panNumber;
+    private String panNumber;
 
     @Valid
     @NotNull(message = "Personal data is mandatory")

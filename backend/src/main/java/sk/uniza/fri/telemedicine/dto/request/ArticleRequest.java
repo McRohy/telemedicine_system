@@ -10,7 +10,7 @@ import lombok.Getter;
 public class ArticleRequest {
 
     @NotNull(message = "Personal number is mandatory")
-    private Integer panNumber;
+    private String panNumber;
 
     @NotBlank(message = "Title is mandatory")
     private String title;

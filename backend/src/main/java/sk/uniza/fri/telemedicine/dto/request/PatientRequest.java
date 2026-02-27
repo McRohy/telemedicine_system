@@ -9,12 +9,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PatientRequest {
     @NotNull(message = "Personal number is mandatory")
-    private Integer personalNumber;
+    private String personalNumber;
 
     @Valid
     @NotNull(message = "Personal data is mandatory")
     private PersonalDataRequest personalData;
 
     @NotNull(message = "Pan number is mandatory")
-    private Integer panNumber;
+    private String panNumber;
 }

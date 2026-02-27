@@ -32,7 +32,7 @@ public class ArticleService {
         return mapToArticleResponse(article, author);
     }
 
-    public List<ArticleResponse> findAllArticlesByPanNumber(Integer panNumber) {
+    public List<ArticleResponse> findAllArticlesByPanNumber(String panNumber) {
         String author = doctorService.getFullNameByPanNumber(panNumber);
         return articleRepository.findAllByDoctorPanNumber(panNumber)
                 .stream()

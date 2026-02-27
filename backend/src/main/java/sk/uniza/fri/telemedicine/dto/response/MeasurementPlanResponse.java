@@ -10,8 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 public class MeasurementPlanResponse {
     private Integer id;
-    private Integer personalNumber;
-    private Integer panNumber;
+    private String personalNumber;
+    private String panNumber;
     private String timeOfPlannedMeasurements;
     private Frequency frequency;
     private List<MeasurementPlanTypesResponse> typesOfMeasurements;

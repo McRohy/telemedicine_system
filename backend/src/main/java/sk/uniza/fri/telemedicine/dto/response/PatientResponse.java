@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class PatientResponse {
-    private Integer personalNumber;
+    private String personalNumber;
     private PersonalDataResponse personalData;
-    private Integer doctorPanNumber;
+    private String doctorPanNumber;
 }

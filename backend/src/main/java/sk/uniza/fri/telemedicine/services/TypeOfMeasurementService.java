@@ -3,6 +3,7 @@ package sk.uniza.fri.telemedicine.services;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
+import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
 import sk.uniza.fri.telemedicine.repository.TypeOfMeasurementRepository;
 
@@ -16,16 +17,15 @@ public class TypeOfMeasurementService {
         this.typeOfMeasurementRepository = typeOfMeasurementRepository;
     }
 
-    //FIX THIS
     public List<TypeOfMeasurement> getAllTypesOfMeasurement() {
-        if (typeOfMeasurementRepository.findAllTypeNames().isEmpty()) {
-            throw new RuntimeException("No types of measurement found");
-        }
-        return typeOfMeasurementRepository.findAllTypeNames();
+        return typeOfMeasurementRepository.findAll();
     }
 
     @Transactional
     public TypeOfMeasurement createTypeOfMeasurement(String typeName, String units, Integer minValue, Integer maxValue) {
+       if (typeOfMeasurementRepository.existsByTypeName(typeName)){
+           throw  new DuplicateException(("Type of measurement already exists"));
+       }
         TypeOfMeasurement typeOfMeasurement = new TypeOfMeasurement();
         typeOfMeasurement.setTypeName(typeName);
         typeOfMeasurement.setUnits(units);

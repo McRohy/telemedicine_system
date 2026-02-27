@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 public interface TypeOfMeasurementRepository extends JpaRepository<TypeOfMeasurement, Integer> {
 
-    @Query(value = "SELECT t.typeName FROM TypeOfMeasurement t ORDER BY t.typeName ASC")
-    List<TypeOfMeasurement> findAllTypeNames();
-
+    @Query("SELECT COUNT(t) > 0 FROM TypeOfMeasurement t WHERE t.typeName = :typeName")
+    boolean existsByTypeName(String typeName);
 }

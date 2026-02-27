@@ -7,7 +7,7 @@ import sk.uniza.fri.telemedicine.enums.constrains.Specialization;
 @Getter //for Json serialization
 @AllArgsConstructor
 public class DoctorResponse {
-        private Integer panNumber;
+        private String panNumber;
         private PersonalDataResponse personalData;
         private Specialization specialization;
 }

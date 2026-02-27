@@ -32,7 +32,7 @@ public class DoctorController {
 
     @GetMapping("/{panNumber}")
     @ResponseStatus(HttpStatus.OK)
-    public DoctorResponse findByPanNumber(@PathVariable Integer panNumber) {
+    public DoctorResponse findByPanNumber(@PathVariable String panNumber) {
         return doctorService.findDoctorByPanNumberResponse(panNumber);
     }
 }

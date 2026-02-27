@@ -8,7 +8,7 @@ import lombok.Getter;
 public class MeasurementRecordRequest {
 
     @NotNull(message = "Personal number is mandatory")
-    private Integer personalNumber;
+    private String personalNumber;
 
     @NotNull(message = "Type of measurement is mandatory")
     private Integer typeOfMeasurementId;

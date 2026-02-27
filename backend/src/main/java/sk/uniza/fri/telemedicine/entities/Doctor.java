@@ -12,7 +12,7 @@ import sk.uniza.fri.telemedicine.enums.constrains.Specialization;
 public class Doctor {
 
     @Id
-    private Integer PanNumber;
+    private String PanNumber;
 
     @OneToOne
     @JoinColumn(name = "email", nullable = false)

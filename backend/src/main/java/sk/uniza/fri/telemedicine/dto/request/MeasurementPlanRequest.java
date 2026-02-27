@@ -12,10 +12,10 @@ import java.util.List;
 public class MeasurementPlanRequest {
 
     @NotNull(message = "Personal number is mandatory")
-    private  Integer personalNumber;
+    private  String personalNumber;
 
     @NotNull(message = "Pan number is mandatory")
-    private Integer panNumber;
+    private String panNumber;
 
     @NotNull(message = "Frequency is mandatory")
     private String  frequency;

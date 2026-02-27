@@ -27,7 +27,7 @@ public class ArticleController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ArticleResponse> findAllArticlesByPanNumber(@RequestParam Integer panNumber) {
+    public List<ArticleResponse> findAllArticlesByPanNumber(@RequestParam String panNumber) {
         return articleService.findAllArticlesByPanNumber(panNumber);
     }
 
