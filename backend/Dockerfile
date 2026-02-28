@@ -1,9 +1,10 @@
-#https://spring.io/guides/gs/spring-boot-docker
-#https://medium.com/@bhargavkanjarla01/how-to-combine-a-java-spring-boot-back-end-with-a-reactjs-front-end-app-ed8d8ca65285
-FROM eclipse-temurin:21-jdk
+FROM maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
-COPY . .
-RUN ./mvnw clean package -DskipTests
-RUN cp target/*.jar app.jar
-EXPOSE 8080
+COPY pom.xml .
+RUN mvn dependency:resolve
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+FROM eclipse-temurin:21-jre
+COPY --from=build /app/target/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]

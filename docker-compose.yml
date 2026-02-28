@@ -1,8 +1,8 @@
 services:
   postgre-db:
-    image: postgres:18.2
-    ports:
-      - "5432:5432"
+    image: postgres:18
+    volumes:
+      - postgres-data:/var/lib/postgresql
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -29,3 +29,6 @@ services:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_EMAIL_USERNAME: ${SPRING_EMAIL_USERNAME}
       SPRING_EMAIL_PASSWORD: ${SPRING_EMAIL_PASSWORD}
+
+volumes:
+  postgres-data:
