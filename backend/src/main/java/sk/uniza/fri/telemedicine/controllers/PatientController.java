@@ -25,9 +25,15 @@ public class PatientController {
         return patientService.createPatient(request);
     }
 
-    @GetMapping("/{panNumber}")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<PatientResponse> getPatientByPanNumber(@PathVariable String panNumber) {
+    public List<PatientResponse> getPatientsByPanNumber(@RequestParam String panNumber) {
         return patientService.getAllByDoctorsPanNumber(panNumber);
+    }
+
+    @GetMapping("/all")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PatientResponse> getAllPatients() {
+        return patientService.getAllPatients();
     }
 }

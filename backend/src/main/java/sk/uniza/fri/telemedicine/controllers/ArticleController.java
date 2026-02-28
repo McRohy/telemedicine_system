@@ -31,6 +31,12 @@ public class ArticleController {
         return articleService.findAllArticlesByPanNumber(panNumber);
     }
 
+    @GetMapping("/{articleId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ArticleResponse  getArticleById(@PathVariable Long articleId) {
+        return articleService.findArticleById(articleId);
+    }
+
     @DeleteMapping("/{articleId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteArticle(@PathVariable Long articleId) {

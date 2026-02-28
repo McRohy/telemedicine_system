@@ -22,4 +22,10 @@ public class MeasurementPlanController {
     public MeasurementPlanResponse createMeasurementPlan(@Valid @RequestBody MeasurementPlanRequest request) {
         return measurementPlanService.createMeasurementPlan(request);
     }
+
+    @GetMapping("/{personalNumber}")
+    @ResponseStatus(HttpStatus.OK)
+    public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(@PathVariable String personalNumber) {
+        return measurementPlanService.findMeasurementPlanByPersonalNumber(personalNumber);
+    }
 }

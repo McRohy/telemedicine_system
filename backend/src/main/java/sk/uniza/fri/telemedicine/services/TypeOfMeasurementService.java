@@ -2,6 +2,8 @@ package sk.uniza.fri.telemedicine.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
+import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
@@ -17,25 +19,41 @@ public class TypeOfMeasurementService {
         this.typeOfMeasurementRepository = typeOfMeasurementRepository;
     }
 
-    public List<TypeOfMeasurement> getAllTypesOfMeasurement() {
-        return typeOfMeasurementRepository.findAll();
+    public List<TypeOfMeasurementResponse> getAllTypesOfMeasurement() {
+        return typeOfMeasurementRepository.findAll()
+                .stream()
+                .map(t -> this.mapToTypeOfMeasurementResponse(t))
+                .toList();
     }
 
     @Transactional
-    public TypeOfMeasurement createTypeOfMeasurement(String typeName, String units, Integer minValue, Integer maxValue) {
-       if (typeOfMeasurementRepository.existsByTypeName(typeName)){
+    public TypeOfMeasurementResponse createTypeOfMeasurement(TypeOfMeasurementRequest request) {
+       if (typeOfMeasurementRepository.existsByTypeName(request.getTypeName())){
            throw  new DuplicateException(("Type of measurement already exists"));
        }
-        TypeOfMeasurement typeOfMeasurement = new TypeOfMeasurement();
-        typeOfMeasurement.setTypeName(typeName);
-        typeOfMeasurement.setUnits(units);
-        typeOfMeasurement.setMinValue(minValue);
-        typeOfMeasurement.setMaxValue(maxValue);
-        return typeOfMeasurementRepository.save(typeOfMeasurement);
+       TypeOfMeasurement typeOfMeasurement = this.mapToTypeOfMeasurement(request);
+        typeOfMeasurementRepository.save(typeOfMeasurement);
+
+       return this.mapToTypeOfMeasurementResponse(typeOfMeasurement);
     }
 
     public TypeOfMeasurement findTypeOfMeasurementById(Integer id){
         return typeOfMeasurementRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Type of measurement with id : " + id + " not found"));
     }
+
+    private TypeOfMeasurement mapToTypeOfMeasurement(TypeOfMeasurementRequest request) {
+        TypeOfMeasurement typeOfMeasurement = new TypeOfMeasurement();
+        typeOfMeasurement.setTypeName(request.getTypeName());
+        typeOfMeasurement.setUnits(request.getUnits());
+        typeOfMeasurement.setMinValue(request.getMinValue());
+        typeOfMeasurement.setMaxValue(request.getMaxValue());
+        return typeOfMeasurement;
+    }
+
+    private  TypeOfMeasurementResponse mapToTypeOfMeasurementResponse(TypeOfMeasurement typeOfMeasurement) {
+        return new TypeOfMeasurementResponse(typeOfMeasurement.getTypeId(), typeOfMeasurement.getTypeName(),
+                typeOfMeasurement.getUnits(), typeOfMeasurement.getMinValue(), typeOfMeasurement.getMaxValue());
+    }
+
 }

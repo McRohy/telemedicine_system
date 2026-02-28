@@ -40,6 +40,13 @@ public class ArticleService {
                 .toList();
     }
 
+    public ArticleResponse findArticleById(Long articleId) {
+        Article article = articleRepository.findById(articleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
+        String author = doctorService.getFullNameByPanNumber(article.getDoctor().getPanNumber());
+        return this.mapToArticleResponse(article, author);
+    }
+
     @Transactional
     public void deleteArticle(Long articleId) {
         Article article = articleRepository.findById(articleId)

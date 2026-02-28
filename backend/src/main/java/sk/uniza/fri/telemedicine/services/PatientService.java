@@ -44,6 +44,13 @@ public class PatientService {
                 .toList();
     }
 
+    public List<PatientResponse> getAllPatients() {
+        return patientRepository.findAll()
+                .stream()
+                .map(p -> mapToPatientResponse(p))
+                .toList();
+    }
+
     public Patient findByPersonalNumber(String personalNumber){
         return patientRepository.findByPersonalNumber(personalNumber).orElseThrow(
                 () -> new ResourceNotFoundException("Patient with personal number: " + personalNumber + " not exists"));

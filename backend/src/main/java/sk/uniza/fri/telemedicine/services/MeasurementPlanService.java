@@ -7,6 +7,7 @@ import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
 import sk.uniza.fri.telemedicine.entities.*;
 import sk.uniza.fri.telemedicine.enums.constrains.Frequency;
+import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanTypesRepository;
 
@@ -52,6 +53,13 @@ public class MeasurementPlanService {
         });
         measurementPlanTypesRepository.saveAll(planTypes);
 
+        return mapToMeasurementPlanResponse(plan, planTypes);
+    }
+
+    public MeasurementPlanResponse findMeasurementPlanByPersonalNumber (String personalNumber) {
+        MeasurementPlan plan = measurementPlanRepository.findByPersonalNumber(personalNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Measurement plan not found"));
+        List<MeasurementPlanTypes> planTypes = measurementPlanTypesRepository.findAllByPlanId(plan.getPlanId());
         return mapToMeasurementPlanResponse(plan, planTypes);
     }
 
