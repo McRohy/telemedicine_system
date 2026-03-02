@@ -4,7 +4,7 @@ import Header from '../components/Header';
 function PreviewOfPatients() {
     return (
         <div className="page-2">
-            <Navbar />
+            <Navbar variant="admin" profileName="Matej Kralovsky" profileRole="Admin"/>
             <div style={{ padding: 24 }}>
                 <Header title="Prehľad pacientov" />
             </div>
