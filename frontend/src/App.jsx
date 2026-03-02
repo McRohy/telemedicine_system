@@ -4,6 +4,9 @@ import PasswordPage from './pages/PasswordPage';
 import LoginPage from './pages/LoginPage';
 import PreviewOfDoctors from './pages/PreviewOfDoctors';
 import PreviewOfPatients from './pages/PreviewOfPatients';
+import PreviewOfMeasurements from './pages/PreviewOfMeasurements';
+import DoctorPreviewOfPatients from './pages/DoctorPreviewOfPatients';
+import AddDoctor from './pages/AddDoctor';
 
 function App() {
   return (
@@ -17,6 +20,9 @@ function App() {
        
         <Route path="/doctors" element={<PreviewOfDoctors />} />
         <Route path="/patients" element={<PreviewOfPatients />} />
+        <Route path="/measurements" element={<PreviewOfMeasurements />} />
+        <Route path="/doctor-preview-of-patients" element={<DoctorPreviewOfPatients />} />
+        <Route path="/add-doctor" element={<AddDoctor />} />
       </Routes>
     </BrowserRouter>
   );
