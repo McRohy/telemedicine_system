@@ -1,15 +1,19 @@
 import './AddDoctor.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 
 
 function AddPatient() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const defaultPanNumber = params.get("panNumber") || '';
+
     const [personalNumber, setPersonalNumber] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [panNumber, setPanNumber] = useState('');
+    const [panNumber, setPanNumber] = useState(defaultPanNumber);
     const [email, setEmail] = useState('');
 
     async function createPatient() {
@@ -64,11 +68,11 @@ function AddPatient() {
                     </div>
                     <div className="field-group">
                         <label className="field-label" htmlFor="pan">PAN cislo *</label>
-                        <input type="text" id="pan" placeholder="Zadajte PAN cislo" className="field-input" onChange={(e) => setPanNumber(e.target.value)} />
+                        <input type="text" id="pan" placeholder="Zadajte PAN cislo" className="field-input" onChange={(e) => setPanNumber(e.target.value)} value={panNumber} />
                     </div>
                 </div>
                 <div className="group-btns">
-                    <button className="btn btn-secondary" onClick={() => navigate('/patients')}>Zrusit</button>
+                    <button className="btn btn-secondary" onClick={() => navigate(-1)}>Zrusit</button>
                     <button className="btn btn-primary" onClick={() => createPatient()}>Pridat Pacienta</button>
                 </div>
             </div>

@@ -8,6 +8,7 @@ import PreviewOfMeasurements from './pages/PreviewOfMeasurements';
 import DoctorPreviewOfPatients from './pages/DoctorPreviewOfPatients';
 import AddDoctor from './pages/AddDoctor';
 import AddPatient from './pages/AddPatient';
+import Patient from './pages/Patient';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route path="/doctor-preview-of-patients" element={<DoctorPreviewOfPatients />} />
         <Route path="/add-doctor" element={<AddDoctor />} />
         <Route path="/add-patient" element={<AddPatient />} />
+        <Route path="/patient/:personalNumber" element={<Patient />} />
       </Routes>
     </BrowserRouter>
   );
