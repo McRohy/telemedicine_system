@@ -75,3 +75,11 @@ body {
     background: #c4c4c4;
     color: black;
 }
+
+.no-data{
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+}
