@@ -11,7 +11,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class DoctorRequest {
 
-    @NotNull(message = "Personal number is mandatory")
+    @NotBlank(message = "Personal number is mandatory")
     private String panNumber;
 
     @Valid

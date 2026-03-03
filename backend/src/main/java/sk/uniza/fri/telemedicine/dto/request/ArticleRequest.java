@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ArticleRequest {
 
-    @NotNull(message = "Personal number is mandatory")
+    @NotBlank(message = "Personal number is mandatory")
     private String panNumber;
 
     @NotBlank(message = "Title is mandatory")
