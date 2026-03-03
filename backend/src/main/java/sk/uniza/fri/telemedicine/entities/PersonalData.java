@@ -16,6 +16,7 @@ public class PersonalData {
 
     @Id
     @Email
+    @Column(length = 70)
     private String email;
 
     @Column(length = 50, nullable = false)

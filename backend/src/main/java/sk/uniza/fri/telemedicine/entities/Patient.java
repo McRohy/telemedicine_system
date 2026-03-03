@@ -10,6 +10,7 @@ import lombok.Setter;
 public class Patient {
 
     @Id
+    @Column(length = 11)
     private String personalNumber;
 
     @OneToOne

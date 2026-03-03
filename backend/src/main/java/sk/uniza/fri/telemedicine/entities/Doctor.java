@@ -1,7 +1,6 @@
 package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +11,7 @@ import sk.uniza.fri.telemedicine.enums.constrains.Specialization;
 public class Doctor {
 
     @Id
+    @Column(length = 16)
     private String PanNumber;
 
     @OneToOne

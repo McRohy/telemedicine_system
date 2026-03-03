@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -20,6 +19,6 @@ public class PatientRequest {
     private PersonalDataRequest personalData;
 
     @NotBlank(message = "Pan number is mandatory")
-    @Pattern(regexp = "\\d{24}", message = "PAN number must consist from 24 digits")
+    @Pattern(regexp = "\\d{16}", message = "PAN number must consist from 16 digits")
     private String panNumber;
 }
