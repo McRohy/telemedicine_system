@@ -29,6 +29,5 @@ public class MeasurementPlan {
     @Column(length = 20, nullable = false)
     private Frequency frequency;
 
-    @NotNull
     private LocalTime timeOfPlannedMeasurement;
 }

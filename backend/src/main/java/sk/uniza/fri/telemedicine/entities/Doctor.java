@@ -18,7 +18,6 @@ public class Doctor {
     @JoinColumn(name = "email", nullable = false)
     private PersonalData personalData;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     private Specialization specialization;

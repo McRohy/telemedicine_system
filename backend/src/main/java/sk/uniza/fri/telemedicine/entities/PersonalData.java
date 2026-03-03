@@ -18,22 +18,17 @@ public class PersonalData {
     @Email
     private String email;
 
-    @NotBlank
-    @Size(max = 50)
     @Column(length = 50, nullable = false)
     private String firstName;
 
-    @NotBlank
-    @Size(max = 50)
     @Column(length = 50, nullable = false)
     private String lastName;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(length = 15, nullable = false)
     private Role role;
 
-    @Column(length = 60) //more space for hashed password
+    @Column(length = 60)
     private String password;
 
     private String setupToken;

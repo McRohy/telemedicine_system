@@ -27,7 +27,6 @@ public class MeasurementRecord {
     @JoinColumn(name = "personal_number", nullable = false)
     private Patient patient;
 
-    @NotNull
     @Column(nullable = false)
     private Integer value;
 
