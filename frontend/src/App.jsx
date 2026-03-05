@@ -1,33 +1,25 @@
-import './index.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import PasswordPage from './pages/PasswordPage';
-import LoginPage from './pages/LoginPage';
-import PreviewOfDoctors from './pages/PreviewOfDoctors';
-import PreviewOfPatients from './pages/PreviewOfPatients';
-import PreviewOfMeasurements from './pages/PreviewOfMeasurements';
-import DoctorPreviewOfPatients from './pages/DoctorPreviewOfPatients';
-import AddDoctor from './pages/AddDoctor';
-import AddPatient from './pages/AddPatient';
-import Patient from './pages/Patient';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AppLayout from "./layout/AppLayout";
+import PasswordPage from "./pages/PasswordPage";
+import LoginPage from "./pages/LoginPage";
+import PreviewOfDoctors from "./pages/admin/PreviewOfDoctors";
+import PreviewOfPatients from "./pages/admin/PreviewOfPatients";
+import DoctorPreviewOfPatients from "./pages/doctor/PreviewOfPatients";
 
 function App() {
   return (
-
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<AppLayout />}>
+          <Route path="/admin/doctors" element={<PreviewOfDoctors />} />
+          <Route path="/admin/patients" element={<PreviewOfPatients />} />
+          <Route path="/doctor/patients" element={<DoctorPreviewOfPatients />} />
+        </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/password/:token" element={<PasswordPage />} />
-       
-        <Route path="/doctors" element={<PreviewOfDoctors />} />
-        <Route path="/patients" element={<PreviewOfPatients />} />
-        <Route path="/measurements" element={<PreviewOfMeasurements />} />
-        <Route path="/doctor-preview-of-patients" element={<DoctorPreviewOfPatients />} />
-        <Route path="/add-doctor" element={<AddDoctor />} />
-        <Route path="/add-patient" element={<AddPatient />} />
-        <Route path="/patient/:personalNumber" element={<Patient />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
-export default App
+export default App;

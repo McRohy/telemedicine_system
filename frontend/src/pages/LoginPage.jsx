@@ -1,27 +1,58 @@
-import './PasswordPage.css';
-import {BsHeartPulse} from "react-icons/bs";
-
+import { BsHeartPulse } from "react-icons/bs";
+import { useState } from "react";
+import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center } from "@mantine/core";
 
 function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-    return (
-       <div className="page">
-        <div className="card">
-            <div>
-                <BsHeartPulse className='logo'/>   
-                <h1>TELEMEDICINE</h1>
-                <p> Vitajte, pre používanie telemedicínskeho systému sa prosím prihláste pomocou svojho hesla. </p>
-            </div>
-            <div className='input-part'>
-                <input type="email" id="email" placeholder="Zadajte email" className="input" />
-                <input type="password" id="password" placeholder="Zadajte heslo" className="input" />
-                <button id="submit" className="btn btn-primary">
-                    Prihlásiť sa
-                </button>
-            </div> 
-        </div>
-    </div>
-    );
-    }
+  return (
+    <Center w="100vw" h="100vh" bg="#0b5942">
+      <Card p="lg" radius="lg" maw={{ base: 300, xs: 450 }}>
+        <Stack gap="xl">
+          <Stack align="center" gap="xs" m="xs">
+            <BsHeartPulse size={96} />
+            <Title order={1}>TELEMEDICINE</Title>
+            <Text align="center">
+              Vitajte, pre používanie telemedicínskeho systému sa prosím
+              prihláste pomocou svojho hesla.
+            </Text>
+          </Stack>
+
+          <Stack gap="md">
+            <TextInput
+              label="Email"
+              placeholder="rohy@gmail.sk"
+              type="email"
+              ta="left"
+              size="md"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <PasswordInput
+              label="Heslo"
+              placeholder="**********"
+              ta="left"
+              size="md"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              color="gray"
+            />
+
+            <Button
+              type="submit"
+              size="md"
+              color="#0b5942"
+              disabled={email == "" || password == ""}
+            >
+              Prihlásiť sa
+            </Button>
+          </Stack>
+        </Stack>
+      </Card>
+    </Center>
+  );
+}
 
 export default LoginPage;
