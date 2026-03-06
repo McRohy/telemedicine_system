@@ -1,20 +1,35 @@
 import { useEffect, useState } from "react";
-import {  Group, Stack, Button, Title, Alert, Table } from "@mantine/core";
+import {  Group, Stack, Button, Title, Alert, Table, TextInput, Loader, Center } from "@mantine/core";
+import { IconSearch } from '@tabler/icons-react';
 import AddPatientModal from "../../components/AddPatientModal";
 import { useDisclosure } from '@mantine/hooks'
 
 export default function PreviewOfPatients() {
   const [patients, setPatients] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
+  const [loading, setLoading] = useState(true);
+
+  const [search, setSearch] = useState('');
+  const filtered = patients.filter((item) =>
+    [item.personalData.firstName, item.personalData.lastName, item.personalNumber, item.doctorPanNumber]
+      .some((value) => value.toLowerCase().includes(search.toLowerCase()))
+  );
 
   useEffect(() => {
     async function loadPatients() {
       const res = await fetch("http://localhost:8080/api/patients/all");
       const data = await res.json();
       setPatients(data);
+      setLoading(false);
     }
     loadPatients();
   }, []);
+
+  if (loading) return (
+      <Center h="100vh">
+              <Loader color="#0b5942" />
+      </Center>
+    );
 
   if (patients.length === 0) {
     return (
@@ -52,6 +67,13 @@ export default function PreviewOfPatients() {
         </Button>
       </Group>
 
+     <TextInput  
+        placeholder="Hľadať..."
+        leftSection={<IconSearch size={16} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+
      <Table.ScrollContainer minWidth={400} type="native">
       <Table highlightOnHover>
         <Table.Thead bg="#0b5942" c="white">
@@ -63,7 +85,7 @@ export default function PreviewOfPatients() {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {patients.map((d) => (
+          {filtered.map((d) => (
             <Table.Tr key={d.personalNumber}>
               <Table.Td>{d.personalNumber}</Table.Td>
               <Table.Td>{d.personalData.firstName}</Table.Td>

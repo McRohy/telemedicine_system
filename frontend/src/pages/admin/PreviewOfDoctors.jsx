@@ -1,12 +1,21 @@
 
 import { useEffect, useState } from "react";
-import {  Group, Stack, Button, Title, Alert, Table} from "@mantine/core";
+import {  Group, Stack, Button, Title, Alert, Table, Center, Loader, TextInput} from "@mantine/core";
+import { IconSearch } from '@tabler/icons-react';
 import AddDoctorModal from "../../components/AddDoctorModal";
 import { useDisclosure } from '@mantine/hooks'
 
 export default function PreviewOfDoctors() {
   const [doctors, setDoctors] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
+  const [loading, setLoading] = useState(true);
+
+  const [search, setSearch] = useState('');
+  const filtered = doctors.filter((item) =>
+    [item.personalData.firstName, item.personalData.lastName, item.panNumber, item.specialization]
+      .some((value) => value.toLowerCase().includes(search.toLowerCase()))
+  );
+  
 
 
   useEffect(() => {
@@ -14,9 +23,16 @@ export default function PreviewOfDoctors() {
       const res = await fetch("http://localhost:8080/api/doctors");
       const data = await res.json();
       setDoctors(data);
+      setLoading(false);
     }
     loadDoctors();
   }, []);
+
+  if (loading) return (
+        <Center h="100vh">
+                <Loader color="#0b5942" />
+        </Center>
+      );
 
   if (doctors.length === 0) {
     return (
@@ -54,6 +70,13 @@ export default function PreviewOfDoctors() {
         </Button>
       </Group>
 
+      <TextInput  
+        placeholder="Hľadať..."
+        leftSection={<IconSearch size={16} />}
+        value={search}
+        onChange={(e) => setSearch(e.currentTarget.value)}
+      />
+
      <Table.ScrollContainer minWidth={400} type="native">
       <Table highlightOnHover>
         <Table.Thead bg="#0b5942" c="white">
@@ -65,7 +88,7 @@ export default function PreviewOfDoctors() {
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {doctors.map((d) => (
+          {filtered.map((d) => (
             <Table.Tr key={d.panNumber}>
               <Table.Td>{d.panNumber}</Table.Td>
               <Table.Td>{d.personalData.firstName}</Table.Td>
