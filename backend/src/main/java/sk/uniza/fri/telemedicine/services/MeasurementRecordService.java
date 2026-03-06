@@ -7,7 +7,7 @@ import sk.uniza.fri.telemedicine.dto.response.MeasurementRecordResponse;
 import sk.uniza.fri.telemedicine.entities.MeasurementRecord;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
-import sk.uniza.fri.telemedicine.enums.others.StatusOfMeasurementRecord;
+import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
 import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.MeasurementRecordRepository;
 
@@ -35,17 +35,18 @@ public class MeasurementRecordService {
         TypeOfMeasurement typeOfMeasurement = typeOfMeasurementService.findTypeOfMeasurementById(request.getTypeOfMeasurementId());
 
         MeasurementRecord measurementRecord = this.mapToMeasurementRecord(request, patient, typeOfMeasurement);
-        measurementRecordRepository.save(measurementRecord);
 
-        StatusOfMeasurementRecord status = StatusOfMeasurementRecord.STATUS_OK;
         if (!checkIfRecordIsInRange(request.getValue(), typeOfMeasurement)) {
-            status = StatusOfMeasurementRecord.STATUS_DOCTOR_INFORMED;
+            measurementRecord.setMeasurementStatus(MeasurementStatus.ABNORMAL);
             emailSender.sendMeasurementRecordAlert(
                     patientService.getCareProviderEmailByPatientPersonalNumber(patient.getPersonalNumber()),
                     patientService.getPatientFullNameByPersonalNumber(patient.getPersonalNumber()),
                     request.getValue(), typeOfMeasurement.getUnits());
+        } else {
+            measurementRecord.setMeasurementStatus(MeasurementStatus.NORMAL);
         }
-        return this.mapToMeasurementRecordResponse(measurementRecord, status);
+        measurementRecordRepository.save(measurementRecord);
+        return this.mapToMeasurementRecordResponse(measurementRecord);
     }
 
     private boolean checkIfRecordIsInRange(Integer value, TypeOfMeasurement typeOfMeasurement) {
@@ -62,9 +63,9 @@ public class MeasurementRecordService {
         return measurementRecord;
     }
 
-    private MeasurementRecordResponse mapToMeasurementRecordResponse(MeasurementRecord measurementRecord, StatusOfMeasurementRecord status) {
+    private MeasurementRecordResponse mapToMeasurementRecordResponse(MeasurementRecord measurementRecord) {
         return new MeasurementRecordResponse(measurementRecord.getTypeOfMeasurement().getTypeName(),
                 measurementRecord.getValue(), measurementRecord.getTypeOfMeasurement().getUnits(),
-                measurementRecord.getTimeOfMeasurement(), status);
+                measurementRecord.getTimeOfMeasurement(), measurementRecord.getMeasurementStatus());
     }
 }
