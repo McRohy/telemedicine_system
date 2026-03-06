@@ -7,6 +7,9 @@ import sk.uniza.fri.telemedicine.dto.request.MeasurementRecordRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementRecordResponse;
 import sk.uniza.fri.telemedicine.services.MeasurementRecordService;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/measurements")
 public class MeasurementController {
@@ -21,6 +24,12 @@ public class MeasurementController {
     @ResponseStatus(HttpStatus.OK)
     public MeasurementRecordResponse trackMeasurementRecord(@Valid @RequestBody MeasurementRecordRequest request) {
         return measurementRecordService.trackNewMeasurement(request);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<MeasurementRecordResponse> getMeasurementRecord(@RequestParam String personalNumber, @RequestParam Integer typeId, @RequestParam LocalDate from, @RequestParam LocalDate to) {
+        return measurementRecordService.getMeasurementRecordForPatient(personalNumber, typeId, from, to);
     }
 
 }

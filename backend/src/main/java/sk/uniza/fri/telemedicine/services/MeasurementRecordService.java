@@ -11,7 +11,9 @@ import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
 import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.MeasurementRecordRepository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class MeasurementRecordService {
@@ -51,6 +53,13 @@ public class MeasurementRecordService {
 
     private boolean checkIfRecordIsInRange(Integer value, TypeOfMeasurement typeOfMeasurement) {
         return value >= typeOfMeasurement.getMinValue() && value <= typeOfMeasurement.getMaxValue();
+    }
+
+    public List<MeasurementRecordResponse> getMeasurementRecordForPatient(String personalNumber, Integer typeId, LocalDate from, LocalDate to) {
+        return measurementRecordRepository
+                .findAllByPatientAndTimeBetween(personalNumber,typeId, from, to).stream()
+                .map(record -> this.mapToMeasurementRecordResponse(record))
+                .toList();
     }
 
     private MeasurementRecord mapToMeasurementRecord(MeasurementRecordRequest request, Patient patient, TypeOfMeasurement typeOfMeasurement) {
