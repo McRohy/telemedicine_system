@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { Modal, Stack, TextInput, Select, Button, Alert } from "@mantine/core";
 
+const genders = [
+        { value: 'MALE', label: 'Muž' },
+        { value: 'FEMALE', label: 'Žena' },
+    ];
 
 export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
     const [firstName, setFirstName] = useState('');
@@ -8,6 +12,7 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
     const [panNumber, setPanNumber] = useState(doctorPanNumber || '');
     const [personalNumber, setPersonalNumber] = useState('');
     const [email, setEmail] = useState('');
+    const [gender, setGender] = useState('');
     const [alert, setAlert] = useState(null);
 
     async function createPatient() {
@@ -22,6 +27,7 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
             personalNumber,
             personalData,
             panNumber,
+            gender,
         };
 
         const res = await fetch('http://localhost:8080/api/patients', {
@@ -92,6 +98,17 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
           onChange={(e) => setEmail(e.target.value)}
         />
 
+        <Select
+          label="Pohlavie"
+          placeholder="Vyberte pohlavie"
+          data={genders}
+          size="md"
+          searchable
+          clearable
+          value={gender}
+          onChange={setGender}
+        />
+
         <TextInput
           label="PAN číslo lekára"
           placeholder="123456789"
@@ -107,7 +124,7 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
         p="xs"
         size="md"
         onClick={() => createPatient()}
-        disabled={!firstName || !lastName || !panNumber || !email || !personalNumber}
+        disabled={!firstName || !lastName || !panNumber || !email || !personalNumber || !gender}
         >
           Pridať Pacienta
         </Button>
