@@ -31,6 +31,12 @@ public class PatientController {
         return patientService.getAllByDoctorsPanNumber(panNumber);
     }
 
+    @GetMapping("/{personalNumber}")
+    @ResponseStatus(HttpStatus.OK)
+    public PatientResponse getPatientByPersonalNumber(@PathVariable String personalNumber) {
+        return patientService.getPatientByPersonalNumber(personalNumber);
+    }
+
     @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     public List<PatientResponse> getAllPatients() {

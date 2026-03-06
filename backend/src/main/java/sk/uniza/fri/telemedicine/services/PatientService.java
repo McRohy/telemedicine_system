@@ -44,6 +44,10 @@ public class PatientService {
                 .toList();
     }
 
+    public PatientResponse getPatientByPersonalNumber(String personalNumber) {
+        return mapToPatientResponse(this.findByPersonalNumber(personalNumber));
+    }
+
     public List<PatientResponse> getAllPatients() {
         return patientRepository.findAll()
                 .stream()
@@ -71,11 +75,12 @@ public class PatientService {
         patient.setPersonalNumber(request.getPersonalNumber());
         patient.setPersonalData(personalData);
         patient.setDoctor(doctor);
+        patient.setGender(request.getGender());
         return patient;
     }
 
     public PatientResponse mapToPatientResponse(Patient patient) {
         return new PatientResponse(patient.getPersonalNumber(), personalDataService.mapToPersonalDataResponse(patient.getPersonalData()),
-                patient.getDoctor().getPanNumber());
+                patient.getDoctor().getPanNumber(), patient.getGender());
     }
 }

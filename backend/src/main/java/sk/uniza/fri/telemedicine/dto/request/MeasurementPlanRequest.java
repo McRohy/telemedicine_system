@@ -14,7 +14,7 @@ import java.util.List;
 public class MeasurementPlanRequest {
 
     @NotNull(message = "Personal number is mandatory")
-    @Pattern(regexp = "\\d{11}", message = "Personal number must consist from 11 digits")
+    @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 11 digits")
     private  String personalNumber;
 
     @NotNull(message = "Pan number is mandatory")
