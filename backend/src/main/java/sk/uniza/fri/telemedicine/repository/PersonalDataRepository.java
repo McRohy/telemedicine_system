@@ -10,4 +10,7 @@ public interface PersonalDataRepository extends JpaRepository<PersonalData, Stri
 
      @Query("SELECT pd FROM PersonalData pd WHERE pd.setupToken = :setupToken")
         Optional<PersonalData> findBySetupToken(String setupToken);
+
+     @Query("SELECT pd FROM PersonalData pd WHERE pd.email = :email")
+      Optional<PersonalData> findByEmail(String email);
 }

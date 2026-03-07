@@ -2,6 +2,7 @@ package sk.uniza.fri.telemedicine.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
 import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
@@ -28,6 +29,7 @@ public class TypeOfMeasurementController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public TypeOfMeasurementResponse createTypeOfMeasurement(@Valid @RequestBody TypeOfMeasurementRequest request) {
         return typeOfMeasurementService.createTypeOfMeasurement(request);
     }

@@ -2,6 +2,7 @@ package sk.uniza.fri.telemedicine.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
@@ -20,18 +21,21 @@ public class DoctorController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public DoctorResponse createDoctor(@Valid @RequestBody DoctorRequest request) {
         return doctorService.createDoctor(request);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public List<DoctorResponse> getAllDoctors() {
         return doctorService.getAllDoctors();
     }
 
     @GetMapping("/{panNumber}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('DOCTOR')")
     public DoctorResponse findByPanNumber(@PathVariable String panNumber) {
         return doctorService.findDoctorByPanNumberResponse(panNumber);
     }

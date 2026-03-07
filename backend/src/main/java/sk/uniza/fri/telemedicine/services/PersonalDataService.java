@@ -9,10 +9,10 @@ import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
 import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.constrains.Role;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
 import sk.uniza.fri.telemedicine.helpers.EmailSender;
-import sk.uniza.fri.telemedicine.helpers.SecurityConfiger;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
 import java.util.Random;
@@ -23,12 +23,12 @@ public class PersonalDataService {
 
     private final PersonalDataRepository personalDataRepository;
     private final EmailSender emailSender;
-    private final SecurityConfiger securityConfiger;
+    private final PasswordEncoder passwordEncoder;
 
-    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailSender emailSender, SecurityConfiger securityConfiger) {
+    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailSender emailSender, PasswordEncoder passwordEncoder) {
         this.personalDataRepository = personalDataRepository;
         this.emailSender = emailSender;
-        this.securityConfiger = securityConfiger;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -38,7 +38,6 @@ public class PersonalDataService {
         }
         PersonalData personalData = this.mapToPersonalData(request);
         this.setUpPassword(personalData, request.getEmail());
-        personalDataRepository.save(personalData);
         return personalDataRepository.save(personalData);
     }
 
@@ -55,10 +54,15 @@ public class PersonalDataService {
        PersonalData personalData = personalDataRepository.findBySetupToken(request.getToken())
                 .orElseThrow(() -> new ResourceNotFoundException("Token not found"));
 
-       String password = securityConfiger.passwordEncoder().encode(request.getPassword());
+       String password = passwordEncoder.encode(request.getPassword());
        personalData.setPassword(password);
        personalData.setSetupToken(null);
        personalDataRepository.save(personalData);
+    }
+
+    public PersonalData getByEmail(String email) {
+        return personalDataRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Personal data with this email not found"));
     }
 
     private PersonalData mapToPersonalData(PersonalDataRequest request) {
