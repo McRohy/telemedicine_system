@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, Stack, TextInput, Select, Button, Alert } from "@mantine/core";
+import api from "../configs/api";
 
 const genders = [
         { value: 'MALE', label: 'Muž' },
@@ -30,18 +31,15 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
             gender,
         };
 
-        const res = await fetch('http://localhost:8080/api/patients', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(patientRequest),
-        });
-
-        if (res.ok) {
-            onClose();
-        } else {
-            const error = await res.json();
-            setAlert(error.message);
-        }
+        try {
+          await api.post('/patients', patientRequest);
+       } catch (err) {
+       if (err.response && err.response.data.message) {
+          setAlert(err.response.data.message);
+           } else {
+          setAlert('Nepodarilo sa načítať dáta');
+          }
+        } 
     }
 
   return (

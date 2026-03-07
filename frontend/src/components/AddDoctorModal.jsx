@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, Stack, TextInput, Select, Button, Alert } from "@mantine/core";
+import api from "../configs/api";
 
 const specializations = [
   { value: "cardiologist", label: "Kardiológ" },
@@ -28,20 +29,17 @@ export default function AddDoctorModal({ opened, onClose }) {
             specialization,
         };
 
-        const res = await fetch('http://localhost:8080/api/doctors', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(doctorRequest),
-        });
-
-        if (res.ok) {
-            onClose();
-        } else {
-            const error = await res.json();
-            setAlert(error.message);
-        }
+        try {
+          await api.post('/doctors', doctorRequest);
+       } catch (err) {
+       if (err.response && err.response.data.message) {
+          setAlert(err.response.data.message);
+           } else {
+          setAlert('Nepodarilo sa načítať dáta');
+          }
+        } 
     }
-
+  
   return (
     <Modal
       opened={opened}
