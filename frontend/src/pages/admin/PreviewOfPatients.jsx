@@ -3,11 +3,13 @@ import {  Group, Stack, Button, Title, Alert, Table, TextInput, Loader, Center }
 import { IconSearch } from '@tabler/icons-react';
 import AddPatientModal from "../../components/AddPatientModal";
 import { useDisclosure } from '@mantine/hooks'
+import api from "../../configs/api";
 
 export default function PreviewOfPatients() {
   const [patients, setPatients] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [search, setSearch] = useState('');
   const filtered = patients.filter((item) =>
@@ -16,13 +18,22 @@ export default function PreviewOfPatients() {
   );
 
   useEffect(() => {
-    async function loadPatients() {
-      const res = await fetch("http://localhost:8080/api/patients/all");
-      const data = await res.json();
-      setPatients(data);
+    async function fetchPatients() {
+    try {
+      const response = await api.get('/patients/all');
+      setPatients(response.data);
+      
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+          setError(err.response.data.message);
+      } else {
+          setError('Nepodarilo sa načítať dáta');
+  }
+    } finally {
       setLoading(false);
     }
-    loadPatients();
+  }
+  fetchPatients();
   }, []);
 
   if (loading) return (
@@ -66,6 +77,10 @@ export default function PreviewOfPatients() {
           Pridať pacienta
         </Button>
       </Group>
+
+      <Alert color="red" hidden={!error}>
+              {error}
+      </Alert>
 
      <TextInput  
         placeholder="Hľadať..."

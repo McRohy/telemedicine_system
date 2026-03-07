@@ -1,10 +1,29 @@
 import { BsHeartPulse } from "react-icons/bs";
-import { useState } from "react";
-import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center } from "@mantine/core";
+import { useState, useContext} from "react";
+import { useNavigate } from "react-router-dom";
+import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center, Alert } from "@mantine/core";
+import { AuthContext } from '../context/authContextValue';
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+
+    const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
+
+    async function handleLogin() {
+    try {
+        await login({ email, password });
+        navigate('/admin/doctors');
+    } catch (err) {
+        if (err.response && err.response.data.message) {
+          setError(err.response.data.message);
+      } else {
+          setError('Nepodarilo sa načítať dáta');
+      }
+    }
+    }
 
   return (
     <Center w="100vw" h="100vh" bg="#0b5942">
@@ -45,9 +64,11 @@ function LoginPage() {
               size="md"
               color="#0b5942"
               disabled={email == "" || password == ""}
+              onClick={() => handleLogin()}
             >
               Prihlásiť sa
             </Button>
+            {error && <Alert color="red">{error}</Alert>}
           </Stack>
         </Stack>
       </Card>

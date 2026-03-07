@@ -4,11 +4,13 @@ import {  Group, Stack, Button, Title, Alert, Table, Center, Loader, TextInput} 
 import { IconSearch } from '@tabler/icons-react';
 import AddDoctorModal from "../../components/AddDoctorModal";
 import { useDisclosure } from '@mantine/hooks'
+import api from "../../configs/api";
 
 export default function PreviewOfDoctors() {
   const [doctors, setDoctors] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [search, setSearch] = useState('');
   const filtered = doctors.filter((item) =>
@@ -16,23 +18,30 @@ export default function PreviewOfDoctors() {
       .some((value) => value.toLowerCase().includes(search.toLowerCase()))
   );
   
-
-
   useEffect(() => {
-    async function loadDoctors() {
-      const res = await fetch("http://localhost:8080/api/doctors");
-      const data = await res.json();
-      setDoctors(data);
+    async function fetchDoctors() {
+    try {
+      const response = await api.get('/doctors');
+      setDoctors(response.data);
+      
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+          setError(err.response.data.message);
+      } else {
+          setError('Nepodarilo sa načítať dáta');
+  }
+    } finally {
       setLoading(false);
     }
-    loadDoctors();
+  }
+  fetchDoctors();
   }, []);
 
   if (loading) return (
         <Center h="100vh">
                 <Loader color="#0b5942" />
         </Center>
-      );
+  );
 
   if (doctors.length === 0) {
     return (
@@ -69,6 +78,10 @@ export default function PreviewOfDoctors() {
           Pridať lekára
         </Button>
       </Group>
+
+      <Alert color="red" hidden={!error}>
+        {error}
+      </Alert>
 
       <TextInput  
         placeholder="Hľadať..."
