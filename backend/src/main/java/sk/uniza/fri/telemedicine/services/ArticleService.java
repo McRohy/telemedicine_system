@@ -6,7 +6,7 @@ import sk.uniza.fri.telemedicine.dto.request.ArticleRequest;
 import sk.uniza.fri.telemedicine.dto.response.ArticleResponse;
 import sk.uniza.fri.telemedicine.entities.Article;
 import sk.uniza.fri.telemedicine.entities.Doctor;
-import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
+import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.ArticleRepository;
 
 import java.time.LocalDateTime;
@@ -42,7 +42,7 @@ public class ArticleService {
 
     public ArticleResponse findArticleById(Long articleId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
+                .orElseThrow(() -> new NotFoundException("Article not found"));
         String author = doctorService.getFullNameByPanNumber(article.getDoctor().getPanNumber());
         return this.mapToArticleResponse(article, author);
     }
@@ -50,7 +50,7 @@ public class ArticleService {
     @Transactional
     public void deleteArticle(Long articleId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Article not found"));
+                .orElseThrow(() -> new NotFoundException("Article not found"));
         articleRepository.delete(article);
     }
 

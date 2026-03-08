@@ -1,11 +1,11 @@
 package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sk.uniza.fri.telemedicine.entities.idHelpers.MeasurementRecordId;
+import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
 
 import java.time.LocalDateTime;
 
@@ -27,9 +27,12 @@ public class MeasurementRecord {
     @JoinColumn(name = "personal_number", nullable = false)
     private Patient patient;
 
-    @NotNull
     @Column(nullable = false)
     private Integer value;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, nullable = false)
+    private MeasurementStatus measurementStatus;
 
     @Column(length = 220)
     private String note;

@@ -6,7 +6,7 @@ import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
 import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
-import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
+import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.TypeOfMeasurementRepository;
 
 import java.util.List;
@@ -39,7 +39,7 @@ public class TypeOfMeasurementService {
 
     public TypeOfMeasurement findTypeOfMeasurementById(Integer id){
         return typeOfMeasurementRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Type of measurement with id : " + id + " not found"));
+                () -> new NotFoundException("Type of measurement with id : " + id + " not found"));
     }
 
     private TypeOfMeasurement mapToTypeOfMeasurement(TypeOfMeasurementRequest request) {

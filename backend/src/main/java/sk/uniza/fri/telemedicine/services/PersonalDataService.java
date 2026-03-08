@@ -2,25 +2,30 @@ package sk.uniza.fri.telemedicine.services;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.dto.request.PasswordRequest;
 import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
 import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.constrains.Role;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
+import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
-import java.util.Random;
+import java.util.UUID;
 
 @Service
 public class PersonalDataService {
 
     private final PersonalDataRepository personalDataRepository;
     private final EmailSender emailSender;
+    private final PasswordEncoder passwordEncoder;
 
-    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailSender emailSender) {
+    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailSender emailSender, PasswordEncoder passwordEncoder) {
         this.personalDataRepository = personalDataRepository;
         this.emailSender = emailSender;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -29,23 +34,32 @@ public class PersonalDataService {
             throw new DuplicateException("Personal data with this email already exists");
         }
         PersonalData personalData = this.mapToPersonalData(request);
-        String temporary_password = generateRandomPassword();
-        personalData.setPassword(temporary_password);
-        emailSender.sendEmailWithPassword(request.getEmail(), temporary_password);
+        this.setUpPassword(personalData, request.getEmail());
         return personalDataRepository.save(personalData);
     }
 
-    private String generateRandomPassword() {
-        Random random = new Random();
-        StringBuilder password = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            if (i % 2 == 0) {
-                password.append((char) (random.nextInt(26) + 'a'));
-            } else {
-                password.append(random.nextInt(10));
-            }
-        }
-        return password.toString();
+    private void setUpPassword(PersonalData personalData, String email) {
+        personalData.setPassword(null);
+        String token = UUID.randomUUID().toString();
+        personalData.setSetupToken(token);
+        String link = "http://localhost:5173/password/" + token;
+        emailSender.sendEmailWithPassword(email, link);
+    }
+
+    @Transactional
+    public void setPassword(PasswordRequest request) {
+       PersonalData personalData = personalDataRepository.findBySetupToken(request.getToken())
+                .orElseThrow(() -> new NotFoundException("Token not found"));
+
+       String password = passwordEncoder.encode(request.getPassword());
+       personalData.setPassword(password);
+       personalData.setSetupToken(null);
+       personalDataRepository.save(personalData);
+    }
+
+    public PersonalData getByEmail(String email) {
+        return personalDataRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Personal data with this email not found"));
     }
 
     private PersonalData mapToPersonalData(PersonalDataRequest request) {

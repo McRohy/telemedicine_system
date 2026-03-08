@@ -16,26 +16,23 @@ public class PersonalData {
 
     @Id
     @Email
+    @Column(length = 70)
     private String email;
 
-    @NotBlank
-    @Size(max = 50)
     @Column(length = 50, nullable = false)
     private String firstName;
 
-    @NotBlank
-    @Size(max = 50)
     @Column(length = 50, nullable = false)
     private String lastName;
 
-    @NotBlank
-    @Size(max = 30)
-    @Column(length = 30, nullable = false)
-    private String password;
-
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(length = 15, nullable = false)
     private Role role;
+
+    @Column(length = 60)
+    private String password;
+
+    private String setupToken;
+
 }
 
