@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, Stack, TextInput, Select, Button, Alert } from "@mantine/core";
+import { notifications } from '@mantine/notifications';
 import api from "../configs/api";
 
 const specializations = [
@@ -30,7 +31,15 @@ export default function AddDoctorModal({ opened, onClose }) {
         };
 
         try {
-          await api.post('/doctors', doctorRequest);
+         const res =await api.post('/doctors', doctorRequest);
+        notifications.show({
+          title: 'Lekár pridaný',
+          message: `${res.data.panNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} (${res.data.specialization}) bol úspešne pridaný.`,
+          position: 'top-right',
+          color: "#0b5942",
+        });
+        onClose();
+        
        } catch (err) {
        if (err.response && err.response.data.message) {
           setAlert(err.response.data.message);

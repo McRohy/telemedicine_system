@@ -3,12 +3,15 @@ import { AppShell, Burger, Group, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Outlet } from 'react-router-dom';
 import {BsHeartPulse} from "react-icons/bs";
+import { Notifications } from '@mantine/notifications';
 
 export default function AppLayout() {
   const [opened, { toggle, close }] = useDisclosure();
   const role = 'DOCTOR';
 
   return (
+    <>
+    <Notifications />
     <AppShell
       header={{ height: 56 }}
       navbar={{
@@ -38,5 +41,6 @@ export default function AppLayout() {
         <Outlet />
       </AppShell.Main>
     </AppShell>
+    </>
   );
 }

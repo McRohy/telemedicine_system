@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Modal, Stack, TextInput, Select, Button, Alert } from "@mantine/core";
+import { notifications } from '@mantine/notifications';
 import api from "../configs/api";
 
 const genders = [
@@ -32,7 +33,14 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
         };
 
         try {
-          await api.post('/patients', patientRequest);
+          const res = await api.post('/patients', patientRequest);
+          notifications.show({
+                    title: 'Pacient pridaný',
+                    message: `${res.data.personalNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} bol úspešne pridaný lekárovi s PAN: ${res.data.doctorPanNumber}.`,
+                    position: 'top-right',
+                    color: "#0b5942",
+           });
+           onClose();
        } catch (err) {
        if (err.response && err.response.data.message) {
           setAlert(err.response.data.message);
