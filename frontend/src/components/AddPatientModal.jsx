@@ -9,29 +9,20 @@ const genders = [
     ];
 
 export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [panNumber, setPanNumber] = useState(doctorPanNumber || '');
-    const [personalNumber, setPersonalNumber] = useState('');
-    const [email, setEmail] = useState('');
-    const [gender, setGender] = useState('');
-    const [alert, setAlert] = useState(null);
+    const [errorInputs, setErrorInputs] = useState(null);
+    const [patientRequest, setPatientRequest] = useState({
+      personalNumber: '',
+      personalData: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        role: 'PATIENT',
+      },
+      panNumber: doctorPanNumber || '',
+      gender: '',
+    });
 
     async function createPatient() {
-        const personalData = {
-            firstName,
-            lastName,
-            email,
-            role: 'PATIENT',
-        };
-
-        const patientRequest = {
-            personalNumber,
-            personalData,
-            panNumber,
-            gender,
-        };
-
         try {
           const res = await api.post('/patients', patientRequest);
           notifications.show({
@@ -42,13 +33,22 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
            });
            onClose();
        } catch (err) {
-       if (err.response && err.response.data.message) {
-          setAlert(err.response.data.message);
-           } else {
-          setAlert('Nepodarilo sa načítať dáta');
-          }
-        } 
-    }
+          console.log(err.response);  
+
+         const status = err.response?.status;
+  
+        if (status === 400) {
+          setErrorInputs(err.response.data.fieldErrors); // map error to inputs
+        } else {
+          notifications.show({
+          title: status,
+          message: err.response?.data.message,
+          position: 'top-right',
+          color: "red",
+        }); // other backend error      
+        }
+     }
+   }
 
   return (
     <Modal
@@ -62,9 +62,6 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
         color: "#0b5942",
       }}
     >
-      <Alert color="red" hidden={!alert} mb="md">
-        {alert}
-      </Alert>
       <Stack gap="md">
 
         <TextInput
@@ -73,8 +70,10 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
           type="text"
           ta="left"
           size="md"
-          value={personalNumber}
-          onChange={(e) => setPersonalNumber(e.target.value)}
+          value={patientRequest.personalNumber}
+          onChange={(e) => setPatientRequest({ ...patientRequest, personalNumber: e.target.value })}
+          withAsterisk
+          error={errorInputs?.["personalNumber"]}
         />
 
         <TextInput
@@ -82,16 +81,20 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
           placeholder="Matej"
           ta="left"
           size="md"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          value={patientRequest.personalData.firstName}
+          onChange={(e) => setPatientRequest({ ...patientRequest, personalData: { ...patientRequest.personalData, firstName: e.target.value } })}
+          withAsterisk
+          error={errorInputs?.["personalData.firstName"]}
         />
         <TextInput
           label="Priezvisko"
           placeholder="Rohy"
           ta="left"
           size="md"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          value={patientRequest.personalData.lastName}
+          onChange={(e) => setPatientRequest({ ...patientRequest, personalData: { ...patientRequest.personalData, lastName: e.target.value } })}
+          withAsterisk
+          error={errorInputs?.["personalData.lastName"]}
         />
 
         <TextInput
@@ -100,8 +103,10 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
           type="email"
           ta="left"
           size="md"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={patientRequest.personalData.email}
+          onChange={(e) => setPatientRequest({ ...patientRequest, personalData: { ...patientRequest.personalData, email: e.target.value } })}
+          withAsterisk
+          error={errorInputs?.["personalData.email"]}
         />
 
         <Select
@@ -111,8 +116,10 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
           size="md"
           searchable
           clearable
-          value={gender}
-          onChange={setGender}
+          value={patientRequest.gender}
+          onChange={(value) => setPatientRequest({ ...patientRequest, gender: value || null })}
+          withAsterisk
+          error={errorInputs?.["gender"]}
         />
 
         <TextInput
@@ -121,8 +128,10 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
           type="text"
           ta="left"
           size="md"
-          value={panNumber}
-          onChange={(e) => setPanNumber(e.target.value)}
+          value={patientRequest.panNumber}
+          onChange={(e) => setPatientRequest({ ...patientRequest, panNumber: e.target.value })}
+          withAsterisk
+          error={errorInputs?.["panNumber"]}
         />
 
         <Button
@@ -130,7 +139,6 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
         p="xs"
         size="md"
         onClick={() => createPatient()}
-        disabled={!firstName || !lastName || !panNumber || !email || !personalNumber || !gender}
         >
           Pridať Pacienta
         </Button>

@@ -9,29 +9,21 @@ const specializations = [
 ];
 
 export default function AddDoctorModal({ opened, onClose }) {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [panNumber, setPanNumber] = useState('');
-    const [specialization, setSpecialization] = useState('');
-    const [email, setEmail] = useState('');
-    const [alert, setAlert] = useState(null);
+    const [errorInputs, setErrorInputs] = useState(null);
+    const [doctorRequest, setDoctorRequest] = useState({
+      panNumber: '',
+      personalData: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        role: 'DOCTOR',
+      },
+      specialization: '',
+    });
 
     async function createDoctor() {
-        const personalData = {
-            firstName,
-            lastName,
-            email,
-            role: 'DOCTOR',
-        };
-
-        const doctorRequest = {
-            panNumber,
-            personalData,
-            specialization,
-        };
-
         try {
-         const res =await api.post('/doctors', doctorRequest);
+         const res = await api.post('/doctors', doctorRequest);
         notifications.show({
           title: 'Lekár pridaný',
           message: `${res.data.panNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} (${res.data.specialization}) bol úspešne pridaný.`,
@@ -41,12 +33,21 @@ export default function AddDoctorModal({ opened, onClose }) {
         onClose();
         
        } catch (err) {
-       if (err.response && err.response.data.message) {
-          setAlert(err.response.data.message);
-           } else {
-          setAlert('Nepodarilo sa načítať dáta');
-          }
-        } 
+         console.log(err.response);  
+
+         const status = err.response?.status;
+  
+        if (status === 400) {
+          setErrorInputs(err.response.data.fieldErrors); // map error to inputs
+        } else {
+          notifications.show({
+          title: status,
+          message: err.response?.data.message,
+          position: 'top-right',
+          color: "red",
+        }); // other backend error      
+        }
+      } 
     }
   
   return (
@@ -60,27 +61,27 @@ export default function AddDoctorModal({ opened, onClose }) {
         blur: 5,
         color: "#0b5942",
       }}
-      
     >
-      <Alert color="red" hidden={!alert} mb="md">
-        {alert}
-      </Alert>
       <Stack gap="md">
         <TextInput
           label="Meno"
           placeholder="Matej"
           ta="left"
           size="md"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          value={doctorRequest.personalData.firstName}
+          onChange={(e) => setDoctorRequest({ ...doctorRequest, personalData: { ...doctorRequest.personalData, firstName: e.target.value } })}
+          withAsterisk
+          error={errorInputs?.["personalData.firstName"]}
         />
         <TextInput
           label="Priezvisko"
           placeholder="Rohy"
           ta="left"
           size="md"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          value={doctorRequest.personalData.lastName}
+          onChange={(e) => setDoctorRequest({ ...doctorRequest, personalData: { ...doctorRequest.personalData, lastName: e.target.value } })}
+          withAsterisk
+          error={errorInputs?.["personalData.lastName"]}
         />
 
         <TextInput
@@ -89,8 +90,10 @@ export default function AddDoctorModal({ opened, onClose }) {
           type="text"
           ta="left"
           size="md"
-          value={panNumber}
-          onChange={(e) => setPanNumber(e.target.value)}
+          value={doctorRequest.panNumber}
+          onChange={(e) => setDoctorRequest({ ...doctorRequest, panNumber: e.target.value })}
+          withAsterisk
+          error={errorInputs?.["panNumber"]}
         />
 
         <TextInput
@@ -99,8 +102,10 @@ export default function AddDoctorModal({ opened, onClose }) {
           type="email"
           ta="left"
           size="md"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={doctorRequest.personalData.email}
+          onChange={(e) => setDoctorRequest({ ...doctorRequest, personalData: { ...doctorRequest.personalData, email: e.target.value } })}
+          withAsterisk
+          error={errorInputs?.["personalData.email"]}
         />
 
         <Select
@@ -110,8 +115,10 @@ export default function AddDoctorModal({ opened, onClose }) {
           size="md"
           searchable
           clearable
-          value={specialization}
-          onChange={setSpecialization}
+          value={doctorRequest.specialization}
+          onChange={(value) => setDoctorRequest({ ...doctorRequest, specialization: value })}
+          withAsterisk
+          error={errorInputs?.["specialization"]}
         />
 
         <Button
@@ -119,7 +126,6 @@ export default function AddDoctorModal({ opened, onClose }) {
         p="xs"
         size="md"
         onClick={() => createDoctor()}
-        disabled={!firstName || !lastName || !panNumber || !email || !specialization}
         >
           Pridať Lekára
         </Button>
