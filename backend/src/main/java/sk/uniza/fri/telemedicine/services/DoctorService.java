@@ -8,7 +8,7 @@ import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.constrains.Specialization;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
-import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
+import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.DoctorRepository;
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class DoctorService {
 
     public Doctor findByPanNumber(String panNumber) {
         return doctorRepository.findByPanNumber(panNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Doctor with PAN number not found"));
+                () -> new NotFoundException("Doctor with PAN number not found"));
     }
 
     public DoctorResponse findDoctorByPanNumberResponse(String panNumber) {
@@ -52,7 +52,7 @@ public class DoctorService {
 
     public String getFullNameByPanNumber(String panNumber) {
         return doctorRepository.findFullNameByPanNumber(panNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Doctor with PAN number not found"));
+                () -> new NotFoundException("Doctor with PAN number not found"));
     }
 
     private Doctor mapToDoctor(DoctorRequest request, PersonalData personalData) {

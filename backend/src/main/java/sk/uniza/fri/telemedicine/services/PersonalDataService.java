@@ -1,9 +1,7 @@
 package sk.uniza.fri.telemedicine.services;
 
 import jakarta.transaction.Transactional;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import sk.uniza.fri.telemedicine.dto.request.PasswordRequest;
 import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
 import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
@@ -11,11 +9,10 @@ import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.constrains.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
-import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
+import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
-import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -52,7 +49,7 @@ public class PersonalDataService {
     @Transactional
     public void setPassword(PasswordRequest request) {
        PersonalData personalData = personalDataRepository.findBySetupToken(request.getToken())
-                .orElseThrow(() -> new ResourceNotFoundException("Token not found"));
+                .orElseThrow(() -> new NotFoundException("Token not found"));
 
        String password = passwordEncoder.encode(request.getPassword());
        personalData.setPassword(password);
@@ -62,7 +59,7 @@ public class PersonalDataService {
 
     public PersonalData getByEmail(String email) {
         return personalDataRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Personal data with this email not found"));
+                .orElseThrow(() -> new NotFoundException("Personal data with this email not found"));
     }
 
     private PersonalData mapToPersonalData(PersonalDataRequest request) {

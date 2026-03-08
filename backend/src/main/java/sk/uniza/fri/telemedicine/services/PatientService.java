@@ -8,7 +8,7 @@ import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
-import sk.uniza.fri.telemedicine.exception.ResourceNotFoundException;
+import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.PatientRepository;
 import java.util.List;
 
@@ -57,17 +57,18 @@ public class PatientService {
 
     public Patient findByPersonalNumber(String personalNumber){
         return patientRepository.findByPersonalNumber(personalNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Patient with personal number: " + personalNumber + " not exists"));
+                () -> new NotFoundException("Patient with personal number: " + personalNumber + " not exists"));
     }
 
     public String getCareProviderEmailByPatientPersonalNumber(String personalNumber) {
         return patientRepository.findCareProviderEmailByPatientPersonalNumber(personalNumber).orElseThrow(
-                () -> new ResourceNotFoundException("Patient with personal number: " + personalNumber + " not exists")
+                () -> new NotFoundException("Patient with personal number: " + personalNumber + " not exists")
         );
     }
 
     public String getPatientFullNameByPersonalNumber(String personalNumber) {
-        return patientRepository.findFullNameByPernosalNumber(personalNumber);
+        return patientRepository.findFullNameByPernosalNumber(personalNumber)
+                .orElseThrow(() -> new NotFoundException("Patient with personal number: " + personalNumber + " not found"));
     }
 
     private Patient mapToPatient(PatientRequest request, PersonalData personalData, Doctor doctor) {

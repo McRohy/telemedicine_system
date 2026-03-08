@@ -22,6 +22,6 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
     Optional<String> findCareProviderEmailByPatientPersonalNumber(String personalNumber);
 
     @Query("SELECT CONCAT(pd.firstName, ' ', pd.lastName) FROM Patient p JOIN p.personalData pd WHERE p.personalNumber = :personalNumber")
-    String findFullNameByPernosalNumber(String personalNumber);
+    Optional<String> findFullNameByPernosalNumber(String personalNumber);
 
 }
