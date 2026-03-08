@@ -2,6 +2,8 @@ import { Stack, Group, Text } from "@mantine/core";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "@mantine/core";
 import { IconArticle, IconActivity, IconClipboardHeart, IconUserCircle, IconUsers} from "@tabler/icons-react";
+import { useContext } from "react";
+import { AuthContext } from "../context/authContextValue";
 
 const navLinks = {
   ADMIN: [
@@ -20,10 +22,11 @@ const navLinks = {
   ],
 };
 
-export default function Sidebar({ role }) {
+export default function Sidebar() {
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const links = navLinks[role] || [];
+  const links = user ? navLinks[user.role] : [];
 
   return (
     <Stack h="100%" justify="space-between">
@@ -32,10 +35,10 @@ export default function Sidebar({ role }) {
           <IconUserCircle size={56} color="white" stroke={1} />
           <Stack gap={0}>
             <Text c="white" size="md" fw={600}>
-              Matej Bohaty 
+              {user?.firstName} {user?.lastName}
             </Text>
             <Text c="white" size="xs">
-              {role}
+              {user?.role}
             </Text>
           </Stack>
         </Group>
@@ -62,7 +65,7 @@ export default function Sidebar({ role }) {
         ta="center"
         mb="sm"
         style={{ cursor: 'pointer' }}
-        onClick={() => navigate('/login')}
+        onClick={() => { logout(); navigate('/login'); }}
       >
         Odhlásiť sa
       </Text>

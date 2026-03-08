@@ -7,7 +7,6 @@ import { Notifications } from '@mantine/notifications';
 
 export default function AppLayout() {
   const [opened, { toggle, close }] = useDisclosure();
-  const role = 'DOCTOR';
 
   return (
     <>
@@ -34,7 +33,7 @@ export default function AppLayout() {
       </AppShell.Header>
 
       <AppShell.Navbar bg= "#0b5942" p="md">
-        <Sidebar role={role} onClose={close} />
+        <Sidebar onClose={close} />
       </AppShell.Navbar>
 
       <AppShell.Main>
