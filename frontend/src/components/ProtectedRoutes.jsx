@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children, allowedRoles }) {
 
   //logged in but not have required role
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    return <Navigate to="/unauthorized" />;
+    return <Navigate to="/forbidden" />;
   }
 
   return children;

@@ -2,7 +2,7 @@ import { BsHeartPulse } from "react-icons/bs";
 import { useState, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center, Alert } from "@mantine/core";
-import { AuthContext } from '../context/authContextValue';
+import { AuthContext } from '../../context/authContextValue';
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,11 +17,8 @@ function LoginPage() {
         await login({ email, password });
         navigate('/admin/doctors');
     } catch (err) {
-        if (err.response && err.response.data.message) {
-          setError(err.response.data.message);
-      } else {
-          setError('Nepodarilo sa načítať dáta');
-      }
+       console.log(err.response);
+       setError(err.response?.data?.message || 'Nastala chyba pri prihlásovaní');
     }
     }
 

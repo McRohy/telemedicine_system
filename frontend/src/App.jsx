@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppLayout from "./configs/AppLayout";
-import PasswordPage from "./pages/PasswordPage";
-import LoginPage from "./pages/LoginPage";
+import PasswordPage from "./pages/other/PasswordPage";
+import LoginPage from "./pages/other/LoginPage";
 import PreviewOfDoctors from "./pages/admin/PreviewOfDoctors";
 import PreviewOfPatients from "./pages/admin/PreviewOfPatients";
 import DoctorPreviewOfPatients from "./pages/doctor/PreviewOfPatients";
 import PatientDetail from "./pages/doctor/PatientDetail";
-import Unauthorized from "./pages/other/Unauthorized";
+import Forbidden from "./pages/other/Forbidden";
 
 import ProtectedRoute from "./components/ProtectedRoutes";
 import { AuthProvider } from "./context/AuthContext";
@@ -46,7 +46,7 @@ function App() {
               element={<PatientDetail />}
             />
           </Route>
-          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/forbidden" element={<Forbidden />} />
           <Route path="/login" element={<LoginPage />} />
           <Route
             path="/password/:token"
