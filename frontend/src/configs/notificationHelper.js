@@ -5,7 +5,12 @@ const SUCCESS_COLOR = '#0b5942';
 const ERROR_COLOR = 'red';
 
 export function notifySuccess(title, message) {
-  notifications.show({ title, message, position: POSITION, color: SUCCESS_COLOR });
+  notifications.show({
+    title,
+    message,
+    position: POSITION,
+    color: SUCCESS_COLOR,
+  });
 }
 
 export function notifyError(err) {
@@ -16,12 +21,4 @@ export function notifyError(err) {
     position: POSITION,
     color: ERROR_COLOR,
   });
-}
-
-export function notifyLoading(id, title, message) {
-  notifications.show({ id, title, message, position: POSITION, color: SUCCESS_COLOR, loading: true });
-}
-
-export function notifyUpdate(id, title, message, color = SUCCESS_COLOR) {
-  notifications.update({ id, title, message, position: POSITION, color, loading: false });
 }

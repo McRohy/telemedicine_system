@@ -20,7 +20,7 @@ export default function PreviewOfPatients() {
   useEffect(() => {
     async function fetchPatients() {
     try {
-      const response = await api.get('/patients/all');
+      const response = await api.get('/patients');
       setPatients(response.data);
       
     } catch (err) {

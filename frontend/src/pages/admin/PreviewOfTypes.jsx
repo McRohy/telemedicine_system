@@ -27,7 +27,7 @@ export default function PreviewOfTypes() {
   useEffect(() => {
     async function fetchTypes() {
     try {
-      const response = await api.get('/types');
+      const response = await api.get('/measurement-types');
       setTypes(response.data);
       
     } catch (err) {
