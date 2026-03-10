@@ -2,7 +2,8 @@ import { BsHeartPulse } from "react-icons/bs";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Stack, PasswordInput, Title, Text, Center,} from "@mantine/core";
-import { notifications, Notifications } from "@mantine/notifications";
+import { Notifications } from "@mantine/notifications";
+import { notifySuccess, notifyError } from "../../configs/notificationHelper";
 import api from "../../configs/api";
 
 function PasswordPage() {
@@ -14,13 +15,7 @@ function PasswordPage() {
   async function sendPassword() {
     try {
       await api.post("/auth/set-password", { token, password });
-      notifications.show({
-        title: "Heslo nastavené",
-        message: "Vaše heslo bolo úspešne nastavené.",
-
-        position: "top-right",
-        color: "#0b5942",
-      });
+      notifySuccess("Heslo nastavené", "Vaše heslo bolo úspešne nastavené.");
       navigate("/login");
     } catch (err) {
       console.log(err.response);
@@ -29,12 +24,7 @@ function PasswordPage() {
       if (status === 400) {
         setErrorInput(err.response.data.fieldErrors);
       } else {
-        notifications.show({
-          title: status,
-          message: err.response?.data.message,
-          position: "top-right",
-          color: "red",
-        });
+        notifyError(err);
       }
     }
   }

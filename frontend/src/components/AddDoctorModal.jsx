@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Modal, Stack, TextInput, Select, Button, Alert } from "@mantine/core";
-import { notifications } from '@mantine/notifications';
+import { notifySuccess, notifyError } from "../configs/notificationHelper";
 import api from "../configs/api";
 
 const specializations = [
@@ -24,28 +24,18 @@ export default function AddDoctorModal({ opened, onClose }) {
     async function createDoctor() {
         try {
          const res = await api.post('/doctors', doctorRequest);
-        notifications.show({
-          title: 'Lekár pridaný',
-          message: `${res.data.panNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} (${res.data.specialization}) bol úspešne pridaný.`,
-          position: 'top-right',
-          color: "#0b5942",
-        });
+        notifySuccess('Lekár pridaný', `${res.data.panNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} (${res.data.specialization}) bol úspešne pridaný.`);
         onClose();
-        
+
        } catch (err) {
-         console.log(err.response);  
+         console.log(err.response);
 
          const status = err.response?.status;
-  
+
         if (status === 400) {
-          setErrorInputs(err.response.data.fieldErrors); // map error to inputs
+          setErrorInputs(err.response.data.fieldErrors);
         } else {
-          notifications.show({
-          title: status,
-          message: err.response?.data.message,
-          position: 'top-right',
-          color: "red",
-        }); // other backend error      
+          notifyError(err);
         }
       } 
     }

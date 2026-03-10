@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Modal, Stack, TextInput, Select, Button, Alert } from "@mantine/core";
-import { notifications } from '@mantine/notifications';
+import { notifySuccess, notifyError } from "../configs/notificationHelper";
 import api from "../configs/api";
 
 const genders = [
@@ -25,27 +25,17 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
     async function createPatient() {
         try {
           const res = await api.post('/patients', patientRequest);
-          notifications.show({
-                    title: 'Pacient pridaný',
-                    message: `${res.data.personalNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} bol úspešne pridaný lekárovi s PAN: ${res.data.doctorPanNumber}.`,
-                    position: 'top-right',
-                    color: "#0b5942",
-           });
-           onClose();
+          notifySuccess('Pacient pridaný', `${res.data.personalNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} bol úspešne pridaný lekárovi s PAN: ${res.data.doctorPanNumber}.`);
+          onClose();
        } catch (err) {
-          console.log(err.response);  
+          console.log(err.response);
 
          const status = err.response?.status;
-  
+
         if (status === 400) {
-          setErrorInputs(err.response.data.fieldErrors); // map error to inputs
+          setErrorInputs(err.response.data.fieldErrors);
         } else {
-          notifications.show({
-          title: status,
-          message: err.response?.data.message,
-          position: 'top-right',
-          color: "red",
-        }); // other backend error      
+          notifyError(err);
         }
      }
    }
