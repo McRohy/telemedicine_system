@@ -22,7 +22,7 @@ public class PatientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMIN', 'PATIENT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public PatientResponse createPatient(@Valid @RequestBody PatientRequest request) {
         return patientService.createPatient(request);
     }
