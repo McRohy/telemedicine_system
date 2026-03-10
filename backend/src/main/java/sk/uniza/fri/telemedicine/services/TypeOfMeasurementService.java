@@ -38,9 +38,9 @@ public class TypeOfMeasurementService {
     }
 
     @Transactional
-    public TypeOfMeasurementResponse updateMinMaxTypeOfMeasurement(TypeOfMeasurementRequest request) {
-        TypeOfMeasurement typeOfMeasurement = typeOfMeasurementRepository.findByTypeName(request.getTypeName()).orElseThrow(
-                () -> new NotFoundException("Type of measurement with id : " + request.getTypeName() + " not found"));
+    public TypeOfMeasurementResponse updateMinMaxTypeOfMeasurement(Integer id, TypeOfMeasurementRequest request) {
+        TypeOfMeasurement typeOfMeasurement = typeOfMeasurementRepository.findById(id).orElseThrow(
+                () -> new NotFoundException("Type of measurement with id : " + id + " not found"));
 
         typeOfMeasurement.setMinValue(request.getMinValue());
         typeOfMeasurement.setMaxValue(request.getMaxValue());

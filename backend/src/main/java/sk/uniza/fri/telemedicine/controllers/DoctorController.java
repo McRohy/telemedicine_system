@@ -27,17 +27,9 @@ public class DoctorController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<DoctorResponse> getAllDoctors() {
         return doctorService.getAllDoctors();
-    }
-
-    @GetMapping("/{panNumber}")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('DOCTOR')")
-    public DoctorResponse findByPanNumber(@PathVariable String panNumber) {
-        return doctorService.findDoctorByPanNumberResponse(panNumber);
     }
 }
 

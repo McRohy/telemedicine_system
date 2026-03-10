@@ -22,14 +22,13 @@ public class MeasurementController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('PATIENT')")
     public MeasurementRecordResponse trackMeasurementRecord(@Valid @RequestBody MeasurementRecordRequest request) {
         return measurementRecordService.trackNewMeasurement(request);
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
     public List<MeasurementRecordResponse> getMeasurementRecord(@RequestParam String personalNumber, @RequestParam Integer typeId, @RequestParam LocalDate from, @RequestParam LocalDate to) {
         return measurementRecordService.getMeasurementRecordForPatient(personalNumber, typeId, from, to);

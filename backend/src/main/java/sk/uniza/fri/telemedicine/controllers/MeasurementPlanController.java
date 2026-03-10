@@ -9,7 +9,7 @@ import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.services.MeasurementPlanService;
 
 @RestController
-@RequestMapping("/api/plans")
+@RequestMapping("/api/measurement-plans")
 public class MeasurementPlanController {
 
     private final MeasurementPlanService measurementPlanService;
@@ -25,10 +25,9 @@ public class MeasurementPlanController {
         return measurementPlanService.createMeasurementPlan(request);
     }
 
-    @GetMapping("/{personalNumber}")
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
-    public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(@PathVariable String personalNumber) {
+    public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(@RequestParam String personalNumber) {
         return measurementPlanService.findMeasurementPlanByPersonalNumber(personalNumber);
     }
 }

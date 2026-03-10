@@ -27,22 +27,19 @@ public class PatientController {
         return patientService.createPatient(request);
     }
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole( 'DOCTOR')")
+    @GetMapping(params = "panNumber")
+    @PreAuthorize("hasRole('DOCTOR')")
     public List<PatientResponse> getPatientsByPanNumber(@RequestParam String panNumber) {
         return patientService.getAllByDoctorsPanNumber(panNumber);
     }
 
     @GetMapping("/{personalNumber}")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('DOCTOR')")
+    @PreAuthorize("hasRole('DOCTOR')")
     public PatientResponse getPatientByPersonalNumber(@PathVariable String personalNumber) {
         return patientService.getPatientByPersonalNumber(personalNumber);
     }
 
-    @GetMapping("/all")
-    @ResponseStatus(HttpStatus.OK)
+    @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public List<PatientResponse> getAllPatients() {
         return patientService.getAllPatients();

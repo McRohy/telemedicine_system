@@ -28,16 +28,14 @@ public class ArticleController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
     public List<ArticleResponse> findAllArticlesByPanNumber(@RequestParam String panNumber) {
         return articleService.findAllArticlesByPanNumber(panNumber);
     }
 
     @GetMapping("/{articleId}")
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
-    public ArticleResponse  getArticleById(@PathVariable Long articleId) {
+    public ArticleResponse getArticleById(@PathVariable Long articleId) {
         return articleService.findArticleById(articleId);
     }
 

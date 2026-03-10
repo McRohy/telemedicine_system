@@ -11,7 +11,7 @@ import sk.uniza.fri.telemedicine.services.TypeOfMeasurementService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/types")
+@RequestMapping("/api/measurement-types")
 public class TypeOfMeasurementController {
 
     private final TypeOfMeasurementService typeOfMeasurementService;
@@ -21,21 +21,20 @@ public class TypeOfMeasurementController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
     public List<TypeOfMeasurementResponse> getAllTypesOfMeasurement() {
         return typeOfMeasurementService.getAllTypesOfMeasurement();
     }
 
-    @PutMapping
-    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public TypeOfMeasurementResponse updateTypeOfMeasurement(@Valid @RequestBody TypeOfMeasurementRequest request) {
-        return typeOfMeasurementService.updateMinMaxTypeOfMeasurement(request);
+    public TypeOfMeasurementResponse updateTypeOfMeasurement(
+            @PathVariable Integer id, @Valid @RequestBody TypeOfMeasurementRequest request
+    ) {
+        return typeOfMeasurementService.updateMinMaxTypeOfMeasurement(id, request);
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ADMIN')")
     public TypeOfMeasurementResponse getTypeOfMeasurementById(@PathVariable Integer id) {
         return typeOfMeasurementService.findTypeOfMeasurementByIdResponse(id);
