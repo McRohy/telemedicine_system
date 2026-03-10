@@ -12,7 +12,7 @@ import sk.uniza.fri.telemedicine.enums.constrains.Gender;
 @AllArgsConstructor
 public class PatientRequest {
     @NotBlank(message = "Personal number is mandatory")
-    @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 11 digits")
+    @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 10 digits")
     private String personalNumber;
 
     @Valid

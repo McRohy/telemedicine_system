@@ -6,7 +6,6 @@ import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
 import sk.uniza.fri.telemedicine.entities.*;
-import sk.uniza.fri.telemedicine.enums.constrains.Frequency;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanTypesRepository;
@@ -67,7 +66,7 @@ public class MeasurementPlanService {
         MeasurementPlan plan = new MeasurementPlan();
         plan.setPatient(patient);
         plan.setDoctor(doctor);
-        plan.setFrequency(Frequency.valueOf(request.getFrequency().toUpperCase()));
+        plan.setFrequency(request.getFrequency());
         plan.setTimeOfPlannedMeasurement(request.getTimeOfPlannedMeasurements());
         return plan;
     }

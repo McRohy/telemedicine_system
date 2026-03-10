@@ -6,7 +6,6 @@ import sk.uniza.fri.telemedicine.dto.request.PasswordRequest;
 import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
 import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
-import sk.uniza.fri.telemedicine.enums.constrains.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
@@ -67,7 +66,7 @@ public class PersonalDataService {
         personalData.setEmail(request.getEmail());
         personalData.setFirstName(request.getFirstName());
         personalData.setLastName(request.getLastName());
-        personalData.setRole(Role.valueOf(request.getRole().toUpperCase()));
+        personalData.setRole(request.getRole());
         return personalData;
     }
 

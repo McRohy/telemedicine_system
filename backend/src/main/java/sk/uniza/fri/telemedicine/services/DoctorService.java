@@ -6,7 +6,6 @@ import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
 import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
-import sk.uniza.fri.telemedicine.enums.constrains.Specialization;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.DoctorRepository;
@@ -58,7 +57,7 @@ public class DoctorService {
     private Doctor mapToDoctor(DoctorRequest request, PersonalData personalData) {
         Doctor doctor = new Doctor();
         doctor.setPanNumber(request.getPanNumber());
-        doctor.setSpecialization(Specialization.valueOf(request.getSpecialization().toUpperCase()));
+        doctor.setSpecialization(request.getSpecialization());
         doctor.setPersonalData(personalData);
         return doctor;
     }
