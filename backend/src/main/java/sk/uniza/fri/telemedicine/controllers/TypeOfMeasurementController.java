@@ -6,7 +6,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
 import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
-import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.services.TypeOfMeasurementService;
 
 import java.util.List;
@@ -23,8 +22,23 @@ public class TypeOfMeasurementController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
     public List<TypeOfMeasurementResponse> getAllTypesOfMeasurement() {
         return typeOfMeasurementService.getAllTypesOfMeasurement();
+    }
+
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public TypeOfMeasurementResponse updateTypeOfMeasurement(@Valid @RequestBody TypeOfMeasurementRequest request) {
+        return typeOfMeasurementService.updateMinMaxTypeOfMeasurement(request);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ADMIN')")
+    public TypeOfMeasurementResponse getTypeOfMeasurementById(@PathVariable Integer id) {
+        return typeOfMeasurementService.findTypeOfMeasurementByIdResponse(id);
     }
 
     @PostMapping

@@ -13,4 +13,7 @@ public interface TypeOfMeasurementRepository extends JpaRepository<TypeOfMeasure
 
     @Query("SELECT COUNT(t) > 0 FROM TypeOfMeasurement t WHERE t.typeName = :typeName")
     boolean existsByTypeName(String typeName);
+
+    @Query("SELECT t FROM TypeOfMeasurement t WHERE t.typeName = :typeName")
+    Optional<TypeOfMeasurement> findByTypeName(String typeName);
 }
