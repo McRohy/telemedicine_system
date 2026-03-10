@@ -9,7 +9,7 @@ const navLinks = {
   ADMIN: [
     { label: "Prehľad lekarov", path: "/admin/doctors", icon: IconUsers},
     { label: "Prehľad pacientov", path: "/admin/patients", icon: IconUsers},
-
+    { label: "Prehľad typov meraní", path: "/admin/types-of-measurements", icon: IconActivity},
   ],
   DOCTOR: [
     { label: 'Pacienti', path: '/doctor/patients', icon: IconUsers },

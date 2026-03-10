@@ -7,6 +7,7 @@ import PreviewOfPatients from "./pages/admin/PreviewOfPatients";
 import DoctorPreviewOfPatients from "./pages/doctor/PreviewOfPatients";
 import PatientDetail from "./pages/doctor/PatientDetail";
 import Forbidden from "./pages/other/Forbidden";
+import PreviewOfTypes from "./pages/admin/PreviewOfTypes";
 
 import ProtectedRoute from "./components/ProtectedRoutes";
 import { AuthProvider } from "./context/AuthContext";
@@ -30,6 +31,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <PreviewOfPatients />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/types-of-measurements"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <PreviewOfTypes />
                 </ProtectedRoute>
               }
             />
