@@ -19,7 +19,10 @@ const request = {
 export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
   const [errorInputs, setErrorInputs] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [patientRequest, setPatientRequest] = useState(request);
+  const [patientRequest, setPatientRequest] = useState({
+    ...request,
+    panNumber: doctorPanNumber || '',
+  });
 
   async function createPatient() {
     setLoading(true);
@@ -50,7 +53,7 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
       opened={opened}
       onClose={() => {
         setErrorInputs(null);
-        setPatientRequest(request);
+        setPatientRequest({ ...request, panNumber: doctorPanNumber || '' });
         onClose();
       }}
       title="Pridať pacienta"
@@ -126,8 +129,8 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
           type="text"
           ta="left"
           size="md"
-          value={doctorPanNumber || patientRequest.panNumber}
-          onChange={(e) => setPatientRequest({ ...patientRequest, panNumber: e.target.value }) }
+          value={patientRequest.panNumber}
+          onChange={(e) => setPatientRequest({ ...patientRequest, panNumber: e.target.value })}
           withAsterisk
           error={errorInputs?.['panNumber']}
         />
