@@ -4,9 +4,10 @@ import AddPatientModal from "../../components/AddPatientModal";
 import { useDisclosure } from '@mantine/hooks'
 import { useNavigate } from "react-router-dom";
 import { IconSearch } from '@tabler/icons-react';
+import api from "../../configs/api";
 
 export default function PreviewOfPatients() {
-  const testDoctorPanNumber = "1243095387543123";
+  const testDoctorPanNumber = "2354678909876543";
   const navigate = useNavigate();
   const [patients, setPatients] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
@@ -19,13 +20,22 @@ export default function PreviewOfPatients() {
     );
 
   useEffect(() => {
-    async function loadPatients() {
-      const res = await fetch(`http://localhost:8080/api/patients?panNumber=${testDoctorPanNumber}`);
-      const data = await res.json();
-      setPatients(data);
+    async function fetchPatients() {
+    try {
+      const response = await api.get(`/patients?panNumber=${testDoctorPanNumber}`);
+      setPatients(response.data);
+      
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+          //setError(err.response.data.message);
+      } else {
+          //setError('Nepodarilo sa načítať dáta');
+      }
+    } finally {
       setLoading(false);
     }
-    loadPatients();
+    }
+    fetchPatients();
   }, []);
 
   if (loading) return (
@@ -48,7 +58,7 @@ export default function PreviewOfPatients() {
             Pridať pacienta
           </Button>
         </Group>
-        <Alert bg="#e5646f61" >
+        <Alert bg="#ffee7d61" >
           Žiadni pacienti nenájdení
         </Alert>
       </Stack>

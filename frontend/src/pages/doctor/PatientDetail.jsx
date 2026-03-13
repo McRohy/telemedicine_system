@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Group, Stack, Button, Title, Card, Text, Loader, Center, Alert, Select} from "@mantine/core";
+import { Group, Stack, Button, Title, Card, Text, Loader, Center, Alert, Select, TextInput} from "@mantine/core";
 import {
   IconArrowLeft,
   IconUserCircle,
@@ -13,58 +13,48 @@ import { useNavigate, useParams } from "react-router-dom";
 import { LineChart } from '@mantine/charts';
 import PlanModal from "../../components/PlanModal";
 import { DatePickerInput } from "@mantine/dates";
+import api from "../../configs/api";
+import EditPlanModal from "../../components/EditPlanModal";
 
 
 export default function PatientDetail() {
   const { personalNumber } = useParams();
   const navigate = useNavigate();
-  const [opened, { open, close }] = useDisclosure(false);
+  const [createPlan, { open: openCreatePlan, close: closeCreatePlan }] = useDisclosure(false);
+  const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
 
   const [patientData, setPatientData] = useState(null);
   const [plan, setPlan] = useState(null);
-  const [planError, setPlanError] = useState(null);
+  //const [planError, setPlanError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [measurements, setMeasurements] = useState([]);
+  //const [measurements, setMeasurements] = useState([]);
   const [dateRange, setDateRange] = useState([null, null]);
   const [filterType, setFilterType] = useState(null);
-  const [from, to] = dateRange;
+  //const [from, to] = dateRange;
   
 
   useEffect(() => {
-      if (!from || !to || !filterType) return;
-      async function loadMeasurements() {
-        const res = await fetch(`http://localhost:8080/api/measurements?personalNumber=${personalNumber}&from=${from}&to=${to}&typeId=${filterType}`);
-        if (res.ok) {
-          const data = await res.json();
-          setMeasurements(data);
-        }
-      }
-      loadMeasurements();
-    }, [personalNumber, from, to, filterType]);
+    async function fetchData() {
+    try {
+      const [patientData, plan] = await Promise.all([
+        api.get(`/patients/${personalNumber}`),
+        api.get(`/measurement-plans?personalNumber=${personalNumber}`),
+       
+        
+      ]);
+      setPatientData(patientData.data);
+      setPlan(plan.data);
+      //setMeasurements(measurements.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchData();
+}, [personalNumber]);
 
-  useEffect(() => {
-      async function loadPatient() {
-        const res = await fetch(`http://localhost:8080/api/patients/${personalNumber}`);
-        if (res.ok) {
-          setPatientData(await res.json());
-        }
-        setLoading(false);
-      }
-      loadPatient();
-    }, [personalNumber]);
-
-  useEffect(() => {
-      async function loadPlan() {
-        const res = await fetch(`http://localhost:8080/api/plans/${personalNumber}`);
-        if (res.ok) {
-          setPlan(await res.json());
-        } else if (res.status !== 404) {
-          setPlanError("Nepodarilo sa načítať plán.");
-        }
-      }
-      loadPlan();
-    }, [personalNumber]);
 
 
   if (loading) return (
@@ -80,8 +70,9 @@ export default function PatientDetail() {
         <Title order={4}>Prehľad pacienta</Title>
       </Group>
     
-    <PlanModal opened={opened} onClose={close} panNumber={patientData.doctorPanNumber} personalNumber={personalNumber} />
-
+    <PlanModal opened={createPlan} onClose={closeCreatePlan} panNumber={patientData.doctorPanNumber} personalNumber={personalNumber} />
+    <EditPlanModal  opened={editOpened}  onClose={closeEdit}  plan={plan}  />
+    
       <Card shadow="sm" p="md" radius="md" withBorder>
         <Stack>
           <Group>
@@ -115,23 +106,38 @@ export default function PatientDetail() {
         <Stack>
           <Title order={6}>Monitorovací plán</Title>
 
-        {planError ? (
-            <Alert color="red">{planError}</Alert>
-          ) : plan === null ? (
-            <Text size="sm" c="dimmed">Pacient zatiaľ nemá monitorovací plán.</Text>
-          ) : (
-            <Card withBorder>
-                <Group grow>
-                <Text size="sm">Frekvencia: {plan.frequency}</Text>
-                <Text size="sm">Čas plánu merania: {plan.timeOfPlannedMeasurements}</Text>
-                <Text size="sm">Typy meraní: {plan.typesOfMeasurements?.map((t) => t.typeName).join(", ")}</Text>
-              </Group>
-            </Card>
-          )}
+           
+              <Card withBorder
+                 display={plan ? "block" : "none"}
+              >
+                <Group mb="xs">
+                <Stack>
+                  <Text size="sm">Frekvencia:</Text>
+                  <Text size="sm">Čas plánu merania:</Text>
+                  <Text size="sm">Typy meraní:</Text>
+                  <Text size="sm">Vytvoreny: </Text>
+                  <Text size="sm">Posledna úprava:</Text>
+                </Stack>
+                <Stack>
+                  <Text size="sm">{plan.frequencyDescription}</Text>
+                  <Text size="sm">{plan.timesOfPlannedMeasurements?.join(", ")}</Text>
+                  <Text size="sm">{plan.typesOfMeasurements?.map(t => t.typeName).join(", ")}</Text>
+                  <Text size="sm">{plan.createdAt}</Text>
+                  <Text size="sm">{plan.lastUpdateAt}</Text>
+                </Stack>
+                </Group>
+              </Card>
+           
+              <Text size="sm" c="dimmed"
+                display={plan ? "none" : "block"}
+              >Pacient nemá monitorovací plán.
+              </Text>
+           
+          
             
           <Button
            variant="light" size="xs" color="#0b5942"
-           onClick={open}>
+           onClick={plan ? openEdit : openCreatePlan}>
             {plan ? "Upraviť plán" : "Vytvoriť plán"}
           </Button>
         </Stack>
@@ -153,7 +159,7 @@ export default function PatientDetail() {
                 <Select
                     label="Typ merania"
                     placeholder="Vyberte typ merania"
-                    data={plan ? plan.typesOfMeasurements.map((t) => ({ value: t.typeOfMeasurementId + '', label: t.typeName })) : []}
+                    data={plan?.typesOfMeasurements?.map((t) => ({ value: (t.typeOfMeasurementId ?? t.id)?.toString() ?? '', label: t.typeName ?? '' })) ?? []}
                     searchable
                     clearable
                     value={filterType}
@@ -165,7 +171,7 @@ export default function PatientDetail() {
             <LineChart
                 h={300}
                 withPointLabels
-                data={measurements}
+                data={[]}
                 dataKey="timeOfMeasurement"
                 series={[{ name: 'value', color: 'orange' }]}
             />

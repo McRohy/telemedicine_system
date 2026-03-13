@@ -8,52 +8,85 @@ import {
   Alert,
   Checkbox,
   Group,
+  MultiSelect
 } from "@mantine/core";
 import { TimePicker } from "@mantine/dates";
+import { notifySuccess, notifyError } from "../configs/notificationHelper";
+import frequency from "../constants/frequency";
+import api from "../configs/api";
 
-const specializations = [
-  { value: "daily", label: "denne" },
-  { value: "weekly", label: "týždenne" },
-];
+const request = {
+  frequency: null,
+  typeOfMeasurementIds: [],
+  timesOfPlannedMeasurements: [],
+  panNumber: "",
+  personalNumber: "",
+};
+
 
 export default function PlanModal({opened, onClose, panNumber, personalNumber,}) {
-  const [frequency, setFrequency] = useState("");
+  const [loading, setLoading] = useState(true);
   const [types, setTypes] = useState([]);
-  const [timeOfPlannedMeasurements, setTimeOfPlannedMeasurements] = useState("");
-  const [typeOfMeasurementIds, setSelectedTypes] = useState([]);
-
-  const [alert, setAlert] = useState(null);
+  const [errorInputs, setErrorInputs] = useState(null);
+  const [time1, setTime1] = useState('');
+  const [time2, setTime2] = useState('');
+  const [planRequest, setPlanRequest] = useState({
+    ...request,
+    panNumber: panNumber,
+    personalNumber
+  });
+  
+  
 
   useEffect(() => {
-    async function loadTypes() {
-      const res = await fetch("http://localhost:8080/api/types");
-      const data = await res.json();
-      setTypes(data);
+    async function fetchTypes() {
+    try {
+      const response = await api.get('/measurement-types');
+      setTypes(response.data);
+      
+    } catch (err) {
+      if (err.response && err.response.data.message) {
+          //setErrori(err.response.data.message);
+      } else {
+         // setError('Nepodarilo sa načítať dáta');
+  }
+    } finally {
+      setLoading(false);
     }
-    loadTypes();
+  }
+  fetchTypes();
   }, []);
 
-  async function savePlan() {
-    const MeasurementPlanRequest = {
-      personalNumber: personalNumber,
-      panNumber: panNumber,
-      frequency,
-      timeOfPlannedMeasurements,
-      typeOfMeasurementIds,
-      
-    };
+  
+  async function createPlan() {
+    setLoading(true);
+    try {
+      const timesOfPlannedMeasurements = [];
+      if (time1) timesOfPlannedMeasurements.push(time1);
+      if (time2) timesOfPlannedMeasurements.push(time2);
 
-    const res = await fetch("http://localhost:8080/api/plans", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(MeasurementPlanRequest),
-    });
-
-    if (res.ok) {
+      const res = await api.post('/measurement-plans', {
+        ...planRequest,
+        typeOfMeasurementIds: planRequest.typeOfMeasurementIds.map(Number),
+        timesOfPlannedMeasurements,
+      });
+      notifySuccess(
+        'Plán meraní pridaný',
+        `Pacient ${res.data.personalNumber} má plán s frekvenciou ${res.data.frequency} a časom plánovaných meraní ${res.data.timesOfPlannedMeasurements}.`,
+      );
       onClose();
-    } else {
-      const error = await res.json();
-      setAlert(error.message);
+      //window.location.reload();
+    } catch (err) {
+      console.log(err.response);
+      const status = err.response?.status;
+
+      if (status === 400) {
+        setErrorInputs(err.response.data.fieldErrors);
+      } else {
+        notifyError(err);
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -61,7 +94,7 @@ export default function PlanModal({opened, onClose, panNumber, personalNumber,})
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Pridať pacienta"
+      title="Vytvoriť monitorovací plán"
       centered
       overlayProps={{
         backgroundOpacity: 0.8,
@@ -69,51 +102,85 @@ export default function PlanModal({opened, onClose, panNumber, personalNumber,})
         color: "#0b5942",
       }}
     >
-      <Alert color="red" hidden={!alert} mb="md">
-        {alert}
-      </Alert>
+     
       <Stack gap="md">
+
+        <Group grow>
+        <TextInput
+          label="PAN číslo lekára"
+          type="text"
+          ta="left"
+          size="md"
+          value={panNumber}
+          disabled
+        />
+
+        <TextInput
+          label="Rodné číslo pacienta"
+          type="text"
+          ta="left"
+          size="md"
+          value={personalNumber}
+          disabled
+        />
+        </Group>
+
         <Select
           label="Frekvencia"
           placeholder="Vyberte frekvenciu"
-          data={specializations}
+          data={frequency}
           size="md"
           searchable
           clearable
-          value={frequency}
-          onChange={setFrequency}
+          value={planRequest.frequency}
+          onChange={(value) => setPlanRequest({ ...planRequest, frequency: value })}
+          error={errorInputs?.['frequency']}
         />
 
-        <TimePicker
-          label="Čas plánovaných meraní"
-          withDropdown
+       
+          <TimePicker
+            display={planRequest.frequency === "ONE_TIME_DAILY" || planRequest.frequency === "TWO_TIMES_DAILY" ? "block" : "none"}
+            label="Čas merania 1"
+            withDropdown
+            ta="left"
+            size="md"
+            value={time1}
+            onChange={(value) => setTime1(value)}
+            error={errorInputs?.['timesOfPlannedMeasurements']}
+          />
+       
+
+   
+          <TimePicker
+            display={planRequest.frequency === "TWO_TIMES_DAILY" ? "block" : "none"}
+            label="Čas merania 2"
+            withDropdown
+            ta="left"
+            size="md"
+            value={time2}
+            onChange={(value) => setTime2(value)}
+            error={errorInputs?.['timesOfPlannedMeasurements']}
+          />
+      
+
+         <MultiSelect
+          label="Vyberte typy meraní"
+          searchable
+          clearable
           ta="left"
           size="md"
-          value={timeOfPlannedMeasurements}
-          onChange={setTimeOfPlannedMeasurements}
+          value={planRequest.typeOfMeasurementIds}
+          onChange={(value) => setPlanRequest({ ...planRequest, typeOfMeasurementIds: value })}
+          data={types.map((type) => ({ value: type.id.toString(), label: type.typeName }))}
+          error={errorInputs?.['typeOfMeasurementIds']}
         />
-
-        <Checkbox.Group
-          label="Vyberte typy meraní"
-          value={typeOfMeasurementIds}
-          onChange={setSelectedTypes}
-        >
-          <Group mt="xs">
-            {types.map((type) => (
-              <Checkbox
-                key={type.id}
-                value={type.id.toString()}
-                label={type.typeName}
-              />
-            ))}
-          </Group>
-        </Checkbox.Group>
 
         <Button
           color="#0b5942"
           p="xs"
           size="md"
-          onClick={() => savePlan()}
+          loading={loading}
+          onClick={() => createPlan()}
         >
           Uložiť plán
         </Button>

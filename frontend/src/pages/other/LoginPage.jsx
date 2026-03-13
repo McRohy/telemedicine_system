@@ -5,17 +5,23 @@ import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center, Ale
 import { AuthContext } from '../../context/authContextValue';
 
 function LoginPage() {
+  const { user, login } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
-    const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
     async function handleLogin() {
     try {
         await login({ email, password });
-        navigate('/admin/doctors');
+        if (user.role === 'DOCTOR') {
+          navigate('/doctor/patients');
+        } else if (user.role === 'ADMIN') {
+          navigate('/admin/doctors');
+        } else if (user.role === 'PATIENT') {
+          navigate('/patient/measurements');
+        }
     } catch (err) {
        console.log(err.response);
        setError(err.response?.data?.message || 'Nastala chyba pri prihlásovaní');
