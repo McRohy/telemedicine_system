@@ -1,29 +1,46 @@
-import { Stack, Group, Text } from "@mantine/core";
-import { useLocation, useNavigate } from "react-router-dom";
-import { NavLink } from "@mantine/core";
-import { IconArticle, IconActivity, IconClipboardHeart, IconUserCircle, IconUsers} from "@tabler/icons-react";
-import { useContext } from "react";
-import { AuthContext } from "../context/authContextValue";
+import { Stack, Group, Text } from '@mantine/core';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { NavLink } from '@mantine/core';
+import {
+  IconArticle,
+  IconActivity,
+  IconClipboardHeart,
+  IconUserCircle,
+  IconUsers,
+} from '@tabler/icons-react';
+import { useAuth } from '../context/AuthContext';
 
 const navLinks = {
   ADMIN: [
-    { label: "Prehľad lekarov", path: "/admin/doctors", icon: IconUsers},
-    { label: "Prehľad pacientov", path: "/admin/patients", icon: IconUsers},
-    { label: "Prehľad typov meraní", path: "/admin/types-of-measurements", icon: IconActivity},
+    { label: 'Prehľad lekarov', path: '/admin/doctors', icon: IconUsers },
+    { label: 'Prehľad pacientov', path: '/admin/patients', icon: IconUsers },
+    {
+      label: 'Prehľad typov meraní',
+      path: '/admin/types-of-measurements',
+      icon: IconActivity,
+    },
   ],
   DOCTOR: [
     { label: 'Pacienti', path: '/doctor/patients', icon: IconUsers },
     { label: 'Články', path: '/doctor/articles', icon: IconArticle },
   ],
   PATIENT: [
-    { label: 'Prehľad meraní', path: '/patient/measurements', icon: IconActivity },
+    {
+      label: 'Prehľad meraní',
+      path: '/patient/measurements',
+      icon: IconActivity,
+    },
     { label: 'Články', path: '/patient/articles', icon: IconArticle },
-    { label: 'Plán monitorovania', path: '/patient/monitoring-plan', icon: IconClipboardHeart },
+    {
+      label: 'Plán monitorovania',
+      path: '/patient/monitoring-plan',
+      icon: IconClipboardHeart,
+    },
   ],
 };
 
 export default function Sidebar() {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const links = user ? navLinks[user.role] : [];
@@ -46,14 +63,17 @@ export default function Sidebar() {
         {links.map((link) => (
           <NavLink
             key={link.path}
-            label={<Text c="white" size="md">{link.label}</Text>}
+            label={
+              <Text c="white" size="md">
+                {link.label}
+              </Text>
+            }
             leftSection={<link.icon size={20} color="white" />}
             active={location.pathname === link.path}
             onClick={() => navigate(link.path)}
             p="md"
             color="#00000051"
             variant="filled"
-            
           />
         ))}
       </Stack>
@@ -65,7 +85,10 @@ export default function Sidebar() {
         ta="center"
         mb="sm"
         style={{ cursor: 'pointer' }}
-        onClick={() => { logout(); navigate('/login'); }}
+        onClick={() => {
+          logout();
+          navigate('/login');
+        }}
       >
         Odhlásiť sa
       </Text>

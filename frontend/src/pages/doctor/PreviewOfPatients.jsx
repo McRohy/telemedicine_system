@@ -4,14 +4,17 @@ import AddPatientModal from "../../components/AddPatientModal";
 import { useDisclosure } from '@mantine/hooks'
 import { useNavigate } from "react-router-dom";
 import { IconSearch } from '@tabler/icons-react';
+import { useAuth } from "../../context/AuthContext";
 import api from "../../configs/api";
 
 export default function PreviewOfPatients() {
-  const testDoctorPanNumber = "2354678909876543";
+  const {user} = useAuth();
+  const actualDoctorPanNumber = user?.identificationNumber;
   const navigate = useNavigate();
   const [patients, setPatients] = useState([]);
   const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [search, setSearch] = useState('');
     const filtered = patients.filter((item) =>
@@ -21,19 +24,18 @@ export default function PreviewOfPatients() {
 
   useEffect(() => {
     async function fetchPatients() {
-    try {
-      const response = await api.get(`/patients?panNumber=${testDoctorPanNumber}`);
-      setPatients(response.data);
-      
-    } catch (err) {
-      if (err.response && err.response.data.message) {
-          //setError(err.response.data.message);
-      } else {
-          //setError('Nepodarilo sa načítať dáta');
+      try {
+        const response = await api.get(`/patients?panNumber=${actualDoctorPanNumber}`);
+        setPatients(response.data);
+      } catch (err) {
+        if (err.response && err.response.data.message) {
+          setError(err.response.data.message);
+        } else {
+          setError('Nepodarilo sa načítať dáta');
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
     }
     fetchPatients();
   }, []);
@@ -47,7 +49,7 @@ export default function PreviewOfPatients() {
   if (patients.length === 0) {
     return (
       <Stack p="md">
-      <AddPatientModal opened={opened} onClose={close} doctorPanNumber={testDoctorPanNumber} />
+      <AddPatientModal opened={opened} onClose={close} doctorPanNumber={actualDoctorPanNumber} />
         <Group justify="space-between">
           <Title order={2}>Prehľad pacientov</Title>
           <Button
@@ -67,7 +69,7 @@ export default function PreviewOfPatients() {
 
   return (
     <Stack p="md">
-      <AddPatientModal opened={opened} onClose={close} doctorPanNumber={testDoctorPanNumber} />
+      <AddPatientModal opened={opened} onClose={close} doctorPanNumber={actualDoctorPanNumber} />
       <Group justify="space-between">
         <Title order={2}>Prehľad pacientov</Title>
         <Button
@@ -80,7 +82,11 @@ export default function PreviewOfPatients() {
         </Button>
       </Group>
 
-     <TextInput  
+      <Alert color="red" hidden={!error}>
+        {error}
+      </Alert>
+
+     <TextInput
         placeholder="Hľadať..."
         leftSection={<IconSearch size={16} />}
         value={search}

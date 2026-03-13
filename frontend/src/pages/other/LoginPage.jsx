@@ -1,32 +1,42 @@
-import { BsHeartPulse } from "react-icons/bs";
-import { useState, useContext} from "react";
-import { useNavigate } from "react-router-dom";
-import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center, Alert } from "@mantine/core";
-import { AuthContext } from '../../context/authContextValue';
+import { BsHeartPulse } from 'react-icons/bs';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Button,
+  Card,
+  Stack,
+  PasswordInput,
+  Title,
+  Text,
+  TextInput,
+  Center,
+  Alert,
+} from '@mantine/core';
+import { useAuth } from '../../context/AuthContext';
 
 function LoginPage() {
-  const { user, login } = useContext(AuthContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { user, login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    async function handleLogin() {
+  async function handleLogin() {
     try {
-        await login({ email, password });
-        if (user.role === 'DOCTOR') {
-          navigate('/doctor/patients');
-        } else if (user.role === 'ADMIN') {
-          navigate('/admin/doctors');
-        } else if (user.role === 'PATIENT') {
-          navigate('/patient/measurements');
-        }
+      await login({ email, password });
+      if (user.role === 'DOCTOR') {
+        navigate('/doctor/patients');
+      } else if (user.role === 'ADMIN') {
+        navigate('/admin/doctors');
+      } else if (user.role === 'PATIENT') {
+        navigate('/patient/measurements');
+      }
     } catch (err) {
-       console.log(err.response);
-       setError(err.response?.data?.message || 'Nastala chyba pri prihlásovaní');
+      console.log(err.response);
+      setError(err.response?.data?.message || 'Nastala chyba pri prihlásovaní');
     }
-    }
+  }
 
   return (
     <Center w="100vw" h="100vh" bg="#0b5942">
@@ -66,7 +76,7 @@ function LoginPage() {
               type="submit"
               size="md"
               color="#0b5942"
-              disabled={email == "" || password == ""}
+              disabled={email == '' || password == ''}
               onClick={() => handleLogin()}
             >
               Prihlásiť sa

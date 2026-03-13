@@ -11,7 +11,7 @@ import PreviewOfTypes from './pages/admin/PreviewOfTypes';
 import Article from './pages/doctor/Article';
 
 import ProtectedRoute from './components/ProtectedRoutes';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './context/AuthProvider';
 
 function App() {
   return (
