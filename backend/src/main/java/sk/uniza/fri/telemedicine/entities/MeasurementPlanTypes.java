@@ -1,12 +1,11 @@
 package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sk.uniza.fri.telemedicine.entities.idHelpers.MeasurementPlanComponentId;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @IdClass(MeasurementPlanComponentId.class)
@@ -22,4 +21,6 @@ public class MeasurementPlanTypes {
     @ManyToOne
     @JoinColumn(name = "type_of_measurement_id")
     private TypeOfMeasurement typeOfMeasurement;
+
+    private LocalDateTime archivedAt;
 }

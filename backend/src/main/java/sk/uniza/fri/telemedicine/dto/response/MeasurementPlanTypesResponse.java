@@ -5,7 +5,6 @@ import lombok.Getter;
 
 @Getter @AllArgsConstructor
 public class MeasurementPlanTypesResponse {
-    private Integer measurementPlanId;
-    private Integer typeOfMeasurementId;
+    private Integer id;
     private String typeName;
 }

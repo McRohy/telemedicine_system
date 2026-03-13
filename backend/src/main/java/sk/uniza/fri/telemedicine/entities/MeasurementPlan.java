@@ -1,13 +1,12 @@
 package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sk.uniza.fri.telemedicine.enums.constrains.Frequency;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter @NoArgsConstructor
@@ -29,5 +28,9 @@ public class MeasurementPlan {
     @Column(length = 20, nullable = false)
     private Frequency frequency;
 
-    private LocalTime timeOfPlannedMeasurement;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime lastUpdateAt;
 }
