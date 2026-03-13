@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementRecordRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementRecordResponse;
-import sk.uniza.fri.telemedicine.services.MeasurementRecordService;
+import sk.uniza.fri.telemedicine.services.core.MeasurementRecordService;
 
 import java.time.LocalDate;
 import java.util.List;

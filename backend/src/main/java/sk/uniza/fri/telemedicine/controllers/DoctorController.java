@@ -6,7 +6,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
-import sk.uniza.fri.telemedicine.services.DoctorService;
+import sk.uniza.fri.telemedicine.services.core.DoctorService;
 import java.util.List;
 
 @RestController

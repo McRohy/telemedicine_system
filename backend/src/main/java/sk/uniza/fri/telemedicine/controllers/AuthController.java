@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.LoginRequest;
 import sk.uniza.fri.telemedicine.dto.request.PasswordRequest;
 import sk.uniza.fri.telemedicine.dto.response.LoginResponse;
-import sk.uniza.fri.telemedicine.services.AuthService;
-import sk.uniza.fri.telemedicine.services.PersonalDataService;
+import sk.uniza.fri.telemedicine.services.auth.AuthService;
+import sk.uniza.fri.telemedicine.services.core.PersonalDataService;
 
 @RestController
 @RequestMapping("/api/auth")

@@ -16,4 +16,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
 
     @Query("SELECT CONCAT(d.personalData.firstName, ' ', d.personalData.lastName) FROM Doctor d WHERE d.PanNumber = :panNumber")
     Optional<String> findFullNameByPanNumber(String panNumber);
+
+    @Query("SELECT d.PanNumber FROM Doctor d JOIN d.personalData pd WHERE pd.email = :email")
+    Optional<String> findPanNumberByEmail(String email);
 }

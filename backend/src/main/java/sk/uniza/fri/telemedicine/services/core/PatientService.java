@@ -1,4 +1,4 @@
-package sk.uniza.fri.telemedicine.services;
+package sk.uniza.fri.telemedicine.services.core;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -69,6 +69,11 @@ public class PatientService {
     public String getPatientFullNameByPersonalNumber(String personalNumber) {
         return patientRepository.findFullNameByPernosalNumber(personalNumber)
                 .orElseThrow(() -> new NotFoundException("Patient with personal number: " + personalNumber + " not found"));
+    }
+
+    public String getPatientPersonalNumberByEmail(String email) {
+        return patientRepository.findPersonalNumberByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Patient with email: " + email + " not found"));
     }
 
     private Patient mapToPatient(PatientRequest request, PersonalData personalData, Doctor doctor) {

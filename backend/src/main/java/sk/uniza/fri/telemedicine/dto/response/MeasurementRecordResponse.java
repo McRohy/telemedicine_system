@@ -1,5 +1,6 @@
 package sk.uniza.fri.telemedicine.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
@@ -12,6 +13,7 @@ public class MeasurementRecordResponse {
         private String typeName;
         private Integer value;
         private String units;
+        @JsonFormat(pattern = "MM-dd HH:mm:ss")
         private LocalDateTime timeOfMeasurement;
         private MeasurementStatus status;
 }

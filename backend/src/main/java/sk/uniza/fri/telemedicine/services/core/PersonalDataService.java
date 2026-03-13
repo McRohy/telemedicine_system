@@ -1,4 +1,4 @@
-package sk.uniza.fri.telemedicine.services;
+package sk.uniza.fri.telemedicine.services.core;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
