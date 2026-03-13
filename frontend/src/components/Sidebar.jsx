@@ -27,15 +27,10 @@ const navLinks = {
   PATIENT: [
     {
       label: 'Prehľad meraní',
-      path: '/patient/measurements',
+      path: '/patient/dashboard',
       icon: IconActivity,
     },
     { label: 'Články', path: '/patient/articles', icon: IconArticle },
-    {
-      label: 'Plán monitorovania',
-      path: '/patient/monitoring-plan',
-      icon: IconClipboardHeart,
-    },
   ],
 };
 

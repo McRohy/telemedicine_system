@@ -119,7 +119,7 @@ export default function PatientDetail() {
                   <Text size="sm">Posledna úprava:</Text>
                 </Stack>
                 <Stack>
-                  <Text size="sm">{plan.frequencyDescription}</Text>
+                  <Text size="sm">{plan.frequency}</Text>
                   <Text size="sm">{plan.timesOfPlannedMeasurements?.join(", ")}</Text>
                   <Text size="sm">{plan.typesOfMeasurements?.map(t => t.typeName).join(", ")}</Text>
                   <Text size="sm">{plan.createdAt}</Text>

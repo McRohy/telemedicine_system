@@ -30,7 +30,7 @@ function LoginPage() {
       } else if (user.role === 'ADMIN') {
         navigate('/admin/doctors');
       } else if (user.role === 'PATIENT') {
-        navigate('/patient/measurements');
+        navigate('/patient/dashboard');
       }
     } catch (err) {
       console.log(err.response);
