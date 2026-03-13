@@ -7,7 +7,7 @@ import lombok.Getter;
 public enum EmailText {
     SUBJECT_ALERT_RECORD("Telemedicina - Upozornenie na meranie mimo normy"),
     SUBJECT_ACCOUNT_PASSWORD("Telemedicina - Dočasné heslo"),
-    CONTENT_ALERT_RECORD("Pacient: %s s hodnotou %d %s je mimo povolený rozsah"),
+    CONTENT_ALERT_RECORD("Pacient: %s s hodnotou %.2f %s je mimo povolený rozsah"),
     CONTENT_ACCOUNT_PASSWORD("Vaše dočasné heslo je: %s");
 
     private final String text;

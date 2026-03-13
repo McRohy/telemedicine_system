@@ -51,7 +51,7 @@ public class MeasurementRecordService {
         return this.mapToMeasurementRecordResponse(measurementRecord);
     }
 
-    private boolean checkIfRecordIsInRange(Integer value, TypeOfMeasurement typeOfMeasurement) {
+    private boolean checkIfRecordIsInRange(Double value, TypeOfMeasurement typeOfMeasurement) {
         return value >= typeOfMeasurement.getMinValue() && value <= typeOfMeasurement.getMaxValue();
     }
 

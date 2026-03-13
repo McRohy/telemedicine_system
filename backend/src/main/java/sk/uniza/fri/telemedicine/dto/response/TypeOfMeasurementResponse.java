@@ -8,7 +8,7 @@ public class TypeOfMeasurementResponse {
     private Integer id;
     private String typeName;
     private String units;
-    private Integer minValue;
-    private Integer maxValue;
+    private Double minValue;
+    private Double maxValue;
 
 }

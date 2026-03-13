@@ -16,7 +16,7 @@ public class MeasurementRecordRequest {
     private Integer typeOfMeasurementId;
 
     @NotNull(message = "Value is mandatory")
-    private Integer value;
+    private Double value;
 
     private String note;
 }

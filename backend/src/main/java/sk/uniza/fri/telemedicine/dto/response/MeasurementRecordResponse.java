@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MeasurementRecordResponse {
         private String typeName;
-        private Integer value;
+        private Double value;
         private String units;
         @JsonFormat(pattern = "MM-dd HH:mm:ss")
         private LocalDateTime timeOfMeasurement;

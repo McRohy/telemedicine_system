@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import sk.uniza.fri.telemedicine.entities.idHelpers.MeasurementRecordId;
 import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,7 +27,7 @@ public class MeasurementRecord {
     private Patient patient;
 
     @Column(nullable = false)
-    private Integer value;
+    private Double value;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
