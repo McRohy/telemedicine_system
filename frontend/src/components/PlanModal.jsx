@@ -1,87 +1,77 @@
-import { useState, useEffect } from "react";
-import {
-  Modal,
-  Stack,
-  TextInput,
-  Select,
-  Button,
-  Alert,
-  Checkbox,
-  Group,
-  MultiSelect
-} from "@mantine/core";
-import { TimePicker } from "@mantine/dates";
-import { notifySuccess, notifyError } from "../configs/notificationHelper";
-import frequency from "../constants/frequency";
-import api from "../configs/api";
+import { useState, useEffect } from 'react';
+import { useForm } from '@mantine/form';
+import { Modal, Stack, TextInput, Select, Button, Group, MultiSelect } from '@mantine/core';
+import { TimePicker } from '@mantine/dates';
+import { notifySuccess, notifyError } from '../configs/notificationHelper';
+import frequency from '../constants/frequency';
+import api from '../configs/api';
 
-const request = {
-  frequency: null,
-  typeOfMeasurementIds: [],
-  timesOfPlannedMeasurements: [],
-  panNumber: "",
-  personalNumber: "",
-};
-
-
-export default function PlanModal({opened, onClose, panNumber, personalNumber,}) {
-  const [loading, setLoading] = useState(true);
+export default function PlanModal({ opened, onClose, panNumber, personalNumber, plan }) {
+  const isEdit = Boolean(plan ? plan.id : null);
+  
+  const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState([]);
-  const [errorInputs, setErrorInputs] = useState(null);
-  const [time1, setTime1] = useState('');
-  const [time2, setTime2] = useState('');
-  const [planRequest, setPlanRequest] = useState({
-    ...request,
-    panNumber: panNumber,
-    personalNumber
+  const form = useForm({
+    initialValues: {
+      panNumber: (isEdit ? plan.panNumber : panNumber),
+      personalNumber: (isEdit ? plan.personalNumber : personalNumber),
+      frequency: (isEdit ? plan.frequency : null),
+      timesOfPlannedMeasurements: (isEdit ? plan.timesOfPlannedMeasurements : []),
+      typeOfMeasurementIds: (isEdit ? plan.typesOfMeasurements.map(t => String(t.id)) : []),
+    },
+    validate: {
+      frequency: (value) => (value ? null : 'Vyberte frekvenciu'),
+      typeOfMeasurementIds: (value) => (value.length > 0 ? null : 'Vyberte aspoň jeden typ merania'),
+      timesOfPlannedMeasurements: (value) => (value.length > 0 ? null : 'Vyberte aspon jeden čas merania'),
+    }
   });
-  
-  
 
   useEffect(() => {
     async function fetchTypes() {
-    try {
-      const response = await api.get('/measurement-types');
-      setTypes(response.data);
-      
-    } catch (err) {
-      if (err.response && err.response.data.message) {
-          //setErrori(err.response.data.message);
-      } else {
-         // setError('Nepodarilo sa načítať dáta');
-  }
-    } finally {
-      setLoading(false);
+      try {
+        const response = await api({
+          url: '/measurement-types',
+          method: 'get',
+        });
+        setTypes(response.data);
+      } catch (err) {
+        notifyError(err);
+      }
     }
-  }
-  fetchTypes();
+    fetchTypes();
   }, []);
 
-  
-  async function createPlan() {
+  async function handleSubmit() {
     setLoading(true);
     try {
-      const timesOfPlannedMeasurements = [];
-      if (time1) timesOfPlannedMeasurements.push(time1);
-      if (time2) timesOfPlannedMeasurements.push(time2);
+      const payload = {
+        ...form.values,
+        typeOfMeasurementIds: form.values.typeOfMeasurementIds.map(Number),
+     };
 
-      const res = await api.post('/measurement-plans', {
-        ...planRequest,
-        typeOfMeasurementIds: planRequest.typeOfMeasurementIds.map(Number),
-        timesOfPlannedMeasurements,
-      });
-      notifySuccess(
-        'Plán meraní pridaný',
-        `Pacient ${res.data.personalNumber} má plán s frekvenciou ${res.data.frequency} a časom plánovaných meraní ${res.data.timesOfPlannedMeasurements}.`,
-      );
+      if (isEdit) {
+        console.log('Updating plan with payload:', payload);
+        await api({
+          url: `/measurement-plans/${plan.id}`,
+          method: 'put',
+          data: payload,
+        });
+        notifySuccess('Plan upraveny', 'Monitorovaci plan bol uspesne upraveny.');
+      } else {
+        const res = await api({
+          url: '/measurement-plans',
+          method: 'post',
+          data: payload,
+        });
+        notifySuccess(
+          'Plan merani pridany',
+          `Pacient ${res.data.personalNumber} ma plan s frekvenciou ${res.data.frequency} a casom planovanych merani ${res.data.timesOfPlannedMeasurements}.`,
+        );
+      }
       onClose();
-      //window.location.reload();
     } catch (err) {
-      console.log(err.response);
-      const status = err.response?.status;
-
-      if (status === 400) {
-        setErrorInputs(err.response.data.fieldErrors);
+      if (err.response?.status === 400) {
+        form.setErrors(err.response.data.fieldErrors);
       } else {
         notifyError(err);
       }
@@ -90,101 +80,99 @@ export default function PlanModal({opened, onClose, panNumber, personalNumber,})
     }
   }
 
+  const numberOfTimePickers = form.values.frequency === 'ONE_TIME_DAILY' ? 1 : form.values.frequency === 'TWO_TIMES_DAILY' ? 2 : 0;
+
   return (
     <Modal
       opened={opened}
       onClose={onClose}
-      title="Vytvoriť monitorovací plán"
+      title={isEdit ? 'Upravit monitorovaci plan' : 'Vytvorit monitorovaci plan'}
       centered
       overlayProps={{
         backgroundOpacity: 0.8,
         blur: 5,
-        color: "#0b5942",
+        color: '#0b5942',
       }}
     >
-     
-      <Stack gap="md">
+      <form onSubmit={form.onSubmit(handleSubmit)}>
+        <Stack gap="md">
+          <Group grow>
+            <TextInput
+              label="PAN cislo lekara"
+              type="text"
+              ta="left"
+              size="md"
+              value={form.values.panNumber}
+              disabled
+            />
 
-        <Group grow>
-        <TextInput
-          label="PAN číslo lekára"
-          type="text"
-          ta="left"
-          size="md"
-          value={panNumber}
-          disabled
-        />
+            <TextInput
+              label="Rodne cislo pacienta"
+              type="text"
+              ta="left"
+              size="md"
+              value={form.values.personalNumber}
+              disabled
+            />
+          </Group>
 
-        <TextInput
-          label="Rodné číslo pacienta"
-          type="text"
-          ta="left"
-          size="md"
-          value={personalNumber}
-          disabled
-        />
-        </Group>
+          <Select
+            label="Frekvencia"
+            placeholder="Vyberte frekvenciu"
+            data={frequency}
+            size="md"
+            searchable
+            clearable
+            value={form.values.frequency}
+            onChange={(value) => {
+        
+              form.setFieldValue('frequency', value);
+              form.removeListItem('timesOfPlannedMeasurements', 1);
+            }}
+            error={form.errors.frequency}
+          />
 
-        <Select
-          label="Frekvencia"
-          placeholder="Vyberte frekvenciu"
-          data={frequency}
-          size="md"
-          searchable
-          clearable
-          value={planRequest.frequency}
-          onChange={(value) => setPlanRequest({ ...planRequest, frequency: value })}
-          error={errorInputs?.['frequency']}
-        />
+          {numberOfTimePickers >= 1 && (
+            <TimePicker
+              label="Cas merania 1"
+              withDropdown
+              ta="left"
+              size="md"
+              {...form.getInputProps('timesOfPlannedMeasurements.0')}
+            />
+          )}
 
-       
-          <TimePicker
-            display={planRequest.frequency === "ONE_TIME_DAILY" || planRequest.frequency === "TWO_TIMES_DAILY" ? "block" : "none"}
-            label="Čas merania 1"
-            withDropdown
+          {numberOfTimePickers >= 2 && (
+            <TimePicker
+              label="Cas merania 2"
+              withDropdown
+              ta="left"
+              size="md"
+              {...form.getInputProps('timesOfPlannedMeasurements.1')}
+            />
+          )}
+
+          <MultiSelect
+            label="Vyberte typy merani"
+            searchable
+            clearable
             ta="left"
             size="md"
-            value={time1}
-            onChange={(value) => setTime1(value)}
-            error={errorInputs?.['timesOfPlannedMeasurements']}
+            data={types.map((type) => ({ value: String(type.id), label: type.typeName }))}
+            {...form.getInputProps('typeOfMeasurementIds')}
           />
-       
 
-   
-          <TimePicker
-            display={planRequest.frequency === "TWO_TIMES_DAILY" ? "block" : "none"}
-            label="Čas merania 2"
-            withDropdown
-            ta="left"
+          <Button
+            type="submit"
+            color="#0b5942"
+            p="xs"
             size="md"
-            value={time2}
-            onChange={(value) => setTime2(value)}
-            error={errorInputs?.['timesOfPlannedMeasurements']}
-          />
-      
-
-         <MultiSelect
-          label="Vyberte typy meraní"
-          searchable
-          clearable
-          ta="left"
-          size="md"
-          value={planRequest.typeOfMeasurementIds}
-          onChange={(value) => setPlanRequest({ ...planRequest, typeOfMeasurementIds: value })}
-          data={types.map((type) => ({ value: type.id.toString(), label: type.typeName }))}
-          error={errorInputs?.['typeOfMeasurementIds']}
-        />
-
-        <Button
-          color="#0b5942"
-          p="xs"
-          size="md"
-          loading={loading}
-          onClick={() => createPlan()}
-        >
-          Uložiť plán
-        </Button>
-      </Stack>
+            loading={loading}
+          >
+            {isEdit ? 'Ulozit plan' : 'Vytvorit plan'}
+          </Button>
+        </Stack>
+      </form>
     </Modal>
   );
 }

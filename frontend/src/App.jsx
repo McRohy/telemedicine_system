@@ -4,7 +4,7 @@ import PasswordPage from './pages/other/PasswordPage';
 import LoginPage from './pages/other/LoginPage';
 import PreviewOfDoctors from './pages/admin/PreviewOfDoctors';
 import PreviewOfPatients from './pages/admin/PreviewOfPatients';
-import DoctorPreviewOfPatients from './pages/doctor/PreviewOfPatients';
+import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import PatientDetail from './pages/doctor/PatientDetail';
 import Forbidden from './pages/other/Forbidden';
 import PreviewOfTypes from './pages/admin/PreviewOfTypes';
@@ -45,10 +45,10 @@ function App() {
               }
             />
             <Route
-              path="/doctor/patients"
+              path="/doctor/dashboard"
               element={
                 <ProtectedRoute allowedRoles={['DOCTOR']}>
-                  <DoctorPreviewOfPatients />
+                  <DoctorDashboard />
                 </ProtectedRoute>
               }
             />

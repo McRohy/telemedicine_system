@@ -26,7 +26,7 @@ function LoginPage() {
     try {
       await login({ email, password });
       if (user.role === 'DOCTOR') {
-        navigate('/doctor/patients');
+        navigate('/doctor/dashboard');
       } else if (user.role === 'ADMIN') {
         navigate('/admin/doctors');
       } else if (user.role === 'PATIENT') {

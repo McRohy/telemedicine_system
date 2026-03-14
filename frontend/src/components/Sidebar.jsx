@@ -21,7 +21,7 @@ const navLinks = {
     },
   ],
   DOCTOR: [
-    { label: 'Pacienti', path: '/doctor/patients', icon: IconUsers },
+    { label: 'Pacienti', path: '/doctor/dashboard', icon: IconUsers },
     { label: 'Články', path: '/doctor/articles', icon: IconArticle },
   ],
   PATIENT: [
