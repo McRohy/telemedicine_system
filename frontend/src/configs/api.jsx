@@ -1,28 +1,43 @@
 import axios from 'axios';
-
-// Axios instance with a common base URL
+/*
+  https://axios-http.com/docs/instance
+*/
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
+  timeout: 10000, // to not wait infinitely for a response
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+/*
+  https://axios-http.com/docs/interceptors
+*/
+api.interceptors.request.use(
+   function (config) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  function (error) {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
+/*
+  https://axios-http.com/docs/interceptors
+*/
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  function onFulfilled(response) {
+    return response;
+  },
+  function onRejected(error) {
     const status = error.response?.status;
     const url = error.config?.url;
     if (status === 401 && url !== '/auth/login') {
       localStorage.removeItem('token');
-      window.location.href = '/login'; //full page reload/reset 
+      window.location.href = '/login';
     }
-    throw error;
+    return Promise.reject(error);
   }
 );
 

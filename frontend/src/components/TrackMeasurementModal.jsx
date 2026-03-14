@@ -16,41 +16,38 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
   const [loading, setLoading] = useState(false);
   const form = useForm({
     initialValues: {
-      personalNumber: plan.personalNumber,
-      typeOfMeasurementId: '',
+      personalNumber: plan?.personalNumber || '',
+      typeOfMeasurementId: null,
       value: '',
       note: '',
     },
+    validate: {
+      typeOfMeasurementId: (value) => (value ? null : 'Vyberte typ merania'),
+      value: (value) => (value === '' ? 'Zadejte hodnotu merania' : null),
+    },
   });
 
-  console.log(plan);
-
-  async function trackMeasurement() {
-    console.log(form.values);
+  async function postMeasurement() {
     setLoading(true);
     try {
-      const res = await api.post('/measurements', form.values);
-      notifySuccess(
-        'Meranie zaznamenané',
-        `${res.data.typeName} - ${res.data.value} ${res.data.units} je ${res.data.status}`,
-      );
-      onClose();
+      const res = await api({
+        url: '/measurements',
+        method: 'post',
+        data: form.values,
+      });
+      notifySuccess('Meranie zaznamenané', `${res.data.typeName} - ${res.data.value} ${res.data.units} je ${res.data.status}`);
       form.reset();
-    } catch (err) {
-      console.log(err.response);
-      const status = err.response?.status;
-
-      if (status === 400) {
-        form.setErrors(err.response.data.fieldErrors);
+      onClose();
+    } catch (error) {
+      if (error.response?.status === 400) {
+        form.setErrors(error.response.data.fieldErrors);
       } else {
-        notifyError(err);
+        notifyError(error);
       }
     } finally {
       setLoading(false);
     }
   }
-
-  if (!plan) return null;
 
   return (
     <Modal
@@ -64,59 +61,50 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
         color: '#0b5942',
       }}
     >
-      <Stack gap="md">
-        <Select
-          label="Typ merania"
-          placeholder="Vyberte typ merania"
-          data={plan.typesOfMeasurements.map((t) => ({
-            value: String(t.id),
-            label: t.typeName,
-          }))}
-          size="md"
-          searchable
-          clearable
-          withAsterisk
-          {...form.getInputProps('typeOfMeasurementId')}
-        />
-
-        <NumberInput
-          label="Hodnota merania"
-          placeholder="Zadejte hodnotu merania"
-          size="md"
-          ta="left"
-          withAsterisk
-          {...form.getInputProps('value')}
-        />
-
-        <TextInput
-          label="Poznámka"
-          type="text"
-          ta="left"
-          size="md"
-          {...form.getInputProps('note')}
-        />
-
-        <Group grow>
-          <Button
-            variant="outline"
-            color="#0b5942"
-            p="xs"
+      <form onSubmit={form.onSubmit(postMeasurement)}>
+        <Stack gap="md">
+          <Select
+            label="Typ merania"
+            placeholder="Vyberte typ merania"
+            data={plan.typesOfMeasurements.map((t) => ({
+              value: String(t.id),
+              label: t.typeName,
+            }))}
             size="md"
-            onClick={() => form.reset()}
-          >
-            Zrušit
-          </Button>
+            searchable
+            clearable
+            withAsterisk
+            {...form.getInputProps('typeOfMeasurementId')}
+          />
+
+          <NumberInput
+            label="Hodnota merania"
+            placeholder="Zadejte hodnotu merania"
+            size="md"
+            ta="left"
+            withAsterisk
+            {...form.getInputProps('value')}
+          />
+
+          <TextInput
+            label="Poznámka"
+            type="text"
+            ta="left"
+            size="md"
+            {...form.getInputProps('note')}
+          />
+
           <Button
+            type="submit"
             color="#0b5942"
             p="xs"
             size="md"
             loading={loading}
-            onClick={() => trackMeasurement()}
           >
             Uložiť meranie
           </Button>
-        </Group>
-      </Stack>
+        </Stack>
+      </form>
     </Modal>
   );
 }
