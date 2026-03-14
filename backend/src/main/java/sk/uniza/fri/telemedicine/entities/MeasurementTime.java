@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -22,4 +23,9 @@ public class MeasurementTime {
 
     @Column(nullable = false)
     private LocalTime time;
+
+    @Column(nullable = false)
+    private LocalDateTime validFrom;
+
+    private LocalDateTime validTo;
 }

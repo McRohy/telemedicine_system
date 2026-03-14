@@ -54,6 +54,7 @@ public class MeasurementPlanService {
             MeasurementTime mt = new MeasurementTime();
             mt.setPlan(plan);
             mt.setTime(time);
+            mt.setValidFrom(LocalDateTime.now());
             measurementTimeRepository.save(mt);
         }
 
@@ -63,6 +64,7 @@ public class MeasurementPlanService {
             MeasurementPlanTypes planType = new MeasurementPlanTypes();
             planType.setMeasurementPlan(plan);
             planType.setTypeOfMeasurement(type);
+            planType.setValidFrom(LocalDateTime.now());
             measurementPlanTypesRepository.save(planType);
         }
 
@@ -75,72 +77,88 @@ public class MeasurementPlanService {
         MeasurementPlan plan = measurementPlanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
 
+        LocalDateTime now = LocalDateTime.now();
         plan.setFrequency(request.getFrequency());
-        plan.setLastUpdateAt(LocalDateTime.now());
+        plan.setLastUpdateAt(now);
         measurementPlanRepository.save(plan);
 
-        //hard delete
-        measurementTimeRepository.deleteAllByPlanPlanId(plan.getPlanId());
-        List<MeasurementTime> newTimes = new ArrayList<>();
-        for (LocalTime time : request.getTimesOfPlannedMeasurements()) {
-            MeasurementTime mt = new MeasurementTime();
-            mt.setPlan(plan);
-            mt.setTime(time);
-            newTimes.add(mt);
+        List<MeasurementTime> existingTimes = measurementTimeRepository.findAllActiveTimesByMeasurementPlanId(plan.getPlanId());
+        List<LocalTime> requestedTimes = request.getTimesOfPlannedMeasurements();
+        List<MeasurementTime> activeTimes = new ArrayList<>();
+
+        for (MeasurementTime existing : existingTimes) {
+            if (!requestedTimes.contains(existing.getTime())) {
+                existing.setValidTo(now);
+            } else {
+                activeTimes.add(existing);
+            }
         }
-        measurementTimeRepository.saveAll(newTimes);
+        measurementTimeRepository.saveAll(existingTimes);
 
-        // soft delete
-        List<MeasurementPlanTypes> existingTypes = measurementPlanTypesRepository.findAllActiveTypesByMeasurementPlanId(plan.getPlanId());
-        existingTypes.forEach(t -> t.setArchivedAt(LocalDateTime.now()));
-        measurementPlanTypesRepository.saveAll(existingTypes);
-
-        List<MeasurementPlanTypes> activeTypes = new ArrayList<>();
-        for (Integer typeId : request.getTypeOfMeasurementIds()) {
-            boolean existsAlready = false;
-            for (MeasurementPlanTypes existing : existingTypes) {
-                if (existing.getTypeOfMeasurement().getTypeId().equals(typeId)) {
-                    existing.setArchivedAt(null); // reactivate
-                    activeTypes.add(existing);
-                    existsAlready = true;
+        for (LocalTime time : requestedTimes) {
+            boolean exists = false;
+            for (MeasurementTime active : activeTimes) {
+                if (active.getTime().equals(time)) {
+                    exists = true;
                     break;
                 }
             }
-            if (!existsAlready) {
-                TypeOfMeasurement type = typeOfMeasurementService.findTypeOfMeasurementById(typeId);
-                MeasurementPlanTypes planType = new MeasurementPlanTypes();
-                planType.setMeasurementPlan(plan);
-                planType.setTypeOfMeasurement(type);
-                activeTypes.add(planType);
+            if (!exists) {
+                MeasurementTime mt = new MeasurementTime();
+                mt.setPlan(plan);
+                mt.setTime(time);
+                mt.setValidFrom(now);
+                activeTimes.add(mt);
             }
         }
+        measurementTimeRepository.saveAll(activeTimes);
 
-        measurementPlanTypesRepository.saveAll(existingTypes); // archived
-        measurementPlanTypesRepository.saveAll(activeTypes);   // reactivated + new
+        List<MeasurementPlanTypes> existingTypes = measurementPlanTypesRepository.findAllActiveTypesByMeasurementPlanId(plan.getPlanId());
+        List<Integer> requestedTypeIds = request.getTypeOfMeasurementIds();
+        List<MeasurementPlanTypes> activeTypes = new ArrayList<>();
 
-        return mapToMeasurementPlanResponse(plan, activeTypes, newTimes);
+        for (MeasurementPlanTypes existing : existingTypes) {
+            if (!requestedTypeIds.contains(existing.getTypeOfMeasurement().getTypeId())) {
+                existing.setValidTo(now);
+            } else {
+                activeTypes.add(existing);
+            }
+        }
+        measurementPlanTypesRepository.saveAll(existingTypes);
+
+        for (Integer typeId : requestedTypeIds) {
+            boolean exists = false;
+            for (MeasurementPlanTypes active : activeTypes) {
+                if (active.getTypeOfMeasurement().getTypeId() == typeId) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                TypeOfMeasurement type = typeOfMeasurementService.findTypeOfMeasurementById(typeId);
+                MeasurementPlanTypes pt = new MeasurementPlanTypes();
+                pt.setMeasurementPlan(plan);
+                pt.setTypeOfMeasurement(type);
+                pt.setValidFrom(now);
+                activeTypes.add(pt);
+            }
+        }
+        measurementPlanTypesRepository.saveAll(activeTypes);
+
+        return mapToMeasurementPlanResponse(plan, activeTypes, activeTimes);
     }
 
-    public MeasurementPlanResponse findMeasurementPlanByPersonalNumber(String personalNumber) {
+    public Optional<MeasurementPlanResponse>  findMeasurementPlanByPersonalNumber(String personalNumber) {
         Optional<MeasurementPlan> optionalPlan = measurementPlanRepository.findByPersonalNumber(personalNumber);
         if (optionalPlan.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
         MeasurementPlan plan = optionalPlan.get();
-
         List<MeasurementPlanTypes> activePlanTypes = measurementPlanTypesRepository.findAllActiveTypesByMeasurementPlanId(plan.getPlanId());
-        List<MeasurementTime> measurementTimes = measurementTimeRepository.findAllByPlanPlanId(plan.getPlanId());
+        List<MeasurementTime> measurementTimes = measurementTimeRepository.findAllActiveTimesByMeasurementPlanId(plan.getPlanId());
 
-        return mapToMeasurementPlanResponse(plan, activePlanTypes, measurementTimes);
+        return Optional.of( mapToMeasurementPlanResponse(plan, activePlanTypes, measurementTimes));
     }
-
-//    private void validateMeasurementTimes(MeasurementPlanRequest request) {
-//        int requiredTimes = request.getFrequency().getRequiredCountOfTimes();
-//        if (request.getTimesOfPlannedMeasurements().size() != requiredTimes) {
-//            throw new IllegalArgumentException(
-//                    "Frequency " + request.getFrequency() + " requires: " + requiredTimes);
-//        }
-//    }
 
     private MeasurementPlan mapToMeasurementPlan(MeasurementPlanRequest request, Patient patient, Doctor doctor) {
         MeasurementPlan plan = new MeasurementPlan();
@@ -156,7 +174,7 @@ public class MeasurementPlanService {
                 plan.getPlanId(),
                 plan.getPatient().getPersonalNumber(),
                 plan.getDoctor().getPanNumber(),
-                plan.getFrequency().getDescription(),
+                plan.getFrequency(),
                 planTypes.stream().map(pt -> new MeasurementPlanTypesResponse(pt.getTypeOfMeasurement().getTypeId(), pt.getTypeOfMeasurement().getTypeName(), pt.getTypeOfMeasurement().getUnits())).toList(),
                 measurementTimes.stream().map(t -> t.getTime()).toList(),
                 plan.getCreatedAt(),

@@ -22,5 +22,8 @@ public class MeasurementPlanTypes {
     @JoinColumn(name = "type_of_measurement_id")
     private TypeOfMeasurement typeOfMeasurement;
 
-    private LocalDateTime archivedAt;
+    @Column(nullable = false)
+    private LocalDateTime validFrom;
+
+    private LocalDateTime validTo;
 }

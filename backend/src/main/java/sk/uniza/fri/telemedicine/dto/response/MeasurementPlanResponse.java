@@ -1,9 +1,9 @@
 package sk.uniza.fri.telemedicine.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import sk.uniza.fri.telemedicine.enums.constrains.Frequency;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,7 +15,7 @@ public class MeasurementPlanResponse {
     private Integer id;
     private String personalNumber;
     private String panNumber;
-    private String frequency;
+    private Frequency frequency;
 
     private List<MeasurementPlanTypesResponse> typesOfMeasurements;
 
@@ -27,11 +27,4 @@ public class MeasurementPlanResponse {
 
     @JsonFormat(pattern = "HH:mm:ss MM-dd-yyy")
     private LocalDateTime lastUpdateAt;
-
-    @JsonProperty("typeOfMeasurementIds")
-    public List<Integer> getTypeOfMeasurementIds() {
-        return typesOfMeasurements.stream()
-                .map(MeasurementPlanTypesResponse::getId)
-                .toList();
-    }
 }
