@@ -30,8 +30,8 @@ public class MeasurementController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
-    public List<MeasurementRecordResponse> getMeasurementRecord(@RequestParam String personalNumber, @RequestParam Integer typeId, @RequestParam LocalDate from, @RequestParam LocalDate to) {
-        return measurementRecordService.getMeasurementRecordForPatient(personalNumber, typeId, from, to);
+    public List<MeasurementRecordResponse> getMeasurementRecord(@RequestParam String personalNumber, @RequestParam Integer typeId, @RequestParam LocalDate period ) {
+        return measurementRecordService.getMeasurementRecordForPatient(personalNumber, typeId, period);
     }
 
 }

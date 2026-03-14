@@ -7,4 +7,5 @@ import lombok.Getter;
 public class MeasurementPlanTypesResponse {
     private Integer id;
     private String typeName;
+    private String units;
 }

@@ -157,7 +157,7 @@ public class MeasurementPlanService {
                 plan.getPatient().getPersonalNumber(),
                 plan.getDoctor().getPanNumber(),
                 plan.getFrequency().getDescription(),
-                planTypes.stream().map(pt -> new MeasurementPlanTypesResponse(pt.getTypeOfMeasurement().getTypeId(), pt.getTypeOfMeasurement().getTypeName())).toList(),
+                planTypes.stream().map(pt -> new MeasurementPlanTypesResponse(pt.getTypeOfMeasurement().getTypeId(), pt.getTypeOfMeasurement().getTypeName(), pt.getTypeOfMeasurement().getUnits())).toList(),
                 measurementTimes.stream().map(t -> t.getTime()).toList(),
                 plan.getCreatedAt(),
                 plan.getLastUpdateAt()

@@ -55,7 +55,9 @@ public class MeasurementRecordService {
         return value >= typeOfMeasurement.getMinValue() && value <= typeOfMeasurement.getMaxValue();
     }
 
-    public List<MeasurementRecordResponse> getMeasurementRecordForPatient(String personalNumber, Integer typeId, LocalDate from, LocalDate to) {
+    public List<MeasurementRecordResponse> getMeasurementRecordForPatient(String personalNumber, Integer typeId, LocalDate period) {
+        LocalDate from = period.withDayOfMonth(1);
+        LocalDate to = period.withDayOfMonth(period.lengthOfMonth());
         return measurementRecordRepository
                 .findAllByPatientAndTimeBetween(personalNumber,typeId, from, to).stream()
                 .map(record -> this.mapToMeasurementRecordResponse(record))
@@ -75,6 +77,6 @@ public class MeasurementRecordService {
     private MeasurementRecordResponse mapToMeasurementRecordResponse(MeasurementRecord measurementRecord) {
         return new MeasurementRecordResponse(measurementRecord.getTypeOfMeasurement().getTypeName(),
                 measurementRecord.getValue(), measurementRecord.getTypeOfMeasurement().getUnits(),
-                measurementRecord.getTimeOfMeasurement(), measurementRecord.getMeasurementStatus());
+                measurementRecord.getTimeOfMeasurement(), measurementRecord.getMeasurementStatus().getDescription());
     }
 }

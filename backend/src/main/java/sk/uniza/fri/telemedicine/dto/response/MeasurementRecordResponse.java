@@ -15,5 +15,5 @@ public class MeasurementRecordResponse {
         private String units;
         @JsonFormat(pattern = "MM-dd HH:mm:ss")
         private LocalDateTime timeOfMeasurement;
-        private MeasurementStatus status;
+        private String status;
 }
