@@ -30,7 +30,7 @@ export default function PlanModal({ opened, onClose, panNumber, personalNumber, 
     async function fetchTypes() {
       try {
         const response = await api({
-          url: '/measurement-types',
+          url: '/measurement-types/select',
           method: 'get',
         });
         setTypes(response.data);

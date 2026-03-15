@@ -7,12 +7,13 @@ import {
   IconClipboardHeart,
   IconUserCircle,
   IconUsers,
+  IconStethoscope,
 } from '@tabler/icons-react';
 import { useAuth } from '../context/AuthContext';
 
 const navLinks = {
   ADMIN: [
-    { label: 'Prehľad lekarov', path: '/admin/doctors', icon: IconUsers },
+    { label: 'Prehľad lekárov', path: '/admin/doctors', icon: IconStethoscope },
     { label: 'Prehľad pacientov', path: '/admin/patients', icon: IconUsers },
     {
       label: 'Prehľad typov meraní',

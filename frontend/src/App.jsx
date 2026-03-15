@@ -2,12 +2,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AppLayout from './configs/AppLayout';
 import PasswordPage from './pages/other/PasswordPage';
 import LoginPage from './pages/other/LoginPage';
-import PreviewOfDoctors from './pages/admin/PreviewOfDoctors';
-import PreviewOfPatients from './pages/admin/PreviewOfPatients';
+import DoctorsPage from './pages/admin/DoctorsPage';
+import PatientsPage from './pages/admin/PatientsPage';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import PatientDetail from './pages/doctor/PatientDetail';
 import Forbidden from './pages/other/Forbidden';
-import PreviewOfTypes from './pages/admin/PreviewOfTypes';
+import MeasurementTypesPage from './pages/admin/MeasurementTypesPage';
 import Article from './pages/doctor/Article';
 import PatientDashboard from './pages/patient/PatientDashboard';
 
@@ -24,7 +24,7 @@ function App() {
               path="/admin/doctors"
               element={
                 <ProtectedRoute allowedRoles={['ADMIN']}>
-                  <PreviewOfDoctors />
+                  <DoctorsPage />
                 </ProtectedRoute>
               }
             />
@@ -32,7 +32,7 @@ function App() {
               path="/admin/patients"
               element={
                 <ProtectedRoute allowedRoles={['ADMIN']}>
-                  <PreviewOfPatients />
+                  <PatientsPage />
                 </ProtectedRoute>
               }
             />
@@ -40,7 +40,7 @@ function App() {
               path="/admin/types-of-measurements"
               element={
                 <ProtectedRoute allowedRoles={['ADMIN']}>
-                  <PreviewOfTypes />
+                  <MeasurementTypesPage />
                 </ProtectedRoute>
               }
             />
