@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import {  Group, Stack, Button, Title, Alert, Table, TextInput, Loader, Center } from "@mantine/core";
+import { useEffect, useState } from 'react';
+import { Group, Stack, Button, Title, Alert, Table, TextInput, Loader, Center } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
-import AddPatientModal from "../../components/AddPatientModal";
-import { useDisclosure } from '@mantine/hooks'
-import api from "../../configs/api";
+import AddPatientModal from '../../components/AddPatientModal';
+import { useDisclosure } from '@mantine/hooks';
+import api from '../../configs/api';
 
 export default function PreviewOfPatients() {
   const [patients, setPatients] = useState([]);
@@ -13,104 +13,82 @@ export default function PreviewOfPatients() {
 
   const [search, setSearch] = useState('');
   const filtered = patients.filter((item) =>
-    [item.personalData.firstName, item.personalData.lastName, item.personalNumber, item.doctorPanNumber]
-      .some((value) => value.toLowerCase().includes(search.toLowerCase()))
+    [
+      item.personalData.firstName,
+      item.personalData.lastName,
+      item.personalNumber,
+      item.doctorPanNumber,
+    ].some((value) => value.toLowerCase().includes(search.toLowerCase())),
   );
 
   useEffect(() => {
     async function fetchPatients() {
-    try {
-      const response = await api.get('/patients');
-      setPatients(response.data);
-      
-    } catch (err) {
-      if (err.response && err.response.data.message) {
+      try {
+        const response = await api.get('/patients');
+        setPatients(response.data);
+      } catch (err) {
+        if (err.response && err.response.data.message) {
           setError(err.response.data.message);
-      } else {
+        } else {
           setError('Nepodarilo sa načítať dáta');
-  }
-    } finally {
-      setLoading(false);
+        }
+      } finally {
+        setLoading(false);
+      }
     }
-  }
-  fetchPatients();
+    fetchPatients();
   }, []);
 
-  if (loading) return (
+  if (loading)
+    return (
       <Center h="100vh">
-              <Loader color="#0b5942" />
+        <Loader />
       </Center>
     );
 
-  if (patients.length === 0) {
-    return (
-      <Stack p="md">
-      <AddPatientModal opened={opened} onClose={close}/>
-        <Group justify="space-between">
-          <Title order={2}>Prehľad pacientov</Title>
-          <Button
-            color="#0b5942"
-            p="xs"
-            onClick={open}
-          >
-            Pridať pacienta
-          </Button>
-        </Group>
-        <Alert bg="#e5646f61" >
-          Žiadni pacienti nenájdení
-        </Alert>
-      </Stack>
-    );
-  }
-
   return (
     <Stack p="md">
-      <AddPatientModal opened={opened} onClose={close}/>
+      <AddPatientModal opened={opened} onClose={close} />
       <Group justify="space-between">
         <Title order={2}>Prehľad pacientov</Title>
-        <Button
-          bg="#0b5942"
-          c="white"
-          p="xs"
-          onClick={open}
-        >
-          Pridať pacienta
-        </Button>
+        <Button onClick={open}>Pridať pacienta</Button>
       </Group>
 
-      <Alert color="red" hidden={!error}>
-              {error}
-      </Alert>
+      {patients.length === 0 ? (
+        <Alert bg="yellow">Žiadni pacienti nenájdení</Alert>
+      ) : (
+        <>
+          <TextInput
+            placeholder="Hľadať..."
+            leftSection={<IconSearch size={16} />}
+            value={search}
+            onChange={(e) => setSearch(e.currentTarget.value)}
+          />
 
-     <TextInput  
-        placeholder="Hľadať..."
-        leftSection={<IconSearch size={16} />}
-        value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
-      />
-
-     <Table.ScrollContainer minWidth={400} type="native">
-      <Table highlightOnHover>
-        <Table.Thead bg="#0b5942" c="white">
-          <Table.Tr>
-            <Table.Th>Rodné číslo</Table.Th>
-            <Table.Th>Meno</Table.Th>
-            <Table.Th>Priezvisko</Table.Th>
-            <Table.Th>Ošetrujúci lekár</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {filtered.map((d) => (
-            <Table.Tr key={d.personalNumber}>
-              <Table.Td>{d.personalNumber}</Table.Td>
-              <Table.Td>{d.personalData.firstName}</Table.Td>
-              <Table.Td>{d.personalData.lastName}</Table.Td>
-              <Table.Td>{d.doctorPanNumber}</Table.Td>
-            </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
-     </Table.ScrollContainer> 
+          <Table.ScrollContainer minWidth={400} type="native">
+            <Table highlightOnHover>
+              <Table.Thead bg="primary" c="black">
+                <Table.Tr>
+                  <Table.Th>Rodné číslo</Table.Th>
+                  <Table.Th>Meno</Table.Th>
+                  <Table.Th>Priezvisko</Table.Th>
+                  <Table.Th>Ošetrujúci lekár</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                {filtered.map((d) => (
+                  <Table.Tr key={d.personalNumber}>
+                    <Table.Td>{d.personalNumber}</Table.Td>
+                    <Table.Td>{d.personalData.firstName}</Table.Td>
+                    <Table.Td>{d.personalData.lastName}</Table.Td>
+                    <Table.Td>{d.doctorPanNumber}</Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          </Table.ScrollContainer>
+        </>
+      )}
     </Stack>
   );
 }

@@ -44,12 +44,12 @@ export default function Sidebar() {
     <Stack h="100%" justify="space-between">
       <Stack gap="md">
         <Group>
-          <IconUserCircle size={56} color="white" stroke={1} />
+          <IconUserCircle size={64} stroke={1} />
           <Stack gap={0}>
-            <Text c="white" size="md" fw={600}>
+            <Text size="md" fw={600}>
               {user?.firstName} {user?.lastName}
             </Text>
-            <Text c="white" size="xs">
+            <Text size="xs">
               {user?.role}
             </Text>
           </Stack>
@@ -59,22 +59,21 @@ export default function Sidebar() {
           <NavLink
             key={link.path}
             label={
-              <Text c="white" size="md">
+              <Text size="md" fw={500}>
                 {link.label}
               </Text>
             }
-            leftSection={<link.icon size={20} color="white" />}
+            leftSection={<link.icon size={24} />}
             active={location.pathname === link.path}
             onClick={() => navigate(link.path)}
             p="md"
-            color="#00000051"
+            color="#486d7c51"
             variant="filled"
           />
         ))}
       </Stack>
 
       <Text
-        c="white"
         fw={500}
         size="md"
         ta="center"

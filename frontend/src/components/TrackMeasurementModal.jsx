@@ -54,12 +54,6 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
       opened={opened}
       onClose={onClose}
       title="Zaznamenať meranie"
-      centered
-      overlayProps={{
-        backgroundOpacity: 0.8,
-        blur: 5,
-        color: '#0b5942',
-      }}
     >
       <form onSubmit={form.onSubmit(postMeasurement)}>
         <Stack gap="md">
@@ -96,7 +90,6 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
 
           <Button
             type="submit"
-            color="#0b5942"
             p="xs"
             size="md"
             loading={loading}

@@ -48,12 +48,6 @@ export default function AddTypeModal({ opened, onClose }) {
         onClose();
       }}
       title="Pridať typ merania"
-      centered
-      overlayProps={{
-        backgroundOpacity: 0.8,
-        blur: 5,
-        color: "#0b5942",
-      }}
     >
       <Stack gap="md">
         <TextInput
@@ -114,7 +108,6 @@ export default function AddTypeModal({ opened, onClose }) {
         />
 
         <Button
-          color="#0b5942"
           p="xs"
           size="md"
           loading={loading}

@@ -87,12 +87,6 @@ export default function PlanModal({ opened, onClose, panNumber, personalNumber, 
       opened={opened}
       onClose={onClose}
       title={isEdit ? 'Upravit monitorovaci plan' : 'Vytvorit monitorovaci plan'}
-      centered
-      overlayProps={{
-        backgroundOpacity: 0.8,
-        blur: 5,
-        color: '#0b5942',
-      }}
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
@@ -164,12 +158,11 @@ export default function PlanModal({ opened, onClose, panNumber, personalNumber, 
 
           <Button
             type="submit"
-            color="#0b5942"
             p="xs"
             size="md"
             loading={loading}
           >
-            {isEdit ? 'Ulozit plan' : 'Vytvorit plan'}
+            {isEdit ? 'Uložiť plán' : 'Vytvoriť plán'}
           </Button>
         </Stack>
       </form>

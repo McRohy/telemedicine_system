@@ -49,7 +49,7 @@ export default function DoctorDashboard() {
   if (loading)
     return (
       <Center h="100vh">
-        <Loader color="#0b5942" />
+        <Loader />
       </Center>
     );
 
@@ -62,7 +62,7 @@ export default function DoctorDashboard() {
       />
       <Group justify="space-between">
         <Title order={2}>Prehľad pacientov</Title>
-        <Button bg="#0b5942" c="white" p="xs" onClick={open}>
+        <Button fw={400} p="xs" onClick={open}>
           Pridať pacienta
         </Button>
       </Group>
@@ -83,7 +83,7 @@ export default function DoctorDashboard() {
       ) : (
         <Table.ScrollContainer minWidth={400} type="native">
           <Table highlightOnHover>
-            <Table.Thead bg="#0b5942" c="white">
+            <Table.Thead bg="primary">
               <Table.Tr>
                 <Table.Th>Rodné číslo</Table.Th>
                 <Table.Th>Meno</Table.Th>

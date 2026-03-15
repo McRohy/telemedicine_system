@@ -39,7 +39,7 @@ function LoginPage() {
   }
 
   return (
-    <Center w="100vw" h="100vh" bg="#0b5942">
+    <Center w="100vw" h="100vh" bg="primary">
       <Card p="lg" radius="lg" maw={{ base: 300, xs: 450 }}>
         <Stack gap="xl">
           <Stack align="center" gap="xs" m="xs">
@@ -75,7 +75,6 @@ function LoginPage() {
             <Button
               type="submit"
               size="md"
-              color="#0b5942"
               disabled={email == '' || password == ''}
               onClick={() => handleLogin()}
             >

@@ -32,7 +32,7 @@ export default function AppLayout() {
         </Group>
       </AppShell.Header>
 
-      <AppShell.Navbar bg= "#0b5942" p="md">
+      <AppShell.Navbar bg="primary" p="md">
         <Sidebar onClose={close} />
       </AppShell.Navbar>
 

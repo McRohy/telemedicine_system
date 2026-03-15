@@ -30,7 +30,7 @@ function PasswordPage() {
   }
 
   return (
-    <Center w="100vw" h="100vh" bg="#0b5942">
+    <Center w="100vw" h="100vh" bg="primary">
       <Notifications />
       <Card p="lg" radius="lg" maw={{ base: 300, xs: 450 }}>
         <Stack gap="xl">
@@ -59,7 +59,6 @@ function PasswordPage() {
             <Button
               type="submit"
               size="md"
-              color="#0b5942"
               onClick={() => sendPassword()}
             >
               Nastaviť heslo

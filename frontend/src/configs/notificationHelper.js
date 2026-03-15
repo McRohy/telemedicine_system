@@ -1,7 +1,7 @@
 import { notifications } from '@mantine/notifications';
 
 const POSITION = 'top-right';
-const SUCCESS_COLOR = '#0b5942';
+const SUCCESS_COLOR = 'primary';
 const ERROR_COLOR = 'red';
 
 export function notifySuccess(title, message) {

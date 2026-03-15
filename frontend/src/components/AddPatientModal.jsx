@@ -57,12 +57,6 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
         onClose();
       }}
       title="Pridať pacienta"
-      centered
-      overlayProps={{
-        backgroundOpacity: 0.8,
-        blur: 5,
-        color: '#0b5942',
-      }}
     >
       <Stack gap="md">
         <TextInput
@@ -136,7 +130,6 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
         />
 
         <Button
-          color="#0b5942"
           p="xs"
           size="md"
           loading={loading}

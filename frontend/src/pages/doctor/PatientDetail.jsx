@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Group, Stack, Button, Title, Card, Text, Loader, Center, Box, Select } from '@mantine/core';
+import { Group, Stack, Button, Title, Card, Text, Loader, Center, Box, Select, Table } from '@mantine/core';
 import { IconArrowLeft, IconUserCircle, IconMail, IconNotebook, IconUser } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useNavigate, useParams } from 'react-router-dom';
-import { LineChart } from '@mantine/charts';
 import PlanModal from '../../components/PlanModal';
-import { MonthPickerInput } from '@mantine/dates';
 import { notifyError } from '../../configs/notificationHelper';
+import MeasurementChart from '../../components/MeasurementChart';
 import api from '../../configs/api';
 
 export default function PatientDetail() {
@@ -18,11 +17,6 @@ export default function PatientDetail() {
   const [patientData, setPatientData] = useState(null);
   const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  const [measurements, setMeasurements] = useState([]);
-  const [period, setPeriod] = useState(null);
-  const [filterType, setFilterType] = useState('');
-  const [loadingChart, setLoadingChart] = useState(false);
 
   async function fetchPlan() {
     try {
@@ -62,31 +56,10 @@ export default function PatientDetail() {
     init();
   }, [personalNumber]);
 
-  async function getMeasurementPlan() {
-    console.log(period, filterType);
-    setLoadingChart(true);
-    try {
-      const response = await api({
-        url: '/measurements',
-        method: 'get',
-        params: {
-          personalNumber: personalNumber,
-          typeId: Number(filterType),
-          period: period,
-        },
-      });
-      setMeasurements(response.data);
-    } catch (error) {
-      notifyError(error);
-    } finally {
-      setLoadingChart(false);
-    }
-  }
-
   if (loading)
     return (
       <Center h="100vh">
-        <Loader color="#0b5942" />
+        <Loader />
       </Center>
     );
 
@@ -111,7 +84,7 @@ export default function PatientDetail() {
       <Card shadow="sm" p="md" radius="md" withBorder>
         <Stack>
           <Group>
-            <IconUserCircle size={64} />
+            <IconUserCircle size={64} stroke={1}/>
             <Stack>
               <Group>
                 <Title order={4}>{patientData.personalData.firstName}</Title>
@@ -174,8 +147,9 @@ export default function PatientDetail() {
 
           <Button
             variant="light"
+            c="black"
             size="xs"
-            color="#0b5942"
+           
             onClick={openPlanModal}
           >
             {plan ? 'Upraviť plán' : 'Vytvoriť plán'}
@@ -183,70 +157,30 @@ export default function PatientDetail() {
         </Stack>
       </Card>
 
+      <MeasurementChart personalNumber={personalNumber} plan={plan} />
+           
       <Card shadow="sm" p="md" radius="md" withBorder>
-        <Stack>
-          <Title order={3}>Graf meraní</Title>
-          <Stack>
-            <Group grow mb="md">
-              <MonthPickerInput
-                label="Mesiac"
-                placeholder="Vyberte mesiac"
-                locale="sk"
-                clearable
-                value={period}
-                onChange={setPeriod}
-              />
-              <Select
-                label="Typ merania"
-                placeholder="Vyberte typ merania"
-                data={
-                  plan
-                    ? plan.typesOfMeasurements.map((t) => ({
-                        value: String(t.id),
-                        label: t.typeName,
-                      }))
-                    : []
-                }
-                searchable
-                clearable
-                value={filterType}
-                onChange={setFilterType}
-              />
-            </Group>
-            <Button
-              variant="outline"
-              color="#0b5942"
-              p="xs"
-              size="sm"
-              loading={loadingChart}
-              disabled={!filterType || !period}
-              onClick={() => getMeasurementPlan()}
-            >
-              Zobraziť
-            </Button>
-          </Stack>
-
-          <Box h={300} pos="relative">
-            {measurements.length > 0 ? (
-              <LineChart
-                h={300}
-                withPointLabels
-                data={measurements}
-                dataKey="timeOfMeasurement"
-                series={[
-                  { name: 'value', color: 'orange', label: 'hodnota merania' },
-                ]}
-                valueFormatter={(value) => `${value} ${measurements[0].units}`}
-              />
-            ) : (
-              <Center h="100%">
-                <Text size="sm" c="dimmed">
-                  Žiadne merania nenájdené.
-                </Text>
-              </Center>
-            )}
-          </Box>
-        </Stack>
+        <Table.ScrollContainer minWidth={400} type="native">
+                  <Table highlightOnHover>
+                    <Table.Thead bg="primary" c="black">
+                      <Table.Tr>
+                        <Table.Th>Typ merania</Table.Th>
+                        <Table.Th>Hodnota merania</Table.Th>
+                        <Table.Th>Čas merania</Table.Th>
+                        <Table.Th>Status merania</Table.Th>
+                      </Table.Tr>
+                    </Table.Thead>
+                    <Table.Tbody>
+                        <Table.Tr
+                        >
+                          <Table.Td></Table.Td>
+                          <Table.Td></Table.Td>
+                          <Table.Td></Table.Td>
+                        </Table.Tr>
+            
+                    </Table.Tbody>
+                  </Table>
+                </Table.ScrollContainer>
       </Card>
     </Stack>
   );
