@@ -1,5 +1,7 @@
 package sk.uniza.fri.telemedicine.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import sk.uniza.fri.telemedicine.entities.Patient;
@@ -27,4 +29,6 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
     @Query("SELECT p.personalNumber FROM Patient p JOIN p.personalData pd WHERE pd.email = :email")
     Optional<String> findPersonalNumberByEmail(String email);
 
+    @Query("SELECT p FROM Patient p JOIN p.personalData pd WHERE LOWER(pd.lastName) LIKE LOWER(CONCAT(:searchLastName, '%'))")
+    Page<Patient> findByPersonalDataLastNameContainingIgnoreCase(String searchLastName, Pageable pageable);
 }

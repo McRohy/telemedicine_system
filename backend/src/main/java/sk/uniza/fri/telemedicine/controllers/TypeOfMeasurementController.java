@@ -1,6 +1,7 @@
 package sk.uniza.fri.telemedicine.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +21,19 @@ public class TypeOfMeasurementController {
         this.typeOfMeasurementService = typeOfMeasurementService;
     }
 
-    @GetMapping
+    @GetMapping("/select")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
-    public List<TypeOfMeasurementResponse> getAllTypesOfMeasurement() {
-        return typeOfMeasurementService.getAllTypesOfMeasurement();
+    public List<TypeOfMeasurementResponse> getAllTypesOfMeasurementForSelect() {
+        return typeOfMeasurementService.getAllTypesOfMeasurementForSelect();
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<TypeOfMeasurementResponse> getAllTypesOfMeasurement(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchTypeName) {
+        return typeOfMeasurementService.getAllTypesOfMeasurement(page, size, searchTypeName);
     }
 
     @PutMapping("/{id}")

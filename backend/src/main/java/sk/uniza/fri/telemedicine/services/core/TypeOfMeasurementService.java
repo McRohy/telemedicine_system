@@ -1,8 +1,13 @@
 package sk.uniza.fri.telemedicine.services.core;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
+import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
 import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
@@ -19,11 +24,21 @@ public class TypeOfMeasurementService {
         this.typeOfMeasurementRepository = typeOfMeasurementRepository;
     }
 
-    public List<TypeOfMeasurementResponse> getAllTypesOfMeasurement() {
+    public List<TypeOfMeasurementResponse> getAllTypesOfMeasurementForSelect() {
         return typeOfMeasurementRepository.findAll()
                 .stream()
                 .map(t -> this.mapToTypeOfMeasurementResponse(t))
                 .toList();
+    }
+
+    public Page<TypeOfMeasurementResponse> getAllTypesOfMeasurement(int page, int size, String searchTypeName) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("typeName").ascending());
+
+        if (searchTypeName != null && !searchTypeName.isBlank()) {
+            return typeOfMeasurementRepository.findByTypeNameContainingIgnoreCase(searchTypeName, pageable)
+                    .map(type -> mapToTypeOfMeasurementResponse(type));
+        }
+        return typeOfMeasurementRepository.findAll(pageable).map(type -> mapToTypeOfMeasurementResponse(type));
     }
 
     @Transactional

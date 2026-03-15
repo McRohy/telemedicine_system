@@ -1,6 +1,10 @@
 package sk.uniza.fri.telemedicine.services.core;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
@@ -33,11 +37,16 @@ public class DoctorService {
         return mapToDoctorResponse(doctor);
     }
 
-    public List<DoctorResponse> getAllDoctors() {
-        return doctorRepository.findAll()
-                .stream()
-                .map(doctor -> mapToDoctorResponse(doctor))
-                .toList();
+    public Page<DoctorResponse> getAllDoctors(int page, int size, String searchLastName) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("personalData.lastName").ascending());
+
+        if (searchLastName != null && !searchLastName.isBlank()) {
+            return doctorRepository.findByPersonalDataLastNameContainingIgnoreCase(searchLastName, pageable)
+                    .map(doctor -> mapToDoctorResponse(doctor));
+        }
+        return doctorRepository.findAll(pageable)
+                .map(doctor -> mapToDoctorResponse(doctor));
+
     }
 
     public Doctor findByPanNumber(String panNumber) {
