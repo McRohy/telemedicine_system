@@ -66,7 +66,7 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
           <Select
             label="Typ merania"
             placeholder="Vyberte typ merania"
-            data={plan.typesOfMeasurements.map((t) => ({
+            data={plan?.typesOfMeasurements.map((t) => ({
               value: String(t.id),
               label: t.typeName,
             }))}
