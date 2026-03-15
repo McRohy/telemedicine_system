@@ -36,20 +36,6 @@ public class TypeOfMeasurementController {
         return typeOfMeasurementService.getAllTypesOfMeasurement(page, size, searchTypeName);
     }
 
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public TypeOfMeasurementResponse updateTypeOfMeasurement(
-            @PathVariable Integer id, @Valid @RequestBody TypeOfMeasurementRequest request
-    ) {
-        return typeOfMeasurementService.updateMinMaxTypeOfMeasurement(id, request);
-    }
-
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public TypeOfMeasurementResponse getTypeOfMeasurementById(@PathVariable Integer id) {
-        return typeOfMeasurementService.findTypeOfMeasurementByIdResponse(id);
-    }
-
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('ADMIN')")

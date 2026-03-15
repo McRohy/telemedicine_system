@@ -52,25 +52,9 @@ public class TypeOfMeasurementService {
        return this.mapToTypeOfMeasurementResponse(typeOfMeasurement);
     }
 
-    @Transactional
-    public TypeOfMeasurementResponse updateMinMaxTypeOfMeasurement(Integer id, TypeOfMeasurementRequest request) {
-        TypeOfMeasurement typeOfMeasurement = typeOfMeasurementRepository.findById(id).orElseThrow(
-                () -> new NotFoundException("Type of measurement with id : " + id + " not found"));
-
-        typeOfMeasurement.setMinValue(request.getMinValue());
-        typeOfMeasurement.setMaxValue(request.getMaxValue());
-        typeOfMeasurementRepository.save(typeOfMeasurement);
-
-        return this.mapToTypeOfMeasurementResponse(typeOfMeasurement);
-    }
-
     public TypeOfMeasurement findTypeOfMeasurementById(Integer id){
         return typeOfMeasurementRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Type of measurement with id : " + id + " not found"));
-    }
-
-    public TypeOfMeasurementResponse findTypeOfMeasurementByIdResponse(Integer id){
-        return this.mapToTypeOfMeasurementResponse(findTypeOfMeasurementById(id));
     }
 
     private TypeOfMeasurement mapToTypeOfMeasurement(TypeOfMeasurementRequest request) {
