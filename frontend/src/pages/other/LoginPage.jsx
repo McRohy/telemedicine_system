@@ -1,42 +1,12 @@
 import { BsHeartPulse } from 'react-icons/bs';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Button,
-  Card,
-  Stack,
-  PasswordInput,
-  Title,
-  Text,
-  TextInput,
-  Center,
-  Alert,
-} from '@mantine/core';
+import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center, Alert } from '@mantine/core';
 import { useAuth } from '../../context/AuthContext';
 
 function LoginPage() {
-  const { user, login } = useAuth();
+  const { login, error } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
-
-  const navigate = useNavigate();
-
-  async function handleLogin() {
-    try {
-      await login({ email, password });
-      if (user.role === 'DOCTOR') {
-        navigate('/doctor/dashboard');
-      } else if (user.role === 'ADMIN') {
-        navigate('/admin/doctors');
-      } else if (user.role === 'PATIENT') {
-        navigate('/patient/dashboard');
-      }
-    } catch (err) {
-      console.log(err.response);
-      setError(err.response?.data?.message || 'Nastala chyba pri prihlásovaní');
-    }
-  }
 
   return (
     <Center w="100vw" h="100vh" bg="primary">
@@ -76,7 +46,7 @@ function LoginPage() {
               type="submit"
               size="md"
               disabled={email == '' || password == ''}
-              onClick={() => handleLogin()}
+              onClick={() => login({ email, password })}
             >
               Prihlásiť sa
             </Button>
