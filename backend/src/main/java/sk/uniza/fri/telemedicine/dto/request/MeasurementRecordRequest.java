@@ -9,14 +9,14 @@ import lombok.Getter;
 public class MeasurementRecordRequest {
 
     @NotNull(message = "Personal number is mandatory")
-    @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 11 digits")
+    @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 10 digits")
     private String personalNumber;
 
     @NotNull(message = "Type of measurement is mandatory")
     private Integer typeOfMeasurementId;
 
     @NotNull(message = "Value is mandatory")
-    private Integer value;
+    private Double value;
 
     private String note;
 }

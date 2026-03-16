@@ -1,6 +1,10 @@
-package sk.uniza.fri.telemedicine.services;
+package sk.uniza.fri.telemedicine.services.core;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.PatientRequest;
 import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
@@ -37,22 +41,27 @@ public class PatientService {
         return mapToPatientResponse(patient);
     }
 
-    public List<PatientResponse> getAllByDoctorsPanNumber(String panNumber) {
-        return patientRepository.findAllByPanNumber(panNumber)
-                .stream()
-                .map(p -> mapToPatientResponse(p))
-                .toList();
+    public Page<PatientResponse> getAllByDoctorsPanNumber(String panNumber, int page, int size, String searchLastName) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("personalData.lastName").ascending());
+        if (searchLastName != null && !searchLastName.isBlank()) {
+            return patientRepository.findByPanNumberAndPersonalDataLastNameContainingIgnoreCase(panNumber, searchLastName, pageable)
+                    .map(patient -> mapToPatientResponse(patient));
+        }
+        return patientRepository.findAllByPanNumber(panNumber, pageable).map(p -> mapToPatientResponse(p));
+    }
+
+    public Page<PatientResponse> getAllPatients(int page, int size, String searchLastName) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("personalData.lastName").ascending());
+
+        if (searchLastName != null && !searchLastName.isBlank()) {
+            return patientRepository.findByPersonalDataLastNameContainingIgnoreCase(searchLastName, pageable)
+                    .map(patient -> mapToPatientResponse(patient));
+        }
+        return patientRepository.findAll(pageable).map(p -> mapToPatientResponse(p));
     }
 
     public PatientResponse getPatientByPersonalNumber(String personalNumber) {
         return mapToPatientResponse(this.findByPersonalNumber(personalNumber));
-    }
-
-    public List<PatientResponse> getAllPatients() {
-        return patientRepository.findAll()
-                .stream()
-                .map(p -> mapToPatientResponse(p))
-                .toList();
     }
 
     public Patient findByPersonalNumber(String personalNumber){
@@ -69,6 +78,11 @@ public class PatientService {
     public String getPatientFullNameByPersonalNumber(String personalNumber) {
         return patientRepository.findFullNameByPernosalNumber(personalNumber)
                 .orElseThrow(() -> new NotFoundException("Patient with personal number: " + personalNumber + " not found"));
+    }
+
+    public String getPatientPersonalNumberByEmail(String email) {
+        return patientRepository.findPersonalNumberByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Patient with email: " + email + " not found"));
     }
 
     private Patient mapToPatient(PatientRequest request, PersonalData personalData, Doctor doctor) {

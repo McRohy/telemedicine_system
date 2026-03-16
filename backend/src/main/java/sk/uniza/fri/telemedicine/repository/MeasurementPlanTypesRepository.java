@@ -11,4 +11,9 @@ public interface MeasurementPlanTypesRepository extends JpaRepository<Measuremen
 
     @Query("SELECT mpt FROM MeasurementPlanTypes mpt WHERE mpt.measurementPlan.planId = :planId")
     List<MeasurementPlanTypes> findAllByPlanId(Integer planId);
+
+    // active
+    @Query("SELECT mpt FROM MeasurementPlanTypes mpt WHERE mpt.measurementPlan.planId = :planId AND mpt.validTo IS NULL")
+    List<MeasurementPlanTypes> findAllActiveTypesByMeasurementPlanId(Integer planId);
+
 }

@@ -1,18 +1,18 @@
 package sk.uniza.fri.telemedicine.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
 import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
-import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
-import sk.uniza.fri.telemedicine.services.TypeOfMeasurementService;
+import sk.uniza.fri.telemedicine.services.core.TypeOfMeasurementService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/types")
+@RequestMapping("/api/measurement-types")
 public class TypeOfMeasurementController {
 
     private final TypeOfMeasurementService typeOfMeasurementService;
@@ -21,10 +21,19 @@ public class TypeOfMeasurementController {
         this.typeOfMeasurementService = typeOfMeasurementService;
     }
 
+    @GetMapping("/select")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
+    public List<TypeOfMeasurementResponse> getAllTypesOfMeasurementForSelect() {
+        return typeOfMeasurementService.getAllTypesOfMeasurementForSelect();
+    }
+
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<TypeOfMeasurementResponse> getAllTypesOfMeasurement() {
-        return typeOfMeasurementService.getAllTypesOfMeasurement();
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<TypeOfMeasurementResponse> getAllTypesOfMeasurement(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchTypeName) {
+        return typeOfMeasurementService.getAllTypesOfMeasurement(page, size, searchTypeName);
     }
 
     @PostMapping

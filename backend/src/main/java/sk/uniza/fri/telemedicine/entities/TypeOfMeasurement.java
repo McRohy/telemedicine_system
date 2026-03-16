@@ -21,8 +21,8 @@ public class TypeOfMeasurement {
     private String units;
 
     @Column( nullable = false)
-    private Integer minValue;
+    private Double minValue;
 
     @Column(nullable = false)
-    private Integer maxValue;
+    private Double maxValue;
 }

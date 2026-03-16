@@ -28,7 +28,7 @@ public class EmailSender {
         }
     }
 
-    public void sendMeasurementRecordAlert(String careProviderEmail, String patientFullName, Integer value, String units) {
+    public void sendMeasurementRecordAlert(String careProviderEmail, String patientFullName, Double value, String units) {
         sendMail(careProviderEmail, EmailText.SUBJECT_ALERT_RECORD.getText(),
                 EmailText.CONTENT_ALERT_RECORD.getText().formatted(patientFullName, value, units));
     }

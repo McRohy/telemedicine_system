@@ -1,13 +1,13 @@
 package sk.uniza.fri.telemedicine.controllers;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
-import sk.uniza.fri.telemedicine.services.DoctorService;
-import java.util.List;
+import sk.uniza.fri.telemedicine.services.core.DoctorService;
 
 @RestController
 @RequestMapping("/api/doctors")
@@ -27,17 +27,12 @@ public class DoctorController {
     }
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public List<DoctorResponse> getAllDoctors() {
-        return doctorService.getAllDoctors();
-    }
-
-    @GetMapping("/{panNumber}")
-    @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyRole('DOCTOR')")
-    public DoctorResponse findByPanNumber(@PathVariable String panNumber) {
-        return doctorService.findDoctorByPanNumberResponse(panNumber);
+    @PreAuthorize("hasRole('ADMIN')")
+    public Page<DoctorResponse> getAllDoctors(
+                                              @RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size,
+                                              @RequestParam(required = false) String searchLastName) {
+        return doctorService.getAllDoctors(page, size, searchLastName);
     }
 }
 

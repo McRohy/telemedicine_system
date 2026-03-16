@@ -1,11 +1,10 @@
 package sk.uniza.fri.telemedicine.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import sk.uniza.fri.telemedicine.enums.constrains.Frequency;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
 public class MeasurementPlanRequest {
 
     @NotNull(message = "Personal number is mandatory")
-    @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 11 digits")
+    @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 10 digits")
     private  String personalNumber;
 
     @NotNull(message = "Pan number is mandatory")
@@ -22,13 +21,12 @@ public class MeasurementPlanRequest {
     private String panNumber;
 
     @NotNull(message = "Frequency is mandatory")
-    @Size(max=20)
-    private String  frequency;
+    private Frequency frequency;
 
-    @NotNull(message = "Time of planned measurement is mandatory")
+    @NotEmpty(message = "Time is mandatory")
     @JsonFormat(pattern = "HH:mm") //Jackson map it to LocalTime
-    private LocalTime timeOfPlannedMeasurements;
+    private List<LocalTime> timesOfPlannedMeasurements;
 
-    @NotNull(message = "At least one type of measurement is required")
-     private List<Integer> typeOfMeasurementIds;
+    @NotEmpty(message = "Types are mandatory") //controls null and empty list
+    private List<Integer> typeOfMeasurementIds;
 }

@@ -5,9 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import sk.uniza.fri.telemedicine.enums.constrains.Specialization;
 
 @Getter
 @AllArgsConstructor
@@ -21,7 +21,6 @@ public class DoctorRequest {
     @NotNull(message = "Personal data is mandatory")
     private PersonalDataRequest personalData;
 
-    @NotBlank(message = "Specialization is mandatory")
-    @Size(max=20)
-    private String specialization;
+    @NotNull(message = "Specialization is mandatory")
+    private Specialization specialization;
 }

@@ -20,10 +20,10 @@ public class TypeOfMeasurementRequest {
 
     @NotNull(message = "Minimum value is mandatory")
     @Positive
-    private Integer minValue;
+    private Double minValue;
 
     @NotNull(message = "Maximum value is mandatory")
     @Positive
-    private Integer maxValue;
+    private Double maxValue;
 
 }
