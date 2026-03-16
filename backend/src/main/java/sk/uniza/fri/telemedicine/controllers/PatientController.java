@@ -28,16 +28,20 @@ public class PatientController {
         return patientService.createPatient(request);
     }
 
-    @GetMapping(params = "panNumber")
-    @PreAuthorize("hasRole('DOCTOR')")
-    public List<PatientResponse> getPatientsByPanNumber(@RequestParam String panNumber) {
-        return patientService.getAllByDoctorsPanNumber(panNumber);
-    }
-
     @GetMapping("/{personalNumber}")
     @PreAuthorize("hasRole('DOCTOR')")
     public PatientResponse getPatientByPersonalNumber(@PathVariable String personalNumber) {
         return patientService.getPatientByPersonalNumber(personalNumber);
+    }
+
+    @GetMapping(params = "panNumber")
+    @PreAuthorize("hasRole('DOCTOR')")
+    public Page<PatientResponse> getPatientsByPanNumber(
+                                                @RequestParam(required = true) String panNumber,
+                                                @RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size,
+                                                @RequestParam(required = false) String searchLastName) {
+        return patientService.getAllByDoctorsPanNumber(panNumber, page, size, searchLastName);
     }
 
     @GetMapping

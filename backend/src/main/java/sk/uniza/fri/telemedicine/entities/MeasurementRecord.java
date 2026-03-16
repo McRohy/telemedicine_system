@@ -9,22 +9,23 @@ import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
 import java.time.LocalDateTime;
 
 @Entity
-@IdClass(MeasurementRecordId.class)
 @Setter @Getter @NoArgsConstructor
 public class MeasurementRecord {
 
     @Id
-    private LocalDateTime timeOfMeasurement;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer  id;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "type_of_measurement_id", nullable = false)
     private TypeOfMeasurement typeOfMeasurement;
 
-    @Id
     @ManyToOne
     @JoinColumn(name = "personal_number", nullable = false)
     private Patient patient;
+
+    @Column(nullable = false)
+    private LocalDateTime timeOfMeasurement;
 
     @Column(nullable = false)
     private Double value;

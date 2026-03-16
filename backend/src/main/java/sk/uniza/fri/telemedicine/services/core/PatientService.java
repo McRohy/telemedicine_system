@@ -41,15 +41,13 @@ public class PatientService {
         return mapToPatientResponse(patient);
     }
 
-    public List<PatientResponse> getAllByDoctorsPanNumber(String panNumber) {
-        return patientRepository.findAllByPanNumber(panNumber)
-                .stream()
-                .map(p -> mapToPatientResponse(p))
-                .toList();
-    }
-
-    public PatientResponse getPatientByPersonalNumber(String personalNumber) {
-        return mapToPatientResponse(this.findByPersonalNumber(personalNumber));
+    public Page<PatientResponse> getAllByDoctorsPanNumber(String panNumber, int page, int size, String searchLastName) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("personalData.lastName").ascending());
+        if (searchLastName != null && !searchLastName.isBlank()) {
+            return patientRepository.findByPanNumberAndPersonalDataLastNameContainingIgnoreCase(panNumber, searchLastName, pageable)
+                    .map(patient -> mapToPatientResponse(patient));
+        }
+        return patientRepository.findAllByPanNumber(panNumber, pageable).map(p -> mapToPatientResponse(p));
     }
 
     public Page<PatientResponse> getAllPatients(int page, int size, String searchLastName) {
@@ -60,6 +58,10 @@ public class PatientService {
                     .map(patient -> mapToPatientResponse(patient));
         }
         return patientRepository.findAll(pageable).map(p -> mapToPatientResponse(p));
+    }
+
+    public PatientResponse getPatientByPersonalNumber(String personalNumber) {
+        return mapToPatientResponse(this.findByPersonalNumber(personalNumber));
     }
 
     public Patient findByPersonalNumber(String personalNumber){

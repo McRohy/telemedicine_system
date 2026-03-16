@@ -1,9 +1,14 @@
 package sk.uniza.fri.telemedicine.services.core;
 
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementRecordRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementRecordResponse;
+import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
 import sk.uniza.fri.telemedicine.entities.MeasurementRecord;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
@@ -64,6 +69,15 @@ public class MeasurementRecordService {
                 .toList();
     }
 
+    public Page<MeasurementRecordResponse> getAllMeasurementRecords(String personalNumber, int page, int size, Integer typeId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement").ascending());
+        if (typeId != null) {
+            return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeContainingIgnoreCaseOrderByTimeOfMeasurementDesc(personalNumber, typeId, pageable)
+                    .map(patient -> mapToMeasurementRecordResponse(patient));
+        }
+        return measurementRecordRepository.findByPersonalNumberContainingIgnoreCaseOrderByTimeOfMeasurementDesc(personalNumber, pageable).map(p -> mapToMeasurementRecordResponse(p));
+    }
+
     private MeasurementRecord mapToMeasurementRecord(MeasurementRecordRequest request, Patient patient, TypeOfMeasurement typeOfMeasurement) {
         MeasurementRecord measurementRecord = new MeasurementRecord();
         measurementRecord.setTimeOfMeasurement(LocalDateTime.now());
@@ -75,8 +89,8 @@ public class MeasurementRecordService {
     }
 
     private MeasurementRecordResponse mapToMeasurementRecordResponse(MeasurementRecord measurementRecord) {
-        return new MeasurementRecordResponse(measurementRecord.getTypeOfMeasurement().getTypeName(),
+        return new MeasurementRecordResponse(measurementRecord.getId(), measurementRecord.getTypeOfMeasurement().getTypeName(),
                 measurementRecord.getValue(), measurementRecord.getTypeOfMeasurement().getUnits(),
-                measurementRecord.getTimeOfMeasurement(), measurementRecord.getMeasurementStatus().getDescription());
+                measurementRecord.getTimeOfMeasurement(), measurementRecord.getMeasurementStatus(), measurementRecord.getNote());
     }
 }

@@ -10,10 +10,12 @@ import java.time.LocalDateTime;
 @Getter //for Json serialization
 @AllArgsConstructor
 public class MeasurementRecordResponse {
+        private Integer id;
         private String typeName;
         private Double value;
         private String units;
-        @JsonFormat(pattern = "MM-dd HH:mm:ss")
+        @JsonFormat(pattern = "MM.dd. HH:mm:ss")
         private LocalDateTime timeOfMeasurement;
-        private String status;
+        private MeasurementStatus status;
+        private String note;
 }
