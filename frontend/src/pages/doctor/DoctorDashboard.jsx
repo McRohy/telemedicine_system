@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import { Group, Stack, Button, Title, Table, Loader, Center, TextInput } from '@mantine/core';
+import { useCallback, useEffect, useState } from 'react';
+import { Group, Stack, Button, Title, Table, Loader, Center, TextInput, Card, Pagination, Anchor } from '@mantine/core';
 import AddPatientModal from '../../components/AddPatientModal';
-import { useDisclosure } from '@mantine/hooks';
-import { useNavigate } from 'react-router-dom';
-import { IconSearch } from '@tabler/icons-react';
+import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
+import { Link } from 'react-router-dom';
+import { IconSearch, IconArrowUpRight } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
 import { notifyError } from '../../configs/notificationHelper';
 import api from '../../configs/api';
@@ -11,40 +11,38 @@ import api from '../../configs/api';
 export default function DoctorDashboard() {
   const { user } = useAuth();
   const actualDoctorPanNumber = user?.identificationNumber;
-  const navigate = useNavigate();
-  const [patients, setPatients] = useState([]);
+
   const [opened, { open, close }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
 
+  const [page, setPage] = useState(1);
+  const [data, setData] = useState({ content: [], totalPages: 0 });
   const [search, setSearch] = useState('');
-  const filtered = patients.filter((item) =>
-    [
-      item.personalData.firstName,
-      item.personalData.lastName,
-      item.personalNumber,
-      item.doctorPanNumber,
-    ].some((value) => value.toLowerCase().includes(search.toLowerCase())),
-  );
+  const [debouncedSearch] = useDebouncedValue(search, 300);
+
+  const getPatients = useCallback(async () => {
+    try {
+      const response = await api({
+        url: '/patients',
+        method: 'get',
+        params: {
+          panNumber: actualDoctorPanNumber,
+          page: page - 1, //React 1, Spring 0
+          size: 20,
+          searchLastName: debouncedSearch || undefined,
+        },
+      });
+      setData(response.data);
+    } catch (error) {
+      notifyError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [actualDoctorPanNumber, page, debouncedSearch]);
 
   useEffect(() => {
-    async function getPatients() {
-      try {
-        const response = await api({
-          url: '/patients',
-          method: 'get',
-          params: {
-            panNumber: actualDoctorPanNumber,
-          },
-        });
-        setPatients(response.data);
-      } catch (error) {
-        notifyError(error);
-      } finally {
-        setLoading(false);
-      }
-    }
     getPatients();
-  }, [actualDoctorPanNumber]);
+  }, [getPatients]);
 
   if (loading)
     return (
@@ -57,55 +55,72 @@ export default function DoctorDashboard() {
     <Stack p="md">
       <AddPatientModal
         opened={opened}
-        onClose={close}
+        onClose={() => {
+          close();
+          getPatients(1);
+        }}
         doctorPanNumber={actualDoctorPanNumber}
       />
       <Group justify="space-between">
         <Title order={2}>Prehľad pacientov</Title>
-        <Button fw={400} p="xs" onClick={open}>
+        <Button p="xs" onClick={open}>
           Pridať pacienta
         </Button>
       </Group>
 
       <TextInput
-        placeholder="Hľadať..."
+        placeholder="Hľadať podľa priezviska"
         leftSection={<IconSearch size={16} />}
         value={search}
         onChange={(e) => setSearch(e.currentTarget.value)}
       />
 
-      {patients.length === 0 ? (
-        <Center h="100%">
-          <Text size="sm" c="dimmed">
-            Žiadne merania nenájdené.
-          </Text>
-        </Center>
+      {data.content.length === 0 ? (
+        <Alert bg="yellow">Žiadni pacienti nenájdení</Alert>
       ) : (
-        <Table.ScrollContainer minWidth={400} type="native">
-          <Table highlightOnHover>
-            <Table.Thead bg="primary">
-              <Table.Tr>
-                <Table.Th>Rodné číslo</Table.Th>
-                <Table.Th>Meno</Table.Th>
-                <Table.Th>Priezvisko</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {filtered.map((d) => (
-                <Table.Tr
-                  key={d.personalNumber}
-                  onClick={() =>
-                    navigate(`/doctor/patients/${d.personalNumber}`)
-                  }
-                >
-                  <Table.Td>{d.personalNumber}</Table.Td>
-                  <Table.Td>{d.personalData.firstName}</Table.Td>
-                  <Table.Td>{d.personalData.lastName}</Table.Td>
+        <Card withBorder shadow="sm" p="md">
+          <Table.ScrollContainer minWidth={400} type="native">
+            <Table highlightOnHover>
+              <Table.Thead bg="primary">
+                <Table.Tr>
+                  <Table.Th>Priezvisko</Table.Th>
+                  <Table.Th>Meno</Table.Th>
+                  <Table.Th>Pohlavie</Table.Th>
+                  <Table.Th>Rodné číslo</Table.Th>
+                  <Table.Th><IconArrowUpRight size={16} color="black" /></Table.Th>
                 </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
-        </Table.ScrollContainer>
+              </Table.Thead>
+              <Table.Tbody>
+                {data.content.map((d) => (
+                  <Table.Tr key={d.personalNumber} cursor="pointer">
+                    <Table.Td>{d.personalData.lastName}</Table.Td>
+                    <Table.Td>{d.personalData.firstName}</Table.Td>
+                    <Table.Td>{d.gender === 'MALE' ? 'Muž' : 'Žena'}</Table.Td>
+                    <Table.Td>{d.personalNumber}</Table.Td>
+                    <Table.Td>
+                      <Anchor
+                        component={Link}
+                        to={`/doctor/patients/${d.personalNumber}`}
+                        size="xs"
+                      >
+                        <IconArrowUpRight size={16} color="blue" />
+                      </Anchor>
+                    </Table.Td>
+                  </Table.Tr>
+                ))}
+              </Table.Tbody>
+            </Table>
+          </Table.ScrollContainer>
+
+          <Pagination
+            justify="flex-end"
+            size="sm"
+            total={data.totalPages}
+            value={page}
+            onChange={setPage}
+            mt="sm"
+          />
+        </Card>
       )}
     </Stack>
   );

@@ -7,6 +7,7 @@ import api from '../../configs/api';
 import TrackMeasurementModal from '../../components/TrackMeasurementModal';
 import { notifyError } from '../../configs/notificationHelper';
 import MeasurementChart from '../../components/MeasurementChart';
+import MeasurementTable from '../../components/MeasurementTable';
 
 export default function PatientDashboard() {
   const { user } = useAuth();
@@ -99,6 +100,7 @@ export default function PatientDashboard() {
         </Group>
       </Card>
       <MeasurementChart personalNumber={personalNumber} plan={plan} />
+      <MeasurementTable personalNumber={personalNumber} plan={plan}/>
     </Stack>
   );
 }

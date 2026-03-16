@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Group, Stack, Button, Title, Card, Text, Loader, Center, Box, Select, Table } from '@mantine/core';
+import { Group, Stack, Button, Title, Card, Text, Loader, Center } from '@mantine/core';
 import { IconArrowLeft, IconUserCircle, IconMail, IconNotebook, IconUser } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,6 +7,7 @@ import PlanModal from '../../components/PlanModal';
 import { notifyError } from '../../configs/notificationHelper';
 import MeasurementChart from '../../components/MeasurementChart';
 import api from '../../configs/api';
+import MeasurementTable from '../../components/MeasurementTable';
 
 export default function PatientDetail() {
   const { personalNumber } = useParams();
@@ -84,7 +85,7 @@ export default function PatientDetail() {
       <Card shadow="sm" p="md" radius="md" withBorder>
         <Stack>
           <Group>
-            <IconUserCircle size={64} stroke={1}/>
+            <IconUserCircle size={64} stroke={1} />
             <Stack>
               <Group>
                 <Title order={4}>{patientData.personalData.firstName}</Title>
@@ -94,7 +95,9 @@ export default function PatientDetail() {
               <Group>
                 <Group gap={3}>
                   <IconUser size={16} />
-                  <Text size="sm">{patientData.gender === 'MALE' ? 'Muž' : 'Žena'}</Text>
+                  <Text size="sm">
+                    {patientData.gender === 'MALE' ? 'Muž' : 'Žena'}
+                  </Text>
                 </Group>
                 <Group gap={3}>
                   <IconNotebook size={16} />
@@ -129,7 +132,9 @@ export default function PatientDetail() {
                   <Text size="sm">Posledna úprava:</Text>
                 </Stack>
                 <Stack>
-                  <Text size="sm">{plan?.frequency === 'ONE_TIME_DAILY' ? '1x denne' : '2x denne'}</Text>
+                  <Text size="sm">
+                    {plan?.frequency === 'ONE_TIME_DAILY' ? '1x denne': '2x denne'}
+                  </Text>
                   <Text size="sm">
                     {plan?.timesOfPlannedMeasurements?.join(', ')}
                   </Text>
@@ -145,43 +150,15 @@ export default function PatientDetail() {
             </Card>
           )}
 
-          <Button
-            variant="light"
-            c="black"
-            size="xs"
-           
-            onClick={openPlanModal}
-          >
+          <Button variant="light" c="black" size="xs" onClick={openPlanModal}>
             {plan ? 'Upraviť plán' : 'Vytvoriť plán'}
           </Button>
         </Stack>
       </Card>
 
       <MeasurementChart personalNumber={personalNumber} plan={plan} />
-           
-      <Card shadow="sm" p="md" radius="md" withBorder>
-        <Table.ScrollContainer minWidth={400} type="native">
-                  <Table highlightOnHover>
-                    <Table.Thead bg="primary" c="black">
-                      <Table.Tr>
-                        <Table.Th>Typ merania</Table.Th>
-                        <Table.Th>Hodnota merania</Table.Th>
-                        <Table.Th>Čas merania</Table.Th>
-                        <Table.Th>Status merania</Table.Th>
-                      </Table.Tr>
-                    </Table.Thead>
-                    <Table.Tbody>
-                        <Table.Tr
-                        >
-                          <Table.Td></Table.Td>
-                          <Table.Td></Table.Td>
-                          <Table.Td></Table.Td>
-                        </Table.Tr>
-            
-                    </Table.Tbody>
-                  </Table>
-                </Table.ScrollContainer>
-      </Card>
+
+      <MeasurementTable personalNumber={personalNumber} plan={plan}/>
     </Stack>
   );
 }
