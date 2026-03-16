@@ -7,24 +7,25 @@ import { FREQUENCIES } from '../helpers/constants';
 import { getMeasurementTypesForSelect } from '../api/measurementTypeApi';
 import { createMeasurementPlan, updateMeasurementPlan } from '../api/measurementPlanApi';
 
-export default function PlanModal({ opened, onClose, panNumber, personalNumber, plan }) {
+export default function PlanModal({ opened, onClose, onSuccess, panNumber, personalNumber, plan }) {
   const isEdit = Boolean(plan ? plan.id : null);
+  console.log('From page:',plan, panNumber, personalNumber);
 
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState([]);
   const form = useForm({
     initialValues: {
-      panNumber: (isEdit ? plan.panNumber : panNumber),
-      personalNumber: (isEdit ? plan.personalNumber : personalNumber),
+      panNumber: panNumber,
+      personalNumber: personalNumber,
       frequency: (isEdit ? plan.frequency : null),
       timesOfPlannedMeasurements: (isEdit ? plan.timesOfPlannedMeasurements : []),
-      typeOfMeasurementIds: (isEdit ? plan.typesOfMeasurements.map(t => String(t.id)) : []),
+      typeOfMeasurementIds: (isEdit ? plan.typesOfMeasurements.map(t => String(t.id)) : []), //Jackson will transform to integers
     },
     validate: {
-      frequency: (value) => (value ? null : 'Vyberte frekvenciu'),
-      typeOfMeasurementIds: (value) => (value.length > 0 ? null : 'Vyberte aspoň jeden typ merania'),
-      timesOfPlannedMeasurements: (value) => (value.length > 0 ? null : 'Vyberte aspon jeden čas merania'),
-    }
+      frequency: (value) => (value ? null : 'Povinné pole'),
+      typeOfMeasurementIds: (value) => (value.length > 0 ? null : 'Povinné pole'),
+      timesOfPlannedMeasurements: (value) => (value.length > 0 ? null : 'Povinné pole'),
+    },
   });
 
   useEffect(() => {
@@ -42,26 +43,22 @@ export default function PlanModal({ opened, onClose, panNumber, personalNumber, 
   async function handleSubmit() {
     setLoading(true);
     try {
-      const payload = {
-        ...form.values,
-        typeOfMeasurementIds: form.values.typeOfMeasurementIds.map(Number),
-      };
-
       if (isEdit) {
-        console.log('Updating plan with payload:', payload);
-        await updateMeasurementPlan(plan.id, payload);
+        console.log('Updating plan:', form.values);
+        await updateMeasurementPlan(plan.id, form.values);
         notifySuccess(
           'Plan upraveny',
           'Monitorovaci plan bol uspesne upraveny.',
         );
       } else {
-        const res = await createMeasurementPlan(payload);
+        const res = await createMeasurementPlan(form.values);
         notifySuccess(
           'Plan merani pridany',
           `Pacient ${res.data.personalNumber} ma plan s frekvenciou ${res.data.frequency} a casom planovanych merani ${res.data.timesOfPlannedMeasurements}.`,
         );
       }
       onClose();
+      onSuccess();
     } catch (err) {
       if (err.response?.status === 400) {
         form.setErrors(err.response.data.fieldErrors);
