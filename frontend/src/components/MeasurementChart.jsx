@@ -11,6 +11,7 @@ export default function Chart({ personalNumber, plan }) {
   const [period, setPeriod] = useState(null);
   const [filterType, setFilterType] = useState('');
   const [loadingChart, setLoadingChart] = useState(false);
+  const [pressToShow, setPressToShow] = useState(false);
 
   async function getMeasurements() {
     console.log(period, filterType);
@@ -69,7 +70,10 @@ export default function Chart({ personalNumber, plan }) {
             size="sm"
             loading={loadingChart}
             disabled={!filterType || !period}
-            onClick={() => getMeasurements()}
+            onClick={() => {
+              getMeasurements();
+              setPressToShow(true);
+            }}
           >
             Zobraziť
           </Button>
@@ -90,7 +94,7 @@ export default function Chart({ personalNumber, plan }) {
           ) : (
             <Center h="100%">
               <Text size="sm" c="dimmed">
-                Žiadne merania nenájdené.
+                {pressToShow ? 'Žiadne merania pre zobrazenie v grafe' : 'Zvoľte mesiac a typ merania a kliknite na "Zobraziť" pre zobrazenie grafu'}
               </Text>
             </Center>
           )}
