@@ -1,18 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import {
-  Group,
-  Stack,
-  Button,
-  Title,
-  Alert,
-  Table,
-  Center,
-  Loader,
-  TextInput,
-  Pagination,
-  Box,
-  Card,
-} from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Group, Stack, Button, Title, Alert, Table, Center, Loader, TextInput, Pagination, Card } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import AddDoctorModal from '../../components/AddDoctorModal';
 import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
@@ -20,29 +7,28 @@ import { notifyError } from '../../helpers/notificationHelper';
 import { getDoctors } from '../../api/doctorApi';
 
 export default function PreviewOfDoctors() {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(0); // hack to trigger refresh after adding doctor 
 
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ content: [], totalPages: 0 });
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 300); //not requesting on every key, but after 300ms
 
-  //to prevent infinite loop of useEffect and beacause of need refresh after addDoctor
-  const fetchDoctors = useCallback(async () => {
-    try {
-      const response = await getDoctors(page, debouncedSearch);
-      setData(response.data);
-    } catch (error) {
-      notifyError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, debouncedSearch]);
-
   useEffect(() => {
+    async function fetchDoctors() {
+      try {
+        const response = await getDoctors(page, debouncedSearch);
+        setData(response.data);
+      } catch (error) {
+        notifyError(error);
+      } finally {
+        setLoading(false);
+      }
+    }
     fetchDoctors();
-  }, [fetchDoctors]);
+  }, [page, debouncedSearch, refresh]);
 
   if (loading)
     return (
@@ -53,17 +39,24 @@ export default function PreviewOfDoctors() {
 
   return (
     <Stack p="md">
-      <AddDoctorModal opened={opened} onClose={() => { close(); fetchDoctors(); }} />
+      <AddDoctorModal
+        opened={isModalOpen}
+        onClose={() => closeModal()}
+        onSuccess={() => setRefresh((r) => r + 1)}
+      />
       <Group justify="space-between">
         <Title order={2}>Prehľad lekárov</Title>
-        <Button onClick={open}>Pridať lekára</Button>
+        <Button onClick={() => openModal()}>Pridať lekára</Button>
       </Group>
 
       <TextInput
         placeholder="Hľadať podľa priezviska"
         leftSection={<IconSearch size={16} />}
         value={search}
-        onChange={(e) => {setSearch(e.currentTarget.value); setPage(1);}}
+        onChange={(e) => {
+          setSearch(e.currentTarget.value);
+          setPage(1);
+        }}
       />
 
       {data.content.length === 0 ? (
@@ -98,7 +91,7 @@ export default function PreviewOfDoctors() {
             size="sm"
             total={data.totalPages}
             value={page}
-            onChange={setPage}
+            onChange={(value) => setPage(value)}
             mt="sm"
           />
         </Card>

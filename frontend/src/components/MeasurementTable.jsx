@@ -3,14 +3,14 @@ import { Stack, Card, Text, Loader, Center, Select, Table, Pagination,} from '@m
 import { notifyError } from '../helpers/notificationHelper';
 import { getAllMeasurementsForTable } from '../api/measurementsApi';
 
-export default function MeasurementTable({ personalNumber, plan }) {
+export default function MeasurementTable({ personalNumber, plan, refresh }) {
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ content: [], totalPages: 0 });
   const [filterType, setFilterType] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getMeasurementsTable = async () => {
+    async function fetchMeasurementsForTable() {
       try {
         const response = await getAllMeasurementsForTable(personalNumber, Number(filterType), page);
         setData(response.data);
@@ -21,8 +21,8 @@ export default function MeasurementTable({ personalNumber, plan }) {
       }
     };
 
-    getMeasurementsTable();
-  }, [personalNumber, page, filterType]);
+    fetchMeasurementsForTable();
+  }, [personalNumber, page, filterType, refresh]);
 
   if (loading)
     return (
@@ -37,12 +37,8 @@ export default function MeasurementTable({ personalNumber, plan }) {
         <Select
           placeholder="Vyberte typ merania pre filtrovanie tabuľky"
           data={
-            plan
-              ? plan.typesOfMeasurements.map((t) => ({
-                  value: String(t.id),
-                  label: t.typeName,
-                }))
-              : []
+            plan ? plan.typesOfMeasurements
+            .map((t) => ({ value: String(t.id), label: t.typeName, })) : []
           }
           searchable
           clearable

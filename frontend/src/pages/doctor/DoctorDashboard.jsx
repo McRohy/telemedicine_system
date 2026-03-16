@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Group, Stack, Button, Title, Table, Loader, Center, TextInput, Card, Pagination, Anchor } from '@mantine/core';
 import AddPatientModal from '../../components/AddPatientModal';
 import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
@@ -12,28 +12,28 @@ export default function DoctorDashboard() {
   const { user } = useAuth();
   const actualDoctorPanNumber = user?.identificationNumber;
 
-  const [opened, { open, close }] = useDisclosure(false);
+  const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(0);
 
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ content: [], totalPages: 0 });
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 300);
 
-  const getPatients = useCallback(async () => {
-    try {
-      const response = await getPatientsByPanNumber(actualDoctorPanNumber, page, debouncedSearch);
-      setData(response.data);
-    } catch (error) {
-      notifyError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [actualDoctorPanNumber, page, debouncedSearch]);
-
   useEffect(() => {
-    getPatients();
-  }, [getPatients]);
+    async function fetchPatients() {
+      try {
+        const response = await getPatientsByPanNumber( actualDoctorPanNumber, page, debouncedSearch );
+        setData(response.data);
+      } catch (error) {
+        notifyError(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchPatients();
+  }, [actualDoctorPanNumber, page, debouncedSearch, refresh]);
 
   if (loading)
     return (
@@ -45,16 +45,14 @@ export default function DoctorDashboard() {
   return (
     <Stack p="md">
       <AddPatientModal
-        opened={opened}
-        onClose={() => {
-          close();
-          getPatients(1);
-        }}
+        opened={isModalOpen}
+        onClose={() => closeModal()}
+        onSuccess={() => setRefresh((r) => r + 1)}
         doctorPanNumber={actualDoctorPanNumber}
       />
       <Group justify="space-between">
         <Title order={2}>Prehľad pacientov</Title>
-        <Button p="xs" onClick={open}>
+        <Button p="xs" onClick={() => openModal()}>
           Pridať pacienta
         </Button>
       </Group>

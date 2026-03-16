@@ -13,7 +13,7 @@ export default function Chart({ personalNumber, plan }) {
   const [loadingChart, setLoadingChart] = useState(false);
   const [pressToShow, setPressToShow] = useState(false);
 
-  async function getMeasurements() {
+  async function fetchMeasurements() {
     console.log(period, filterType);
     setLoadingChart(true);
     try {
@@ -63,7 +63,7 @@ export default function Chart({ personalNumber, plan }) {
             loading={loadingChart}
             disabled={!filterType || !period}
             onClick={() => {
-              getMeasurements();
+              fetchMeasurements();
               setPressToShow(true);
             }}
           >

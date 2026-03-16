@@ -1,47 +1,34 @@
-import { useCallback, useEffect, useState } from 'react';
-import {
-  Group,
-  Stack,
-  Button,
-  Title,
-  Alert,
-  Table,
-  Center,
-  Loader,
-  TextInput,
-  Text,
-  Card,
-  Pagination,
-} from '@mantine/core';
-import { IconSearch, IconEdit } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
+import { Group, Stack, Button, Title, Alert, Table, Center, Loader, TextInput, Card, Pagination } from '@mantine/core';
+import { IconSearch } from '@tabler/icons-react';
 import AddTypeModal from '../../components/AddTypeModal';
 import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import { notifyError } from '../../helpers/notificationHelper';
 import { getMeasurementTypes } from '../../api/measurementTypeApi';
 
 export default function MeasurementTypesPage() {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(0); // hack to trigger refresh after adding doctor
 
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ content: [], totalPages: 0 });
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 300);
 
-  const fetchTypes = useCallback(async () => {
-    try {
-      const response = await getMeasurementTypes(page, debouncedSearch);
-      setData(response.data);
-    } catch (error) {
-      notifyError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, debouncedSearch]);
-
   useEffect(() => {
-    fetchTypes();
-  }, [fetchTypes]);
+    async function fetchMeasurementTypes() {
+      try {
+        const response = await getMeasurementTypes(page, debouncedSearch);
+        setData(response.data);
+      } catch (error) {
+        notifyError(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMeasurementTypes();
+  }, [page, debouncedSearch, refresh]);
 
   if (loading)
     return (
@@ -53,15 +40,13 @@ export default function MeasurementTypesPage() {
   return (
     <Stack p="md">
       <AddTypeModal
-        opened={opened}
-        onClose={() => {
-          close();
-          fetchTypes();
-        }}
+        opened={isModalOpen}
+        onClose={() => closeModal()}
+        onSuccess={() => setRefresh((r) => r + 1)}
       />
       <Group justify="space-between">
         <Title order={2}>Prehľad typov meraní</Title>
-        <Button onClick={open}>Pridať typ merania</Button>
+        <Button onClick={() => openModal()}>Pridať typ merania</Button>
       </Group>
 
       <TextInput
@@ -107,7 +92,7 @@ export default function MeasurementTypesPage() {
             size="sm"
             total={data.totalPages}
             value={page}
-            onChange={setPage}
+            onChange={(value) => setPage(value)}
             mt="sm"
           />
         </Card>

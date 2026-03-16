@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Group, Stack, Button, Title, Alert, Table, TextInput, Loader, Center, Card, Pagination} from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { Group, Stack, Button, Title, Alert, Table, TextInput, Loader, Center, Card, Pagination } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import AddPatientModal from '../../components/AddPatientModal';
 import { notifyError } from '../../helpers/notificationHelper';
@@ -7,28 +7,28 @@ import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import { getPatients } from '../../api/patientApi';
 
 export default function PreviewOfPatients() {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(0);
 
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ content: [], totalPages: 0 });
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 300);
 
-  const fetchPatients = useCallback(async () => {
-    try {
-      const response = await getPatients(page, debouncedSearch);
-      setData(response.data);
-    } catch (error) {
-      notifyError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [page, debouncedSearch]);
-
   useEffect(() => {
+    async function fetchPatients() {
+      try {
+        const response = await getPatients(page, debouncedSearch);
+        setData(response.data);
+      } catch (error) {
+        notifyError(error);
+      } finally {
+        setLoading(false);
+      }
+    }
     fetchPatients();
-  }, [fetchPatients]);
+  }, [page, debouncedSearch, refresh]);
 
   if (loading)
     return (
@@ -39,17 +39,24 @@ export default function PreviewOfPatients() {
 
   return (
     <Stack p="md">
-      <AddPatientModal opened={opened} onClose={() => { close(); fetchPatients(); }} />
+      <AddPatientModal
+        opened={isModalOpen}
+        onClose={() => closeModal()}
+        onSuccess={() => setRefresh((r) => r + 1)}
+      />
       <Group justify="space-between">
         <Title order={2}>Prehľad pacientov</Title>
-        <Button onClick={open}>Pridať pacienta</Button>
+        <Button onClick={() => openModal()}>Pridať pacienta</Button>
       </Group>
 
       <TextInput
         placeholder="Hľadať podľa priezviska"
         leftSection={<IconSearch size={16} />}
         value={search}
-        onChange={(e) => {setSearch(e.currentTarget.value); setPage(1);}}
+        onChange={(e) => {
+          setSearch(e.currentTarget.value);
+          setPage(1);
+        }}
       />
 
       {data.content.length === 0 ? (
@@ -84,7 +91,7 @@ export default function PreviewOfPatients() {
             size="sm"
             total={data.totalPages}
             value={page}
-            onChange={setPage}
+            onChange={(value) => setPage(value)}
             mt="sm"
           />
         </Card>

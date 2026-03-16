@@ -13,12 +13,13 @@ export default function PatientDashboard() {
   const { user } = useAuth();
   const personalNumber = user?.identificationNumber;
 
-  const [trackMeasurement, { open, close }] = useDisclosure(false);
+  const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [plan, setPlan] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refresh, setRefresh] = useState(0);
 
   useEffect(() => {
-    async function getMeasurementPlan() {
+    async function fetchMeasurementPlan() {
       try {
         const response = await getMeasurementPlanByPersonalNumber(personalNumber);
         if (response.status === 204) {
@@ -32,7 +33,7 @@ export default function PatientDashboard() {
         setLoading(false);
       }
     }
-    getMeasurementPlan();
+    fetchMeasurementPlan();
   }, [personalNumber]);
 
   if (loading)
@@ -46,14 +47,15 @@ export default function PatientDashboard() {
     <Stack p="md">
       <Group justify="space-between">
         <Title order={2}>Prehľad meraní</Title>
-        <Button p="xs" disabled={plan === null} onClick={open}>
+        <Button p="xs" disabled={plan === null} onClick={openModal}>
           {plan === null ? 'Nie je priradený plán' : 'Zaznamenať meranie'}
         </Button>
       </Group>
 
       <TrackMeasurementModal
-        opened={trackMeasurement}
-        onClose={close}
+        opened={isModalOpen}
+        onClose={() => closeModal()}
+        onSuccess={() => setRefresh((r) => r + 1)}
         plan={plan}
       />
 
@@ -94,7 +96,7 @@ export default function PatientDashboard() {
         </Group>
       </Card>
       <MeasurementChart personalNumber={personalNumber} plan={plan} />
-      <MeasurementTable personalNumber={personalNumber} plan={plan}/>
+      <MeasurementTable personalNumber={personalNumber} plan={plan} refresh={refresh}/>
     </Stack>
   );
 }

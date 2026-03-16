@@ -1,18 +1,10 @@
 import { useState } from 'react';
 import { useForm } from '@mantine/form';
-import {
-  Modal,
-  Stack,
-  TextInput,
-  Select,
-  Button,
-  NumberInput,
-  Group,
-} from '@mantine/core';
+import { Modal, Stack, TextInput, Select, Button, NumberInput } from '@mantine/core';
 import { notifySuccess, notifyError } from '../helpers/notificationHelper';
 import { postMeasurement } from '../api/measurementsApi';
 
-export default function TrackMeasurementModal({ opened, onClose, plan }) {
+export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan,}) {
   const [loading, setLoading] = useState(false);
   const form = useForm({
     initialValues: {
@@ -22,8 +14,8 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
       note: '',
     },
     validate: {
-      typeOfMeasurementId: (value) => (value ? null : 'Vyberte typ merania'),
-      value: (value) => (value === '' ? 'Zadejte hodnotu merania' : null),
+      typeOfMeasurementId: (value) => (value ? null : 'Povinné pole'),
+      value: (value) => (value !== '' ? null : 'Povinné pole'),
     },
   });
 
@@ -37,6 +29,7 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
       );
       form.reset();
       onClose();
+      onSuccess();
     } catch (error) {
       if (error.response?.status === 400) {
         form.setErrors(error.response.data.fieldErrors);
@@ -49,7 +42,14 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
   }
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Zaznamenať meranie">
+    <Modal
+      opened={opened}
+      onClose={() => {
+        form.reset();
+        onClose();
+      }}
+      title="Zaznamenať meranie"
+    >
       <form onSubmit={form.onSubmit(handleTrackMeasurement)}>
         <Stack gap="md">
           <Select
@@ -83,12 +83,7 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
             {...form.getInputProps('note')}
           />
 
-          <Button
-            type="submit"
-            p="xs"
-            size="md"
-            loading={loading}
-          >
+          <Button type="submit" p="xs" size="md" loading={loading}>
             Uložiť meranie
           </Button>
         </Stack>

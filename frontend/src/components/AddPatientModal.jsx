@@ -3,43 +3,49 @@ import { Modal, Stack, TextInput, Select, Button, Alert } from '@mantine/core';
 import { notifySuccess, notifyError } from '../helpers/notificationHelper';
 import { GENDERS } from '../helpers/constants';
 import { createPatient } from '../api/patientApi';
+import { useForm } from '@mantine/form';
 
-const request = {
-  personalNumber: '',
-  personalData: {
-    firstName: '',
-    lastName: '',
-    email: '',
-    role: 'PATIENT',
-  },
-  panNumber: '',
-  gender: null,
-};
-
-export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
-  const [errorInputs, setErrorInputs] = useState(null);
+export default function AddPatientModal({opened, onClose, onSuccess, doctorPanNumber,}) {
   const [loading, setLoading] = useState(false);
-  const [patientRequest, setPatientRequest] = useState({
-    ...request,
-    panNumber: doctorPanNumber || '',
+  const formRequest = useForm({
+    initialValues: {
+      personalNumber: '',
+      personalData: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        role: 'PATIENT',
+      },
+      panNumber: doctorPanNumber || '',
+      gender: null,
+    },
+    validate: {
+      personalNumber: (value) => (value ? null : 'Povinné pole'),
+      'personalData.firstName': (value) => (value ? null : 'Povinné pole'),
+      'personalData.lastName': (value) => (value ? null : 'Povinné pole'),
+      'personalData.email': (value) => (value ? null : 'Povinné pole'),
+      panNumber: (value) => (value ? null : 'Povinné pole'),
+      gender: (value) => (value ? null : 'Povinné pole'),
+    },
   });
 
   async function handleCreatePatient() {
     setLoading(true);
     try {
-      const res = await createPatient(patientRequest);
+      const res = await createPatient(formRequest.values);
       notifySuccess(
         'Pacient pridaný',
-        `${res.data.personalNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} bol úspešne pridaný lekárovi s PAN: ${res.data.doctorPanNumber}.`,
+        `${res.data.personalNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} bol úspešne pridaný lekárovi s PAN: ${res.data.panNumber}.`,
       );
+      formRequest.reset();
       onClose();
-      //window.location.reload();
+      onSuccess();
     } catch (err) {
       console.log(err.response);
       const status = err.response?.status;
 
       if (status === 400) {
-        setErrorInputs(err.response.data.fieldErrors);
+        formRequest.setErrors(err.response.data.fieldErrors);
       } else {
         notifyError(err);
       }
@@ -52,92 +58,76 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
     <Modal
       opened={opened}
       onClose={() => {
-        setErrorInputs(null);
-        setPatientRequest({ ...request, panNumber: doctorPanNumber || '' });
+        formRequest.reset();
         onClose();
       }}
       title="Pridať pacienta"
     >
-      <Stack gap="md">
-        <TextInput
-          label="Rodné číslo"
-          placeholder="123456789"
-          type="text"
-          ta="left"
-          size="md"
-          value={patientRequest.personalNumber}
-          onChange={(e) => setPatientRequest({ ...patientRequest, personalNumber: e.target.value, })}
-          withAsterisk
-          error={errorInputs?.['personalNumber']}
-        />
+      <form onSubmit={formRequest.onSubmit(handleCreatePatient)}>
+        <Stack gap="md">
+          <TextInput
+            label="Rodné číslo"
+            placeholder="123456789"
+            type="text"
+            ta="left"
+            size="md"
+            withAsterisk
+            {...formRequest.getInputProps('personalNumber')}
+          />
 
-        <TextInput
-          label="Meno"
-          placeholder="Matej"
-          ta="left"
-          size="md"
-          value={patientRequest.personalData.firstName}
-          onChange={(e) => setPatientRequest({ ...patientRequest, personalData: {...patientRequest.personalData, firstName: e.target.value }})}
-          withAsterisk
-          error={errorInputs?.['personalData.firstName']}
-        />
-        <TextInput
-          label="Priezvisko"
-          placeholder="Rohy"
-          ta="left"
-          size="md"
-          value={patientRequest.personalData.lastName}
-          onChange={(e) => setPatientRequest({ ...patientRequest, personalData: {...patientRequest.personalData, lastName: e.target.value }})}
-          withAsterisk
-          error={errorInputs?.['personalData.lastName']}
-        />
+          <TextInput
+            label="Meno"
+            placeholder="Matej"
+            ta="left"
+            size="md"
+            withAsterisk
+            {...formRequest.getInputProps('personalData.firstName')}
+          />
+          <TextInput
+            label="Priezvisko"
+            placeholder="Rohy"
+            ta="left"
+            size="md"
+            withAsterisk
+            {...formRequest.getInputProps('personalData.lastName')}
+          />
 
-        <TextInput
-          label="Email"
-          placeholder="matej.rohy@gmail.sk"
-          type="email"
-          ta="left"
-          size="md"
-          value={patientRequest.personalData.email}
-          onChange={(e) => setPatientRequest({ ...patientRequest, personalData: {...patientRequest.personalData, email: e.target.value }})}
-          withAsterisk
-          error={errorInputs?.['personalData.email']}
-        />
+          <TextInput
+            label="Email"
+            placeholder="matej.rohy@gmail.sk"
+            type="email"
+            ta="left"
+            size="md"
+            withAsterisk
+            {...formRequest.getInputProps('personalData.email')}
+          />
 
-        <Select
-          label="Pohlavie"
-          placeholder="Vyberte pohlavie"
-          data={GENDERS}
-          size="md"
-          searchable
-          clearable
-          value={patientRequest.gender}
-          onChange={(value) => setPatientRequest({ ...patientRequest, gender: value }) }
-          withAsterisk
-          error={errorInputs?.['gender']}
-        />
+          <Select
+            label="Pohlavie"
+            placeholder="Vyberte pohlavie"
+            data={GENDERS}
+            size="md"
+            searchable
+            clearable
+            withAsterisk
+            {...formRequest.getInputProps('gender')}
+          />
 
-        <TextInput
-          label="PAN číslo lekára"
-          placeholder="123456789"
-          type="text"
-          ta="left"
-          size="md"
-          value={patientRequest.panNumber}
-          onChange={(e) => setPatientRequest({ ...patientRequest, panNumber: e.target.value })}
-          withAsterisk
-          error={errorInputs?.['panNumber']}
-        />
+          <TextInput
+            label="PAN číslo lekára"
+            placeholder="123456789"
+            type="text"
+            ta="left"
+            size="md"
+            withAsterisk
+            {...formRequest.getInputProps('panNumber')}
+          />
 
-        <Button
-          p="xs"
-          size="md"
-          loading={loading}
-          onClick={() => handleCreatePatient()}
-        >
-          Pridať Pacienta
-        </Button>
-      </Stack>
+          <Button type="submit" p="xs" size="md" loading={loading}>
+            Pridať Pacienta
+          </Button>
+        </Stack>
+      </form>
     </Modal>
   );
 }
