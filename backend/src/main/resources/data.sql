@@ -14,7 +14,7 @@ INSERT INTO patient(personal_number, email, gender, care_provider)
 VALUES ('0204234567', 'patient@firma.sk', 'FEMALE', '2354678909876543') ON CONFLICT (personal_number) DO NOTHING;
 
 INSERT INTO type_of_measurement(type_name, units, min_value, max_value)
-VALUES ('Teplota', 'C', 34, 37) ON CONFLICT (type_name) DO NOTHING;
+VALUES ('Teplota', '°C', 36, 36.9) ON CONFLICT (type_name) DO NOTHING;
 
 INSERT INTO type_of_measurement(type_name, units, min_value, max_value)
-VALUES ('Hmotnost', 'Kg', 1, 150) ON CONFLICT (type_name) DO NOTHING;
+VALUES ('Hmotnost', 'kg', 1, 150) ON CONFLICT (type_name) DO NOTHING;

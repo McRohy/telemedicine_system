@@ -32,9 +32,9 @@ public class MeasurementPlanController {
         return measurementPlanService.updateMeasurementPlan(id, request);
     }
 
-    @GetMapping
+    @GetMapping("/{personalNumber}")
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
-    public ResponseEntity<MeasurementPlanResponse> getMeasurementPlanByPersonalNumber(@RequestParam String personalNumber) {
+    public ResponseEntity<MeasurementPlanResponse> getMeasurementPlanByPersonalNumber(@PathVariable String personalNumber) {
         return measurementPlanService.findMeasurementPlanByPersonalNumber(personalNumber)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
