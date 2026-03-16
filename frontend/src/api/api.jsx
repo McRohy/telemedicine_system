@@ -1,15 +1,14 @@
 import axios from 'axios';
 /*
   https://axios-http.com/docs/instance
+  https://axios-http.com/docs/interceptors
 */
 const api = axios.create({
   baseURL: 'http://localhost:8080/api',
   timeout: 10000, // to not wait infinitely for a response
 });
 
-/*
-  https://axios-http.com/docs/interceptors
-*/
+// add token to every request
 api.interceptors.request.use(
    function (config) {
     const token = localStorage.getItem('token');
@@ -18,14 +17,10 @@ api.interceptors.request.use(
     }
     return config;
   },
-  function (error) {
-    return Promise.reject(error);
-  }
 );
 
-/*
-  https://axios-http.com/docs/interceptors
-*/
+// handle response and logout on 401 globally
+// other errors are handling locally in request
 api.interceptors.response.use(
   function onFulfilled(response) {
     return response;

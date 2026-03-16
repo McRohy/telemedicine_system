@@ -5,8 +5,8 @@ import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import { Link } from 'react-router-dom';
 import { IconSearch, IconArrowUpRight } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
-import { notifyError } from '../../configs/notificationHelper';
-import api from '../../configs/api';
+import { notifyError } from '../../helpers/notificationHelper';
+import { getPatientsByPanNumber } from '../../api/patientApi';
 
 export default function DoctorDashboard() {
   const { user } = useAuth();
@@ -22,16 +22,7 @@ export default function DoctorDashboard() {
 
   const getPatients = useCallback(async () => {
     try {
-      const response = await api({
-        url: '/patients',
-        method: 'get',
-        params: {
-          panNumber: actualDoctorPanNumber,
-          page: page - 1, //React 1, Spring 0
-          size: 20,
-          searchLastName: debouncedSearch || undefined,
-        },
-      });
+      const response = await getPatientsByPanNumber(actualDoctorPanNumber, page, debouncedSearch);
       setData(response.data);
     } catch (error) {
       notifyError(error);

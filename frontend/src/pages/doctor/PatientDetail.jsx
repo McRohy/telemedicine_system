@@ -4,9 +4,10 @@ import { IconArrowLeft, IconUserCircle, IconMail, IconNotebook, IconUser } from 
 import { useDisclosure } from '@mantine/hooks';
 import { useNavigate, useParams } from 'react-router-dom';
 import PlanModal from '../../components/PlanModal';
-import { notifyError } from '../../configs/notificationHelper';
+import { notifyError } from '../../helpers/notificationHelper';
 import MeasurementChart from '../../components/MeasurementChart';
-import api from '../../configs/api';
+import { getMeasurementPlanByPersonalNumber } from '../../api/measurementPlanApi';
+import { getPatientByPersonalNumber } from '../../api/patientApi';
 import MeasurementTable from '../../components/MeasurementTable';
 
 export default function PatientDetail() {
@@ -21,12 +22,7 @@ export default function PatientDetail() {
 
   async function fetchPlan() {
     try {
-      const response = await api({
-        url: '/measurement-plans',
-        method: 'get',
-        params: { personalNumber },
-      });
-
+      const response = await getMeasurementPlanByPersonalNumber(personalNumber);
       if (response.status === 204) {
         setPlan(null);
       } else {
@@ -39,10 +35,7 @@ export default function PatientDetail() {
 
   async function fetchData() {
     try {
-      const response = await api({
-        url: `/patients/${personalNumber}`,
-        method: 'get',
-      });
+      const response = await getPatientByPersonalNumber(personalNumber);
       setPatientData(response.data);
     } catch (error) {
       notifyError(error);

@@ -9,8 +9,8 @@ import {
   NumberInput,
   Group,
 } from '@mantine/core';
-import { notifySuccess, notifyError } from '../configs/notificationHelper';
-import api from '../configs/api';
+import { notifySuccess, notifyError } from '../helpers/notificationHelper';
+import { postMeasurement } from '../api/measurementsApi';
 
 export default function TrackMeasurementModal({ opened, onClose, plan }) {
   const [loading, setLoading] = useState(false);
@@ -27,15 +27,14 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
     },
   });
 
-  async function postMeasurement() {
+  async function handleTrackMeasurement() {
     setLoading(true);
     try {
-      const res = await api({
-        url: '/measurements',
-        method: 'post',
-        data: form.values,
-      });
-      notifySuccess('Meranie zaznamenané', `${res.data.typeName} - ${res.data.value} ${res.data.units} je ${res.data.status}`);
+      const res = await postMeasurement(form.values);
+      notifySuccess(
+        'Meranie zaznamenané',
+        `${res.data.typeName} - ${res.data.value} ${res.data.units} je ${res.data.status}`,
+      );
       form.reset();
       onClose();
     } catch (error) {
@@ -50,12 +49,8 @@ export default function TrackMeasurementModal({ opened, onClose, plan }) {
   }
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title="Zaznamenať meranie"
-    >
-      <form onSubmit={form.onSubmit(postMeasurement)}>
+    <Modal opened={opened} onClose={onClose} title="Zaznamenať meranie">
+      <form onSubmit={form.onSubmit(handleTrackMeasurement)}>
         <Stack gap="md">
           <Select
             label="Typ merania"

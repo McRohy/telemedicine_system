@@ -3,9 +3,9 @@ import { Group, Stack, Button, Title, Card, Loader, Center, Text } from '@mantin
 import { useDisclosure } from '@mantine/hooks';
 import { IconCalendarEvent } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
-import api from '../../configs/api';
+import { getMeasurementPlanByPersonalNumber } from '../../api/measurementPlanApi';
 import TrackMeasurementModal from '../../components/TrackMeasurementModal';
-import { notifyError } from '../../configs/notificationHelper';
+import { notifyError } from '../../helpers/notificationHelper';
 import MeasurementChart from '../../components/MeasurementChart';
 import MeasurementTable from '../../components/MeasurementTable';
 
@@ -20,13 +20,7 @@ export default function PatientDashboard() {
   useEffect(() => {
     async function getMeasurementPlan() {
       try {
-        const response = await api({
-          url: '/measurement-plans',
-          method: 'get',
-          params: {
-            personalNumber: personalNumber,
-          },
-        });
+        const response = await getMeasurementPlanByPersonalNumber(personalNumber);
         if (response.status === 204) {
           setPlan(null);
         } else {

@@ -2,9 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { Group, Stack, Button, Title, Alert, Table, TextInput, Loader, Center, Card, Pagination} from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import AddPatientModal from '../../components/AddPatientModal';
-import { notifyError } from '../../configs/notificationHelper';
+import { notifyError } from '../../helpers/notificationHelper';
 import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
-import api from '../../configs/api';
+import { getPatients } from '../../api/patientApi';
 
 export default function PreviewOfPatients() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -15,17 +15,9 @@ export default function PreviewOfPatients() {
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 300);
 
-  const getPatients = useCallback(async () => {
+  const fetchPatients = useCallback(async () => {
     try {
-      const response = await api({
-        url: '/patients',
-        method: 'get',
-        params: {
-          page: page - 1, //React 1, Spring 0
-          size: 10,
-          searchLastName: debouncedSearch || undefined,
-        },
-      });
+      const response = await getPatients(page, debouncedSearch);
       setData(response.data);
     } catch (error) {
       notifyError(error);
@@ -35,8 +27,8 @@ export default function PreviewOfPatients() {
   }, [page, debouncedSearch]);
 
   useEffect(() => {
-    getPatients();
-  }, [getPatients]);
+    fetchPatients();
+  }, [fetchPatients]);
 
   if (loading)
     return (
@@ -47,7 +39,7 @@ export default function PreviewOfPatients() {
 
   return (
     <Stack p="md">
-      <AddPatientModal opened={opened} onClose={() => { close(); getPatients(); }} />
+      <AddPatientModal opened={opened} onClose={() => { close(); fetchPatients(); }} />
       <Group justify="space-between">
         <Title order={2}>Prehľad pacientov</Title>
         <Button onClick={open}>Pridať pacienta</Button>

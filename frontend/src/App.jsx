@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import AppLayout from './configs/AppLayout';
+import AppLayout from './components/AppLayout';
 import PasswordPage from './pages/other/PasswordPage';
 import LoginPage from './pages/other/LoginPage';
 import DoctorsPage from './pages/admin/DoctorsPage';
@@ -10,7 +10,6 @@ import Forbidden from './pages/other/Forbidden';
 import MeasurementTypesPage from './pages/admin/MeasurementTypesPage';
 import Article from './pages/doctor/Article';
 import PatientDashboard from './pages/patient/PatientDashboard';
-
 import ProtectedRoute from './components/ProtectedRoutes';
 import { AuthProvider } from './context/AuthProvider';
 

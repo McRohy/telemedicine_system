@@ -16,8 +16,8 @@ import {
 import { IconSearch, IconEdit } from '@tabler/icons-react';
 import AddTypeModal from '../../components/AddTypeModal';
 import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
-import { notifyError } from '../../configs/notificationHelper';
-import api from '../../configs/api';
+import { notifyError } from '../../helpers/notificationHelper';
+import { getMeasurementTypes } from '../../api/measurementTypeApi';
 
 export default function MeasurementTypesPage() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -28,17 +28,9 @@ export default function MeasurementTypesPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebouncedValue(search, 300);
 
-  const getTypes = useCallback(async () => {
+  const fetchTypes = useCallback(async () => {
     try {
-      const response = await api({
-        url: '/measurement-types',
-        method: 'get',
-        params: {
-          page: page - 1, //React 1, Spring 0
-          size: 10,
-          search: debouncedSearch || undefined,
-        },
-      });
+      const response = await getMeasurementTypes(page, debouncedSearch);
       setData(response.data);
     } catch (error) {
       notifyError(error);
@@ -48,8 +40,8 @@ export default function MeasurementTypesPage() {
   }, [page, debouncedSearch]);
 
   useEffect(() => {
-    getTypes();
-  }, [getTypes]);
+    fetchTypes();
+  }, [fetchTypes]);
 
   if (loading)
     return (
@@ -64,7 +56,7 @@ export default function MeasurementTypesPage() {
         opened={opened}
         onClose={() => {
           close();
-          getTypes();
+          fetchTypes();
         }}
       />
       <Group justify="space-between">

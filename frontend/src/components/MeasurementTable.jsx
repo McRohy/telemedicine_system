@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Stack, Card, Text, Loader, Center, Select, Table, Pagination,} from '@mantine/core';
-import { notifyError } from '../configs/notificationHelper';
-import api from '../configs/api';
+import { notifyError } from '../helpers/notificationHelper';
+import { getAllMeasurementsForTable } from '../api/measurementsApi';
 
 export default function MeasurementTable({ personalNumber, plan }) {
   const [page, setPage] = useState(1);
@@ -12,16 +12,7 @@ export default function MeasurementTable({ personalNumber, plan }) {
   useEffect(() => {
     const getMeasurementsTable = async () => {
       try {
-        const response = await api({
-          url: '/measurements/table',
-          method: 'get',
-          params: {
-            personalNumber: personalNumber,
-            page: page - 1, //React 1, Spring 0
-            size: 10,
-            typeId: Number(filterType) || undefined,
-          },
-        });
+        const response = await getAllMeasurementsForTable(personalNumber, Number(filterType), page);
         setData(response.data);
       } catch (error) {
         notifyError(error);

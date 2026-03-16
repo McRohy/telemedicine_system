@@ -1,31 +1,37 @@
-import { BsHeartPulse } from "react-icons/bs";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Button, Card, Stack, PasswordInput, Title, Text, Center,} from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
-import { notifySuccess, notifyError } from "../../configs/notificationHelper";
-import api from "../../configs/api";
+import { BsHeartPulse } from 'react-icons/bs';
+import { useState } from 'react';
+import { useForm } from '@mantine/form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button, Card, Stack, PasswordInput, Title, Text, Center } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
+import { notifySuccess, notifyError } from '../../helpers/notificationHelper';
+import { setPassword } from '../../api/authApi';
 
-function PasswordPage() {
+export default function PasswordPage() {
   const { token } = useParams();
-  const [password, setPassword] = useState("");
-  const [errorInput, setErrorInput] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  async function sendPassword() {
-    try {
-      await api.post("/auth/set-password", { token, password });
-      notifySuccess("Heslo nastavené", "Vaše heslo bolo úspešne nastavené.");
-      navigate("/login");
-    } catch (err) {
-      console.log(err.response);
-      const status = err.response?.status;
+  const form = useForm({
+    initialValues: {
+      password: '',
+      token: token,
+    },
+    validate: {
+      password: (value) => (value ? null : 'Povinné pole'),
+    },
+  });
 
-      if (status === 400) {
-        setErrorInput(err.response.data.fieldErrors);
-      } else {
-        notifyError(err);
-      }
+  async function postPassword() {
+    setLoading(true);
+    try {
+      await setPassword(form.values);
+      notifySuccess('Heslo nastavené', 'Vaše heslo bolo úspešne nastavené.');
+      setTimeout(() => navigate('/login'), 2000); //dealay because of notification to be shown
+    } catch (error) {
+      notifyError(error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -43,31 +49,24 @@ function PasswordPage() {
             </Text>
           </Stack>
 
-          <Stack gap="md">
-            <PasswordInput
-              label="Heslo"
-              placeholder="Zadajte nové heslo"
-              ta="left"
-              size="md"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              withAsterisk
-              error={errorInput?.["password"]}
-              onClick={() => setErrorInput(null)}
-            />
+          <form onSubmit={form.onSubmit(postPassword)}>
+            <Stack gap="md">
+              <PasswordInput
+                label="Heslo"
+                placeholder="Zadajte nové heslo"
+                ta="left"
+                size="md"
+                withAsterisk
+                {...form.getInputProps('password')}
+              />
 
-            <Button
-              type="submit"
-              size="md"
-              onClick={() => sendPassword()}
-            >
-              Nastaviť heslo
-            </Button>
-          </Stack>
+              <Button type="submit" size="md" loading={loading}>
+                Nastaviť heslo
+              </Button>
+            </Stack>
+          </form>
         </Stack>
       </Card>
     </Center>
   );
 }
-
-export default PasswordPage;

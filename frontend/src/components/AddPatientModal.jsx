@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Modal, Stack, TextInput, Select, Button, Alert } from '@mantine/core';
-import { notifySuccess, notifyError } from '../configs/notificationHelper';
-import genders from '../constants/genders';
-import api from '../configs/api';
+import { notifySuccess, notifyError } from '../helpers/notificationHelper';
+import { GENDERS } from '../helpers/constants';
+import { createPatient } from '../api/patientApi';
 
 const request = {
   personalNumber: '',
@@ -24,10 +24,10 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
     panNumber: doctorPanNumber || '',
   });
 
-  async function createPatient() {
+  async function handleCreatePatient() {
     setLoading(true);
     try {
-      const res = await api.post('/patients', patientRequest);
+      const res = await createPatient(patientRequest);
       notifySuccess(
         'Pacient pridaný',
         `${res.data.personalNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} bol úspešne pridaný lekárovi s PAN: ${res.data.doctorPanNumber}.`,
@@ -107,7 +107,7 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
         <Select
           label="Pohlavie"
           placeholder="Vyberte pohlavie"
-          data={genders}
+          data={GENDERS}
           size="md"
           searchable
           clearable
@@ -133,7 +133,7 @@ export default function AddPatientModal({ opened, onClose, doctorPanNumber }) {
           p="xs"
           size="md"
           loading={loading}
-          onClick={() => createPatient()}
+          onClick={() => handleCreatePatient()}
         >
           Pridať Pacienta
         </Button>

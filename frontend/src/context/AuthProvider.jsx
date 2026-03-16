@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../configs/api';
+import { login as loginRequest } from '../api/authApi';
 import AuthContext from './AuthContext';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(getInitialUser);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   //survive page refresh by loading user from localStorage
@@ -17,8 +18,9 @@ export function AuthProvider({ children }) {
 
   async function login({ email, password }) {
     setError(null);
+    setLoading(true);
     try {
-      const response = await api.post('/auth/login', { email, password });
+      const response = await loginRequest({ email, password });
       const data = response.data;
 
       const userData = {
@@ -39,6 +41,8 @@ export function AuthProvider({ children }) {
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Nastala chyba pri prihlásovaní');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -50,7 +54,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, error, login, logout }}> 
+    <AuthContext.Provider value={{ user, error, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

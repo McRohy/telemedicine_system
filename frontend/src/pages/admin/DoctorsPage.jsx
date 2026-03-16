@@ -16,8 +16,8 @@ import {
 import { IconSearch } from '@tabler/icons-react';
 import AddDoctorModal from '../../components/AddDoctorModal';
 import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
-import { notifyError } from '../../configs/notificationHelper';
-import api from '../../configs/api';
+import { notifyError } from '../../helpers/notificationHelper';
+import { getDoctors } from '../../api/doctorApi';
 
 export default function PreviewOfDoctors() {
   const [opened, { open, close }] = useDisclosure(false);
@@ -29,17 +29,9 @@ export default function PreviewOfDoctors() {
   const [debouncedSearch] = useDebouncedValue(search, 300); //not requesting on every key, but after 300ms
 
   //to prevent infinite loop of useEffect and beacause of need refresh after addDoctor
-  const getDoctors = useCallback(async () => {
+  const fetchDoctors = useCallback(async () => {
     try {
-      const response = await api({
-        url: '/doctors',
-        method: 'get',
-        params: {
-          page: page - 1, //React 1, Spring 0
-          size: 10,
-          searchLastName: debouncedSearch || undefined,
-        },
-      });
+      const response = await getDoctors(page, debouncedSearch);
       setData(response.data);
     } catch (error) {
       notifyError(error);
@@ -49,8 +41,8 @@ export default function PreviewOfDoctors() {
   }, [page, debouncedSearch]);
 
   useEffect(() => {
-    getDoctors();
-  }, [getDoctors]);
+    fetchDoctors();
+  }, [fetchDoctors]);
 
   if (loading)
     return (
@@ -61,7 +53,7 @@ export default function PreviewOfDoctors() {
 
   return (
     <Stack p="md">
-      <AddDoctorModal opened={opened} onClose={() => { close(); getDoctors(); }} />
+      <AddDoctorModal opened={opened} onClose={() => { close(); fetchDoctors(); }} />
       <Group justify="space-between">
         <Title order={2}>Prehľad lekárov</Title>
         <Button onClick={open}>Pridať lekára</Button>
@@ -93,7 +85,7 @@ export default function PreviewOfDoctors() {
                   <Table.Tr key={d.panNumber}>
                     <Table.Td>{d.personalData.lastName}</Table.Td>
                     <Table.Td>{d.personalData.firstName}</Table.Td>
-                     <Table.Td>{d.specialization}</Table.Td>
+                    <Table.Td>{d.specialization}</Table.Td>
                     <Table.Td>{d.panNumber}</Table.Td>
                   </Table.Tr>
                 ))}

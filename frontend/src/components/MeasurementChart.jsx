@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Group, Stack, Button, Title, Card, Select, Center, Text, Box } from '@mantine/core';
 import { MonthPickerInput } from '@mantine/dates';
-import api from '../configs/api';
+import { getAllFilteredMeasurements } from '../api/measurementsApi';
 import { LineChart } from '@mantine/charts';
-import { notifyError } from '../configs/notificationHelper';
+import { notifyError } from '../helpers/notificationHelper';
 import 'dayjs/locale/sk';
 
 export default function Chart({ personalNumber, plan }) {
@@ -17,15 +17,7 @@ export default function Chart({ personalNumber, plan }) {
     console.log(period, filterType);
     setLoadingChart(true);
     try {
-      const response = await api({
-        url: '/measurements',
-        method: 'get',
-        params: {
-          personalNumber: personalNumber,
-          typeId: Number(filterType),
-          period: period,
-        },
-      });
+      const response = await getAllFilteredMeasurements(personalNumber, Number(filterType), period);
       setMeasurements(response.data);
     } catch (error) {
       notifyError(error);

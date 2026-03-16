@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useForm } from '@mantine/form';
 import { Modal, Stack, TextInput, Select, Button, Group, MultiSelect } from '@mantine/core';
 import { TimePicker } from '@mantine/dates';
-import { notifySuccess, notifyError } from '../configs/notificationHelper';
-import frequency from '../constants/frequency';
-import api from '../configs/api';
+import { notifySuccess, notifyError } from '../helpers/notificationHelper';
+import { FREQUENCIES } from '../helpers/constants';
+import { getMeasurementTypesForSelect } from '../api/measurementTypeApi';
+import { createMeasurementPlan, updateMeasurementPlan } from '../api/measurementPlanApi';
 
 export default function PlanModal({ opened, onClose, panNumber, personalNumber, plan }) {
   const isEdit = Boolean(plan ? plan.id : null);
-  
+
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState([]);
   const form = useForm({
@@ -29,10 +30,7 @@ export default function PlanModal({ opened, onClose, panNumber, personalNumber, 
   useEffect(() => {
     async function fetchTypes() {
       try {
-        const response = await api({
-          url: '/measurement-types/select',
-          method: 'get',
-        });
+        const response = await getMeasurementTypesForSelect();
         setTypes(response.data);
       } catch (err) {
         notifyError(err);
@@ -47,22 +45,17 @@ export default function PlanModal({ opened, onClose, panNumber, personalNumber, 
       const payload = {
         ...form.values,
         typeOfMeasurementIds: form.values.typeOfMeasurementIds.map(Number),
-     };
+      };
 
       if (isEdit) {
         console.log('Updating plan with payload:', payload);
-        await api({
-          url: `/measurement-plans/${plan.id}`,
-          method: 'put',
-          data: payload,
-        });
-        notifySuccess('Plan upraveny', 'Monitorovaci plan bol uspesne upraveny.');
+        await updateMeasurementPlan(plan.id, payload);
+        notifySuccess(
+          'Plan upraveny',
+          'Monitorovaci plan bol uspesne upraveny.',
+        );
       } else {
-        const res = await api({
-          url: '/measurement-plans',
-          method: 'post',
-          data: payload,
-        });
+        const res = await createMeasurementPlan(payload);
         notifySuccess(
           'Plan merani pridany',
           `Pacient ${res.data.personalNumber} ma plan s frekvenciou ${res.data.frequency} a casom planovanych merani ${res.data.timesOfPlannedMeasurements}.`,
@@ -113,13 +106,12 @@ export default function PlanModal({ opened, onClose, panNumber, personalNumber, 
           <Select
             label="Frekvencia"
             placeholder="Vyberte frekvenciu"
-            data={frequency}
+            data={FREQUENCIES}
             size="md"
             searchable
             clearable
             value={form.values.frequency}
             onChange={(value) => {
-        
               form.setFieldValue('frequency', value);
               form.removeListItem('timesOfPlannedMeasurements', 1);
             }}

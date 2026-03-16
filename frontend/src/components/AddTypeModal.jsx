@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Modal, Stack, TextInput, Button, NumberInput } from '@mantine/core';
-import { notifySuccess, notifyError } from '../configs/notificationHelper';
-import api from '../configs/api';
+import { notifySuccess, notifyError } from '../helpers/notificationHelper';
+import { createMeasurementType } from '../api/measurementTypeApi';
 
 const request = {
   typeName: '',
@@ -18,7 +18,7 @@ export default function AddTypeModal({ opened, onClose }) {
   async function createType() {
     setLoading(true);
     try {
-      const res = await api.post('/measurement-types', typeRequest);
+      const res = await createMeasurementType(typeRequest);
       notifySuccess(
         'Typ merania pridaný',
         `${res.data.typeName} s min: ${res.data.minValue} a max: ${res.data.maxValue} jednotkou ${res.data.units} bol úspešne pridaný.`,

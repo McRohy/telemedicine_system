@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Modal, Stack, TextInput, Select, Button } from '@mantine/core';
-import { notifySuccess, notifyError } from '../configs/notificationHelper';
-import specializations from '../constants/specializations';
-import api from '../configs/api';
+import { notifySuccess, notifyError } from '../helpers/notificationHelper';
+import { SPECIALIZATIONS } from '../helpers/constants';
+import { createDoctor } from '../api/doctorApi';
 
 const request = {
   panNumber: '',
@@ -20,10 +20,10 @@ export default function AddDoctorModal({ opened, onClose }) {
   const [loading, setLoading] = useState(false);
   const [doctorRequest, setDoctorRequest] = useState(request);
 
-  async function createDoctor() {
+  async function handleCreateDoctor() {
     setLoading(true);
     try {
-      const res = await api.post('/doctors', doctorRequest);
+      const res = await createDoctor(doctorRequest);
       notifySuccess(
         'Lekár pridaný',
         `${res.data.panNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} (${res.data.specialization}) bol úspešne pridaný.`,
@@ -102,7 +102,7 @@ export default function AddDoctorModal({ opened, onClose }) {
         <Select
           label="Špecializácia"
           placeholder="Vyberte špecializáciu"
-          data={specializations}
+          data={SPECIALIZATIONS}
           size="md"
           searchable
           clearable
@@ -116,7 +116,7 @@ export default function AddDoctorModal({ opened, onClose }) {
           p="xs"
           size="md"
           loading={loading}
-          onClick={() => createDoctor()}
+          onClick={() => handleCreateDoctor()}
         >
           Pridať Lekára
         </Button>
