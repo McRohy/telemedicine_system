@@ -7,6 +7,7 @@ import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
 import sk.uniza.fri.telemedicine.entities.*;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
+import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanTypesRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementTimeRepository;
@@ -27,16 +28,18 @@ public class MeasurementPlanService {
     private final TypeOfMeasurementService typeOfMeasurementService;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final EmailSender emailSender;
 
-    public MeasurementPlanService(MeasurementPlanRepository measurementPlanRepository,
-                                  TypeOfMeasurementService typeOfMeasurementService, MeasurementPlanTypesRepository measurementPlanTypesRepository,
-                                  DoctorService doctorService, PatientService patientService, MeasurementTimeRepository measurementTimeRepository) {
+    public MeasurementPlanService(MeasurementPlanRepository measurementPlanRepository, TypeOfMeasurementService typeOfMeasurementService,
+                                  MeasurementPlanTypesRepository measurementPlanTypesRepository, DoctorService doctorService,
+                                  PatientService patientService, MeasurementTimeRepository measurementTimeRepository, EmailSender emailSender) {
         this.measurementPlanRepository = measurementPlanRepository;
         this.typeOfMeasurementService = typeOfMeasurementService;
         this.measurementPlanTypesRepository = measurementPlanTypesRepository;
         this.measurementTimeRepository = measurementTimeRepository;
         this.doctorService = doctorService;
         this.patientService = patientService;
+        this.emailSender = emailSender;
     }
 
     @Transactional
@@ -67,6 +70,8 @@ public class MeasurementPlanService {
             planType.setValidFrom(LocalDateTime.now());
             measurementPlanTypesRepository.save(planType);
         }
+
+        emailSender.sendEmailCreatedPlan(patient.getPersonalData().getEmail());
 
         return mapToMeasurementPlanResponse(plan, activeTypes, measurementTimes);
     }
@@ -144,6 +149,7 @@ public class MeasurementPlanService {
             }
         }
         measurementPlanTypesRepository.saveAll(activeTypes);
+        emailSender.sendEmailUpdatedPlan(plan.getPatient().getPersonalData().getEmail());
 
         return mapToMeasurementPlanResponse(plan, activeTypes, activeTimes);
     }

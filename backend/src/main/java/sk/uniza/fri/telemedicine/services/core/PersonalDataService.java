@@ -42,7 +42,7 @@ public class PersonalDataService {
         String token = UUID.randomUUID().toString();
         personalData.setSetupToken(token);
         String link = "http://localhost:5173/password/" + token;
-        emailSender.sendEmailWithPassword(email, link);
+        emailSender.sendEmailWithTokenPassword(email, link);
     }
 
     @Transactional
@@ -54,6 +54,7 @@ public class PersonalDataService {
        personalData.setPassword(password);
        personalData.setSetupToken(null);
        personalDataRepository.save(personalData);
+       emailSender.sendEmailSuccessfulPasswordSetUp(personalData.getEmail());
     }
 
     public PersonalData getByEmail(String email) {
