@@ -42,7 +42,7 @@ export default function PasswordPage() {
         <Stack gap="xl">
           <Stack align="center" gap="xs" m="xs">
             <BsHeartPulse size={96} />
-            <Title order={1}>TELEMEDICINE</Title>
+            <Title order={1}>MediRoh</Title>
             <Text align="center">
               Vitajte, pre používanie telemedicínskeho systému si prosím
               nastavte svoje nové heslo.
