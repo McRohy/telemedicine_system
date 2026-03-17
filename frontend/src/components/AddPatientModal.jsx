@@ -35,7 +35,7 @@ export default function AddPatientModal({opened, onClose, onSuccess, doctorPanNu
       const res = await createPatient(formRequest.values);
       notifySuccess(
         'Pacient pridaný',
-        `${res.data.personalNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} bol úspešne pridaný lekárovi s PAN: ${res.data.panNumber}.`,
+        `${res.data.personalNumber} - ${res.data.personalData.firstName} ${res.data.personalData.lastName} bol úspešne pridaný lekárovi s PAN: ${res.data.doctorPanNumber}.`,
       );
       formRequest.reset();
       onClose();
