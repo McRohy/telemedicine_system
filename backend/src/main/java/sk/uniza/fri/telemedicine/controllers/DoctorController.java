@@ -29,9 +29,9 @@ public class DoctorController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public Page<DoctorResponse> getAllDoctors(
-                                              @RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(defaultValue = "10") int size,
-                                              @RequestParam(required = false) String searchLastName) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchLastName) {
         return doctorService.getAllDoctors(page, size, searchLastName);
     }
 }

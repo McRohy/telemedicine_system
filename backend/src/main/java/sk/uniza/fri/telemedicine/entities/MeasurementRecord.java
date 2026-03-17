@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sk.uniza.fri.telemedicine.entities.idHelpers.MeasurementRecordId;
-import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
+import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
 import java.time.LocalDateTime;
 
 @Entity

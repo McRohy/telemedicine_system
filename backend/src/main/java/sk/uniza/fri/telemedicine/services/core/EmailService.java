@@ -1,16 +1,18 @@
-package sk.uniza.fri.telemedicine.helpers;
+package sk.uniza.fri.telemedicine.services.core;
 
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.exception.EmailSendException;
 
-@Component
-public class EmailSender {
+//podla: https://www.geeksforgeeks.org/springboot/spring-boot-sending-email-via-smtp/
+// https://mailtrap.io/blog/spring-send-email/
+@Service
+public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    public EmailSender(JavaMailSender javaMailSender) {
+    public EmailService(JavaMailSender javaMailSender) {
         this.mailSender = javaMailSender;
     }
 

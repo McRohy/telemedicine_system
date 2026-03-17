@@ -34,9 +34,7 @@ public class MeasurementPlanController {
 
     @GetMapping("/{personalNumber}")
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
-    public ResponseEntity<MeasurementPlanResponse> getMeasurementPlanByPersonalNumber(@PathVariable String personalNumber) {
-        return measurementPlanService.findMeasurementPlanByPersonalNumber(personalNumber)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.noContent().build());
+    public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(@PathVariable String personalNumber) {
+        return measurementPlanService.findMeasurementPlanByPersonalNumber(personalNumber);
     }
 }

@@ -8,12 +8,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementRecordRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementRecordResponse;
-import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
 import sk.uniza.fri.telemedicine.entities.MeasurementRecord;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
-import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
-import sk.uniza.fri.telemedicine.helpers.EmailSender;
+import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
 import sk.uniza.fri.telemedicine.repository.MeasurementRecordRepository;
 
 import java.time.LocalDate;
@@ -26,14 +24,14 @@ public class MeasurementRecordService {
     private final PatientService patientService;
     private final MeasurementRecordRepository measurementRecordRepository;
     private final TypeOfMeasurementService typeOfMeasurementService;
-    private final EmailSender emailSender;
+    private final EmailService emailService;
 
     public MeasurementRecordService(PatientService patientService, MeasurementRecordRepository measurementRecordRepository,
-                                  TypeOfMeasurementService typeOfMeasurementService, EmailSender emailSender) {
+                                  TypeOfMeasurementService typeOfMeasurementService, EmailService emailService) {
         this.patientService = patientService;
         this.measurementRecordRepository = measurementRecordRepository;
         this.typeOfMeasurementService = typeOfMeasurementService;
-        this.emailSender = emailSender;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -45,7 +43,7 @@ public class MeasurementRecordService {
 
         if (!checkIfRecordIsInRange(request.getValue(), typeOfMeasurement)) {
             measurementRecord.setMeasurementStatus(MeasurementStatus.ABNORMAL);
-            emailSender.sendMeasurementRecordAlert(
+            emailService.sendMeasurementRecordAlert(
                     patientService.getCareProviderEmailByPatientPersonalNumber(patient.getPersonalNumber()),
                     patientService.getPatientFullNameByPersonalNumber(patient.getPersonalNumber()),
                     request.getValue(), typeOfMeasurement.getUnits());

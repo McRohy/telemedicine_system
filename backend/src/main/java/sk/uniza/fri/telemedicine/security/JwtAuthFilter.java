@@ -1,4 +1,4 @@
-package sk.uniza.fri.telemedicine.helpers.security;
+package sk.uniza.fri.telemedicine.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

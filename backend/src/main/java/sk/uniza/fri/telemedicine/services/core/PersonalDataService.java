@@ -9,7 +9,6 @@ import sk.uniza.fri.telemedicine.entities.PersonalData;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
-import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
 import java.util.UUID;
@@ -18,12 +17,12 @@ import java.util.UUID;
 public class PersonalDataService {
 
     private final PersonalDataRepository personalDataRepository;
-    private final EmailSender emailSender;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
-    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailSender emailSender, PasswordEncoder passwordEncoder) {
+    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.personalDataRepository = personalDataRepository;
-        this.emailSender = emailSender;
+        this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -42,7 +41,7 @@ public class PersonalDataService {
         String token = UUID.randomUUID().toString();
         personalData.setSetupToken(token);
         String link = "http://localhost:5173/password/" + token;
-        emailSender.sendEmailWithTokenPassword(email, link);
+        emailService.sendEmailWithTokenPassword(email, link);
     }
 
     @Transactional
@@ -54,7 +53,7 @@ public class PersonalDataService {
        personalData.setPassword(password);
        personalData.setSetupToken(null);
        personalDataRepository.save(personalData);
-       emailSender.sendEmailSuccessfulPasswordSetUp(personalData.getEmail());
+       emailService.sendEmailSuccessfulPasswordSetUp(personalData.getEmail());
     }
 
     public PersonalData getByEmail(String email) {

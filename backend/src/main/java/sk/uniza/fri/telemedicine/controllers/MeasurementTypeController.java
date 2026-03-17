@@ -13,11 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/measurement-types")
-public class TypeOfMeasurementController {
+public class MeasurementTypeController {
 
     private final TypeOfMeasurementService typeOfMeasurementService;
 
-    public TypeOfMeasurementController(TypeOfMeasurementService typeOfMeasurementService) {
+    public MeasurementTypeController(TypeOfMeasurementService typeOfMeasurementService) {
         this.typeOfMeasurementService = typeOfMeasurementService;
     }
 

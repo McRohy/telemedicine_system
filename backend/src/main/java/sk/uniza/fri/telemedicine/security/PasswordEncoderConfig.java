@@ -1,4 +1,4 @@
-package sk.uniza.fri.telemedicine.helpers.security;
+package sk.uniza.fri.telemedicine.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -37,19 +37,19 @@ public class PatientController {
     @GetMapping(params = "panNumber")
     @PreAuthorize("hasRole('DOCTOR')")
     public Page<PatientResponse> getPatientsByPanNumber(
-                                                @RequestParam(required = true) String panNumber,
-                                                @RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size,
-                                                @RequestParam(required = false) String searchLastName) {
+            @RequestParam(required = true) String panNumber,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchLastName) {
         return patientService.getAllByDoctorsPanNumber(panNumber, page, size, searchLastName);
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public Page<PatientResponse> getAllPatients(
-                                                @RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size,
-                                                @RequestParam(required = false) String searchLastName) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchLastName) {
         return patientService.getAllPatients(page, size, searchLastName);
     }
 }

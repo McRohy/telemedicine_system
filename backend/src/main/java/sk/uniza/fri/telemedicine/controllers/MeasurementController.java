@@ -32,17 +32,20 @@ public class MeasurementController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
-    public List<MeasurementRecordResponse> getMeasurementRecord(@RequestParam String personalNumber, @RequestParam Integer typeId, @RequestParam LocalDate period ) {
+    public List<MeasurementRecordResponse> getMeasurementRecord(
+            @RequestParam String personalNumber,
+            @RequestParam Integer typeId,
+            @RequestParam LocalDate period) {
         return measurementRecordService.getMeasurementRecordForPatient(personalNumber, typeId, period);
     }
 
     @GetMapping("/table")
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
     public Page<MeasurementRecordResponse> getAllMeasurementRecordPaged(
-                                                                @RequestParam String personalNumber,
-                                                                @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size,
-                                                                @RequestParam(required = false) Integer typeId) {
+            @RequestParam String personalNumber,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Integer typeId) {
         return measurementRecordService.getAllMeasurementRecords(personalNumber, page, size, typeId);
     }
 

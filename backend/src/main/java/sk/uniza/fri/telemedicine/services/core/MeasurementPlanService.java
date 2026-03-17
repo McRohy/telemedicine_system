@@ -7,7 +7,6 @@ import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
 import sk.uniza.fri.telemedicine.entities.*;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
-import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanTypesRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementTimeRepository;
@@ -28,18 +27,18 @@ public class MeasurementPlanService {
     private final TypeOfMeasurementService typeOfMeasurementService;
     private final DoctorService doctorService;
     private final PatientService patientService;
-    private final EmailSender emailSender;
+    private final EmailService emailService;
 
     public MeasurementPlanService(MeasurementPlanRepository measurementPlanRepository, TypeOfMeasurementService typeOfMeasurementService,
                                   MeasurementPlanTypesRepository measurementPlanTypesRepository, DoctorService doctorService,
-                                  PatientService patientService, MeasurementTimeRepository measurementTimeRepository, EmailSender emailSender) {
+                                  PatientService patientService, MeasurementTimeRepository measurementTimeRepository, EmailService emailService) {
         this.measurementPlanRepository = measurementPlanRepository;
         this.typeOfMeasurementService = typeOfMeasurementService;
         this.measurementPlanTypesRepository = measurementPlanTypesRepository;
         this.measurementTimeRepository = measurementTimeRepository;
         this.doctorService = doctorService;
         this.patientService = patientService;
-        this.emailSender = emailSender;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -71,7 +70,7 @@ public class MeasurementPlanService {
             measurementPlanTypesRepository.save(planType);
         }
 
-        emailSender.sendEmailCreatedPlan(patient.getPersonalData().getEmail());
+        emailService.sendEmailCreatedPlan(patient.getPersonalData().getEmail());
 
         return mapToMeasurementPlanResponse(plan, activeTypes, measurementTimes);
     }
@@ -149,21 +148,19 @@ public class MeasurementPlanService {
             }
         }
         measurementPlanTypesRepository.saveAll(activeTypes);
-        emailSender.sendEmailUpdatedPlan(plan.getPatient().getPersonalData().getEmail());
+        emailService.sendEmailUpdatedPlan(plan.getPatient().getPersonalData().getEmail());
 
         return mapToMeasurementPlanResponse(plan, activeTypes, activeTimes);
     }
 
-    public Optional<MeasurementPlanResponse>  findMeasurementPlanByPersonalNumber(String personalNumber) {
-        Optional<MeasurementPlan> optionalPlan = measurementPlanRepository.findByPersonalNumber(personalNumber);
-        if (optionalPlan.isEmpty()) {
-            return Optional.empty();
-        }
-        MeasurementPlan plan = optionalPlan.get();
+    public MeasurementPlanResponse  findMeasurementPlanByPersonalNumber(String personalNumber) {
+        MeasurementPlan plan = measurementPlanRepository.findByPersonalNumber(personalNumber)
+                .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
+
         List<MeasurementPlanTypes> activePlanTypes = measurementPlanTypesRepository.findAllActiveTypesByMeasurementPlanId(plan.getPlanId());
         List<MeasurementTime> measurementTimes = measurementTimeRepository.findAllActiveTimesByMeasurementPlanId(plan.getPlanId());
 
-        return Optional.of( mapToMeasurementPlanResponse(plan, activePlanTypes, measurementTimes));
+        return mapToMeasurementPlanResponse(plan, activePlanTypes, measurementTimes);
     }
 
     private MeasurementPlan mapToMeasurementPlan(MeasurementPlanRequest request, Patient patient, Doctor doctor) {

@@ -2,7 +2,7 @@ package sk.uniza.fri.telemedicine.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.constrains.Role;
+import sk.uniza.fri.telemedicine.enums.Role;
 
 @Getter
 @AllArgsConstructor

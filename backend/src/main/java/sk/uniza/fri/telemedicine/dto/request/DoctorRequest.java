@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.constrains.Specialization;
+import sk.uniza.fri.telemedicine.enums.Specialization;
 
 @Getter
 @AllArgsConstructor

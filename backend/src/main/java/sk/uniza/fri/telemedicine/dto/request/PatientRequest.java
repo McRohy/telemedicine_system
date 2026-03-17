@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.constrains.Gender;
+import sk.uniza.fri.telemedicine.enums.Gender;
 
 @Getter
 @AllArgsConstructor
