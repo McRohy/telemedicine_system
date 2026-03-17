@@ -22,13 +22,13 @@ export default function PatientDashboard() {
     async function fetchMeasurementPlan() {
       try {
         const response = await getMeasurementPlanByPersonalNumber(personalNumber);
-        if (response.status === 204) {
+        setPlan(response.data);
+      } catch (error) {
+        if (error.response?.status === 404) {
           setPlan(null);
         } else {
-          setPlan(response.data);
+          notifyError(error);
         }
-      } catch (error) {
-        notifyError(error);
       } finally {
         setLoading(false);
       }

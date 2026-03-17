@@ -25,13 +25,13 @@ export default function PatientDetail() {
     async function fetchPlan() {
      try {
       const response = await getMeasurementPlanByPersonalNumber(personalNumber);
-      if (response.status === 204) {
-        setPlan(null);
-      } else {
-        setPlan(response.data);
-      }
+      setPlan(response.data);
     } catch (error) {
-      notifyError(error);
+      if (error.response?.status === 404) {
+          setPlan(null);
+        } else {
+          notifyError(error);
+        }
     } finally {
       setPlanLoading(false);
     }
@@ -154,7 +154,7 @@ export default function PatientDetail() {
           </Button>
         </Stack>
       </Card>
-      
+
       <MeasurementChart personalNumber={personalNumber} plan={plan} />
       <MeasurementTable personalNumber={personalNumber} plan={plan} refresh={refresh}/>
     </Stack>
