@@ -21,7 +21,7 @@ const theme = createTheme({
         overlayProps: {
           backgroundOpacity: 0.8,
           blur: 5,
-          color: '#0b5942',
+          color: '#2b7d7ca2',
         },
       },
     },
