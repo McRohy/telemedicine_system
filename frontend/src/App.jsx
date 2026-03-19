@@ -8,7 +8,8 @@ import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import PatientDetail from './pages/doctor/PatientDetail';
 import Forbidden from './pages/other/Forbidden';
 import MeasurementTypesPage from './pages/admin/MeasurementTypesPage';
-import Article from './pages/doctor/Article';
+import DoctorArticles from './pages/doctor/ArticlePage';
+import PatientArticles from './pages/patient/ArticlePage';
 import PatientDashboard from './pages/patient/PatientDashboard';
 import ProtectedRoute from './components/ProtectedRoutes';
 import { AuthProvider } from './context/AuthProvider';
@@ -63,7 +64,7 @@ function App() {
               path="/doctor/articles"
               element={
                 <ProtectedRoute allowedRoles={['DOCTOR']}>
-                  <Article />
+                  <DoctorArticles />
                 </ProtectedRoute>
               }
             />
@@ -72,6 +73,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['PATIENT']}>
                   <PatientDashboard />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/patient/articles"
+              element={
+                <ProtectedRoute allowedRoles={['PATIENT']}>
+                  <PatientArticles />
                 </ProtectedRoute>
               }
             />
