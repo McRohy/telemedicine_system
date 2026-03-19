@@ -12,19 +12,19 @@ import java.time.LocalDateTime;
 public class Article {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment ID
+    private Long id;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime timeOfCreation;
 
     @ManyToOne
-    @JoinColumn(name = "pan_cislo", nullable = false)
+    @JoinColumn(name = "pan_number", nullable = false)
     private Doctor doctor;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 220, nullable = false)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(nullable = false)
+    private String filePath;
 }

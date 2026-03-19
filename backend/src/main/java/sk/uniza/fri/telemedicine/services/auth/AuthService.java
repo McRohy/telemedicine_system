@@ -7,7 +7,7 @@ import sk.uniza.fri.telemedicine.dto.request.LoginRequest;
 import sk.uniza.fri.telemedicine.dto.response.LoginResponse;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.Role;
-import sk.uniza.fri.telemedicine.security.JwtUtils;
+import sk.uniza.fri.telemedicine.config.JwtUtils;
 import sk.uniza.fri.telemedicine.services.core.DoctorService;
 import sk.uniza.fri.telemedicine.services.core.PatientService;
 import sk.uniza.fri.telemedicine.services.core.PersonalDataService;

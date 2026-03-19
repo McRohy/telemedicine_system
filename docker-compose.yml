@@ -23,6 +23,8 @@ services:
       - "8080:8080"
     depends_on:
       - postgre-db
+    volumes:
+      - article-data:/mediroh/articles
     environment:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
@@ -42,3 +44,4 @@ services:
 
 volumes:
   postgres-data:
+  article-data:

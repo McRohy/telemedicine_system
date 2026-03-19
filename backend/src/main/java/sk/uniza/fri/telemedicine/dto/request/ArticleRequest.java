@@ -15,7 +15,7 @@ public class ArticleRequest {
     private String panNumber;
 
     @NotBlank(message = "Title is mandatory")
-    @Size(max=100)
+    @Size(max=220)
     private String title;
 
     @NotBlank(message = "Content is mandatory")
