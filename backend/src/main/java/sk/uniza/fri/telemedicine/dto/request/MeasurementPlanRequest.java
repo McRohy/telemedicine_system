@@ -16,10 +16,6 @@ public class MeasurementPlanRequest {
     @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 10 digits")
     private  String personalNumber;
 
-    @NotNull(message = "Pan number is mandatory")
-    @Pattern(regexp = "\\d{16}", message = "PAN number must consist from 16 digits")
-    private String panNumber;
-
     @NotNull(message = "Frequency is mandatory")
     private Frequency frequency;
 

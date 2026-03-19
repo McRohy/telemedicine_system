@@ -16,21 +16,16 @@ public class MeasurementPlan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer planId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "personal_number", nullable = false)
     private Patient patient;
-
-    @ManyToOne
-    @JoinColumn(name = "pan_number", nullable = false)
-    private Doctor doctor;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     private Frequency frequency;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime validFrom;
 
-    @Column(nullable = false)
-    private LocalDateTime lastUpdateAt;
+    private LocalDateTime validTo;
 }
