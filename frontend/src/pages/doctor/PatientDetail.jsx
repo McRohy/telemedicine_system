@@ -75,7 +75,6 @@ export default function PatientDetail() {
           opened={isModalOpen}
           onClose={() => closeModal()}
           onSuccess={() => setRefresh((r) => r + 1)}
-          panNumber={patientData.doctorPanNumber}
           personalNumber={patientData.personalNumber}
           plan={plan}
         />
@@ -128,7 +127,6 @@ export default function PatientDetail() {
                   <Text size="sm">Čas plánu merania:</Text>
                   <Text size="sm">Typy meraní:</Text>
                   <Text size="sm">Vytvoreny: </Text>
-                  <Text size="sm">Posledna úprava:</Text>
                 </Stack>
                 <Stack>
                   <Text size="sm">
@@ -142,8 +140,7 @@ export default function PatientDetail() {
                       ?.map((t) => t.typeName)
                       .join(', ')}
                   </Text>
-                  <Text size="sm">{plan?.createdAt}</Text>
-                  <Text size="sm">{plan?.lastUpdateAt}</Text>
+                  <Text size="sm">{plan?.validFrom}</Text>
                 </Stack>
               </Group>
             </Card>

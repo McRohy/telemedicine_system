@@ -7,15 +7,14 @@ import { FREQUENCIES } from '../helpers/constants';
 import { getMeasurementTypesForSelect } from '../api/measurementTypeApi';
 import { createMeasurementPlan, updateMeasurementPlan } from '../api/measurementPlanApi';
 
-export default function PlanModal({ opened, onClose, onSuccess, panNumber, personalNumber, plan }) {
+export default function PlanModal({ opened, onClose, onSuccess, personalNumber, plan }) {
   const isEdit = Boolean(plan ? plan.id : null);
-  console.log('From page:',plan, panNumber, personalNumber);
+  console.log('From page:',plan, personalNumber);
 
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState([]);
   const form = useForm({
     initialValues: {
-      panNumber: panNumber,
       personalNumber: personalNumber,
       frequency: (isEdit ? plan.frequency : null),
       timesOfPlannedMeasurements: (isEdit ? plan.timesOfPlannedMeasurements : []),
@@ -44,7 +43,8 @@ export default function PlanModal({ opened, onClose, onSuccess, panNumber, perso
     setLoading(true);
     try {
       if (isEdit) {
-        console.log('Updating plan:', form.values);
+        console.log('Updating plan:', form.values, plan.id);
+
         await updateMeasurementPlan(plan.id, form.values);
         notifySuccess(
           'Plan upraveny',
@@ -80,25 +80,14 @@ export default function PlanModal({ opened, onClose, onSuccess, panNumber, perso
     >
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack gap="md">
-          <Group grow>
-            <TextInput
-              label="PAN cislo lekara"
-              type="text"
-              ta="left"
-              size="md"
-              value={form.values.panNumber}
-              disabled
-            />
-
-            <TextInput
-              label="Rodne cislo pacienta"
-              type="text"
-              ta="left"
-              size="md"
-              value={form.values.personalNumber}
-              disabled
-            />
-          </Group>
+          <TextInput
+            label="Rodné číslo pacienta"
+            type="text"
+            ta="left"
+            size="md"
+            value={form.values.personalNumber}
+            disabled
+          />
 
           <Select
             label="Frekvencia"
@@ -117,7 +106,7 @@ export default function PlanModal({ opened, onClose, onSuccess, panNumber, perso
 
           {numberOfTimePickers >= 1 && (
             <TimePicker
-              label="Cas merania 1"
+              label="Čas merania"
               withDropdown
               ta="left"
               size="md"
@@ -127,7 +116,7 @@ export default function PlanModal({ opened, onClose, onSuccess, panNumber, perso
 
           {numberOfTimePickers >= 2 && (
             <TimePicker
-              label="Cas merania 2"
+              label="Čas merania"
               withDropdown
               ta="left"
               size="md"
@@ -136,7 +125,7 @@ export default function PlanModal({ opened, onClose, onSuccess, panNumber, perso
           )}
 
           <MultiSelect
-            label="Vyberte typy merani"
+            label="Vyberte typy meraní"
             searchable
             clearable
             ta="left"
