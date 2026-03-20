@@ -14,7 +14,7 @@ public class MeasurementRecordResponse {
         private String typeName;
         private Double value;
         private String units;
-        @JsonFormat(pattern = "MM.dd. HH:mm:ss")
+        @JsonFormat(pattern = "MM.dd.yyyy HH:mm:ss")
         private LocalDateTime timeOfMeasurement;
         private MeasurementStatus status;
         private String note;
