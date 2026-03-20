@@ -1,12 +1,14 @@
 package sk.uniza.fri.telemedicine.services.core;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import sk.uniza.fri.telemedicine.exception.EmailSendException;
 
 //podla: https://www.geeksforgeeks.org/springboot/spring-boot-sending-email-via-smtp/
 // https://mailtrap.io/blog/spring-send-email/
+@Slf4j
 @Service
 public class EmailService {
 
@@ -16,18 +18,7 @@ public class EmailService {
         this.mailSender = javaMailSender;
     }
 
-    private void sendMail(String to, String subject, String content) {
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setText(content);
-            message.setSubject(subject);
-            mailSender.send(message);
-        } catch (Exception e) {
-            throw new EmailSendException("Pri posielani emailu nastala chyba " + to);
-        }
-    }
-
+    @Async
     public void sendMeasurementRecordAlert(String careProviderEmail, String patientFullName, Double value, String units) {
         String subject = "Upozornenie na meranie mimo normy";
         String content = "Dobrý deň,\n" +
@@ -38,6 +29,7 @@ public class EmailService {
         sendMail(careProviderEmail, subject, content);
     }
 
+    @Async
     public void sendEmailWithTokenPassword(String to, String passwordUrl) {
         String subject = "Nastavenie hesla pre váš účet";
         String content = "Dobrý deň,\n" +
@@ -48,6 +40,7 @@ public class EmailService {
         sendMail(to, subject, content);
     }
 
+    @Async
     public void sendEmailSuccessfulPasswordSetUp(String to) {
         String subject = "Úspešné nastavenie hesla";
         String content = "Dobrý deň,\n" +
@@ -57,6 +50,7 @@ public class EmailService {
         sendMail(to, subject, content);
     }
 
+    @Async
     public void sendEmailCreatedPlan(String to) {
         String subject = "Plán vytvorený";
         String content = "Dobrý deň,\n" +
@@ -66,6 +60,7 @@ public class EmailService {
         sendMail(to, subject, content);
     }
 
+    @Async
     public void sendEmailUpdatedPlan(String to) {
         String subject = "Plán upravený";
         String content = "Dobrý deň,\n" +
@@ -73,5 +68,18 @@ public class EmailService {
                 "\n Skontrolujte si svoj plán pre vzdialené monitorovanie.\n\n" +
                 "S pozdravom,\n Tím MediRoh";
         sendMail(to, subject, content);
+    }
+
+    private void sendMail(String to, String subject, String content) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(to);
+            message.setText(content);
+            message.setSubject(subject);
+            mailSender.send(message);
+            log.error("Email sent - OK");
+        } catch (Exception e) {
+            log.error("Failed to send email {}", e.getMessage());
+        }
     }
 }
