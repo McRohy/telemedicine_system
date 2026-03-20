@@ -75,7 +75,7 @@ public class PatientService {
     }
 
     public String getPatientFullNameByPersonalNumber(String personalNumber) {
-        return patientRepository.findFullNameByPernosalNumber(personalNumber)
+        return patientRepository.findFullNameByPersonalNumber(personalNumber)
                 .orElseThrow(() -> new NotFoundException("Patient with personal number not found"));
     }
 

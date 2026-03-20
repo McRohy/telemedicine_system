@@ -11,7 +11,7 @@ public class MeasurementTypePlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long typePlanId;
 
     @ManyToOne
     @JoinColumn(name = "plan_id", nullable = false)

@@ -1,8 +1,6 @@
 package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
@@ -13,7 +11,7 @@ public class Article {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment ID
-    private Long id;
+    private Long articleId;
 
     @Column(nullable = false)
     private LocalDateTime timeOfCreation;

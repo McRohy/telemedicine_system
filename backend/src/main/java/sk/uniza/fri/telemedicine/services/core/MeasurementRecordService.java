@@ -71,13 +71,13 @@ public class MeasurementRecordService {
         LocalDate from = period.withDayOfMonth(1);
         LocalDate to = period.withDayOfMonth(period.lengthOfMonth());
         return measurementRecordRepository
-                .findAllByPatientAndTimeBetween(personalNumber,typeId, from, to).stream()
+                .findAllByPatientAndTimeBetween(personalNumber, typeId, from, to).stream()
                 .map(record -> mapToMeasurementRecordResponse(record))
                 .toList();
     }
 
     public Page<MeasurementRecordResponse> getPagedMeasurementRecords(String personalNumber, int page, int size, Long typeId) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement").ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement.typeName").ascending());
         if (typeId != null) {
             return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeId(personalNumber, typeId, pageable)
                     .map(patient -> mapToMeasurementRecordResponse(patient));
@@ -100,8 +100,13 @@ public class MeasurementRecordService {
     }
 
     private MeasurementRecordResponse mapToMeasurementRecordResponse(MeasurementRecord measurementRecord) {
-        return new MeasurementRecordResponse(measurementRecord.getId(), measurementRecord.getTypeOfMeasurement().getTypeName(),
-                measurementRecord.getValue(), measurementRecord.getTypeOfMeasurement().getUnits(),
-                measurementRecord.getTimeOfMeasurement(), measurementRecord.getMeasurementStatus(), measurementRecord.getNote());
+        return new MeasurementRecordResponse(
+                measurementRecord.getRecordId(),
+                measurementRecord.getTypeOfMeasurement().getTypeName(),
+                measurementRecord.getValue(),
+                measurementRecord.getTypeOfMeasurement().getUnits(),
+                measurementRecord.getTimeOfMeasurement(),
+                measurementRecord.getMeasurementStatus(), measurementRecord.getNote()
+        );
     }
 }

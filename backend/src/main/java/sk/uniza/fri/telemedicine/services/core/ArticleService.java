@@ -108,7 +108,7 @@ public class ArticleService {
             throw new ArticleException("Failed to read article content");
         }
         return new ArticleResponse(
-                article.getId(),
+                article.getArticleId(),
                 article.getTimeOfCreation(),
                 article.getTitle(),
                 content
