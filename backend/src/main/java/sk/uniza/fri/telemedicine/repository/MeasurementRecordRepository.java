@@ -9,14 +9,14 @@ import sk.uniza.fri.telemedicine.entities.MeasurementRecord;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface MeasurementRecordRepository extends JpaRepository<MeasurementRecord, Integer> {
+public interface MeasurementRecordRepository extends JpaRepository<MeasurementRecord, Long> {
 
     @Query("SELECT m FROM MeasurementRecord m WHERE m.patient.personalNumber = :personalNumber AND m.typeOfMeasurement.typeId= :typeId AND CAST(m.timeOfMeasurement AS LocalDate) BETWEEN :from AND :to")
-    List<MeasurementRecord> findAllByPatientAndTimeBetween(String personalNumber, Integer typeId, LocalDate from, LocalDate to);
+    List<MeasurementRecord> findAllByPatientAndTimeBetween(String personalNumber, Long typeId, LocalDate from, LocalDate to);
 
     @Query("SELECT m FROM MeasurementRecord m WHERE m.patient.personalNumber = :personalNumber")
     Page<MeasurementRecord> findByPersonalNumber(String personalNumber, Pageable pageable);
 
     @Query("SELECT m FROM MeasurementRecord m WHERE m.patient.personalNumber = :personalNumber AND m.typeOfMeasurement.typeId = :typeId")
-    Page<MeasurementRecord> findByPersonalNumberAndMeasurementTypeId(String personalNumber, Integer typeId, Pageable pageable);
+    Page<MeasurementRecord> findByPersonalNumberAndMeasurementTypeId(String personalNumber, Long typeId, Pageable pageable);
 }

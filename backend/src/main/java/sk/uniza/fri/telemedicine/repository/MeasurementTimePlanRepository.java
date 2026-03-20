@@ -7,9 +7,9 @@ import sk.uniza.fri.telemedicine.entities.MeasurementTypePlan;
 
 import java.util.List;
 
-public interface MeasurementTimePlanRepository extends JpaRepository<MeasurementTimePlan, Integer> {
+public interface MeasurementTimePlanRepository extends JpaRepository<MeasurementTimePlan, Long> {
 
     @Query("SELECT mTime FROM MeasurementTimePlan mTime WHERE mTime.measurementPlan.planId = :planId")
-    List<MeasurementTimePlan> findAllByPlanId(Integer planId);
+    List<MeasurementTimePlan> findAllByPlanId(Long planId);
 
 }

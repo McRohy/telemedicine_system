@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 
-public interface TypeOfMeasurementRepository extends JpaRepository<TypeOfMeasurement, Integer> {
+public interface TypeOfMeasurementRepository extends JpaRepository<TypeOfMeasurement, Long> {
 
     @Query("SELECT COUNT(t) > 0 FROM TypeOfMeasurement t WHERE t.typeName = :typeName")
     boolean existsByTypeName(String typeName);

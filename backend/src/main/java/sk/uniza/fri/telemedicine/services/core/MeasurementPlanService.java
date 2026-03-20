@@ -66,7 +66,7 @@ public class MeasurementPlanService {
     }
 
     @Transactional
-    public MeasurementPlanResponse updateMeasurementPlan(Integer id, MeasurementPlanRequest request) {
+    public MeasurementPlanResponse updateMeasurementPlan(Long id, MeasurementPlanRequest request) {
         MeasurementPlan plan = measurementPlanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
 
@@ -109,7 +109,7 @@ public class MeasurementPlanService {
 
     private List<MeasurementTypePlan> createTypesForPlan(MeasurementPlan plan, MeasurementPlanRequest request) {
         List<MeasurementTypePlan> newTypes = new ArrayList<>();
-        for (Integer typeId : request.getTypeOfMeasurementIds()) {
+        for (Long typeId : request.getTypeOfMeasurementIds()) {
             TypeOfMeasurement type = typeOfMeasurementService.findTypeOfMeasurementById(typeId);
             MeasurementTypePlan typePlan = new MeasurementTypePlan();
             typePlan.setMeasurementPlan(plan);

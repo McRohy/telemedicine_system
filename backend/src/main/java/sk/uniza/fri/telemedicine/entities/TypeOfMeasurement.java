@@ -9,7 +9,7 @@ public class TypeOfMeasurement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer typeId;
+    private Long typeId;
 
     @Column(length = 30, nullable = false, unique = true)
     private String typeName;

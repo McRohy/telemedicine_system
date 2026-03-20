@@ -33,7 +33,7 @@ public class MeasurementRecordController {
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
     public List<MeasurementRecordResponse> getMeasurementRecords(
             @RequestParam String personalNumber,
-            @RequestParam Integer typeId,
+            @RequestParam Long typeId,
             @RequestParam LocalDate period) {
         return measurementRecordService.getMeasurementRecords(personalNumber, typeId, period);
     }
@@ -44,7 +44,7 @@ public class MeasurementRecordController {
             @RequestParam String personalNumber,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Integer typeId) {
+            @RequestParam(required = false) Long typeId) {
         return measurementRecordService.getPagedMeasurementRecords(personalNumber, page, size, typeId);
     }
 

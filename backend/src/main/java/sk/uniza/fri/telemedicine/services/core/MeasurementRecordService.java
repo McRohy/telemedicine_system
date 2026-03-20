@@ -67,7 +67,7 @@ public class MeasurementRecordService {
         return mapToMeasurementRecordResponse(measurementRecord);
     }
 
-    public List<MeasurementRecordResponse> getMeasurementRecords(String personalNumber, Integer typeId, LocalDate period) {
+    public List<MeasurementRecordResponse> getMeasurementRecords(String personalNumber, Long typeId, LocalDate period) {
         LocalDate from = period.withDayOfMonth(1);
         LocalDate to = period.withDayOfMonth(period.lengthOfMonth());
         return measurementRecordRepository
@@ -76,7 +76,7 @@ public class MeasurementRecordService {
                 .toList();
     }
 
-    public Page<MeasurementRecordResponse> getPagedMeasurementRecords(String personalNumber, int page, int size, Integer typeId) {
+    public Page<MeasurementRecordResponse> getPagedMeasurementRecords(String personalNumber, int page, int size, Long typeId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement").ascending());
         if (typeId != null) {
             return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeId(personalNumber, typeId, pageable)

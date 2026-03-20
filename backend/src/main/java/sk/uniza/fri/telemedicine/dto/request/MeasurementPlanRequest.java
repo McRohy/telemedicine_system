@@ -24,5 +24,5 @@ public class MeasurementPlanRequest {
     private List<LocalTime> timesOfPlannedMeasurements;
 
     @NotEmpty(message = "Types are mandatory") //controls null and empty list
-    private List<Integer> typeOfMeasurementIds;
+    private List<Long> typeOfMeasurementIds;
 }

@@ -13,7 +13,7 @@ public class MeasurementRecord {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer  id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "type_of_measurement_id", nullable = false)

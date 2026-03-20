@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter //for Json serialization
 @AllArgsConstructor
 public class MeasurementRecordResponse {
-        private Integer id;
+        private Long id;
         private String typeName;
         private Double value;
         private String units;

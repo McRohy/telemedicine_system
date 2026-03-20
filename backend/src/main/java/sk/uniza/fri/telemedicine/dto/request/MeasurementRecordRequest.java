@@ -13,7 +13,7 @@ public class MeasurementRecordRequest {
     private String personalNumber;
 
     @NotNull(message = "Type of measurement is mandatory")
-    private Integer typeOfMeasurementId;
+    private Long typeOfMeasurementId;
 
     @NotNull(message = "Value is mandatory")
     private Double value;

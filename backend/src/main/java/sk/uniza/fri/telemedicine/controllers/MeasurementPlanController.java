@@ -27,7 +27,7 @@ public class MeasurementPlanController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('DOCTOR')")
-    public MeasurementPlanResponse updateMeasurementPlan(@PathVariable Integer id, @Valid @RequestBody MeasurementPlanRequest request) {
+    public MeasurementPlanResponse updateMeasurementPlan(@PathVariable Long id, @Valid @RequestBody MeasurementPlanRequest request) {
         return measurementPlanService.updateMeasurementPlan(id, request);
     }
 

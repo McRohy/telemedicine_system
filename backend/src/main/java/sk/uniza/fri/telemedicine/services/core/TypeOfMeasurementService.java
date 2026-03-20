@@ -54,7 +54,7 @@ public class TypeOfMeasurementService {
         return mapToTypeOfMeasurementResponse(typeOfMeasurement);
     }
 
-    public TypeOfMeasurement findTypeOfMeasurementById(Integer id) {
+    public TypeOfMeasurement findTypeOfMeasurementById(Long id) {
         return typeOfMeasurementRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Type of measurement not found"));
     }

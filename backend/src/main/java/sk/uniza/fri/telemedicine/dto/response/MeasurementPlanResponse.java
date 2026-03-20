@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class MeasurementPlanResponse {
-    private Integer id;
+    private Long id;
     private String personalNumber;
     private Frequency frequency;
     private List<MeasurementPlanTypesResponse> typesOfMeasurements;
