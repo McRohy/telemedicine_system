@@ -20,7 +20,8 @@ public class PersonalDataService {
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
-    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
+    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailService emailService,
+                               PasswordEncoder passwordEncoder) {
         this.personalDataRepository = personalDataRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
@@ -31,8 +32,8 @@ public class PersonalDataService {
         if (personalDataRepository.existsById(request.getEmail())){
             throw new DuplicateException("Personal data with this email already exists");
         }
-        PersonalData personalData = this.mapToPersonalData(request);
-        this.setUpPassword(personalData, request.getEmail());
+        PersonalData personalData = mapToPersonalData(request);
+        setUpPassword(personalData, request.getEmail());
         return personalDataRepository.save(personalData);
     }
 
@@ -57,7 +58,7 @@ public class PersonalDataService {
     }
 
     public PersonalData getByEmail(String email) {
-        return personalDataRepository.findByEmail(email)
+        return personalDataRepository.findById(email)
                 .orElseThrow(() -> new NotFoundException("Personal data with this email not found"));
     }
 
@@ -71,7 +72,10 @@ public class PersonalDataService {
     }
 
     public PersonalDataResponse mapToPersonalDataResponse(PersonalData personalData) {
-        return new PersonalDataResponse(personalData.getEmail(), personalData.getFirstName(),
-                personalData.getLastName());
+        return new PersonalDataResponse(
+                personalData.getEmail(),
+                personalData.getFirstName(),
+                personalData.getLastName()
+        );
     }
 }

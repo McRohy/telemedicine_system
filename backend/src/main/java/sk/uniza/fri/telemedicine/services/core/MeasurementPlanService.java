@@ -6,6 +6,7 @@ import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
 import sk.uniza.fri.telemedicine.entities.*;
+import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementTypePlanRepository;
@@ -38,7 +39,7 @@ public class MeasurementPlanService {
         this.emailService = emailService;
     }
 
-    public MeasurementPlanResponse findMeasurementPlanByPersonalNumber(String personalNumber) {
+    public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(String personalNumber) {
         MeasurementPlan plan = measurementPlanRepository.findActivePlanByPersonalNumber(personalNumber)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
 
@@ -52,6 +53,10 @@ public class MeasurementPlanService {
     public MeasurementPlanResponse createMeasurementPlan(MeasurementPlanRequest request) {
         Patient patient = patientService.findByPersonalNumber(request.getPersonalNumber());
 
+        if (measurementPlanRepository.existsActivePlanByPersonalNumber(request.getPersonalNumber())) {
+            throw new DuplicateException("Patient already has an active measurement plan");
+        }
+
         MeasurementPlan plan = createPlan(request, patient);
         List<MeasurementTimePlan> measurementTimes = createTimeForPlan(plan, request);
         List<MeasurementTypePlan> measurementTypes = createTypesForPlan(plan, request);
@@ -64,6 +69,10 @@ public class MeasurementPlanService {
     public MeasurementPlanResponse updateMeasurementPlan(Integer id, MeasurementPlanRequest request) {
         MeasurementPlan plan = measurementPlanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
+
+        if (!plan.getPatient().getPersonalNumber().equals(request.getPersonalNumber())) {
+            throw new IllegalArgumentException("Plan does not belong to this patient");
+        }
 
         LocalDateTime now = LocalDateTime.now();
         plan.setValidTo(now);

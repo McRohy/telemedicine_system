@@ -12,7 +12,7 @@ public class Doctor {
 
     @Id
     @Column(length = 16)
-    private String PanNumber;
+    private String panNumber;
 
     @OneToOne
     @JoinColumn(name = "email", nullable = false)

@@ -12,7 +12,10 @@ import sk.uniza.fri.telemedicine.entities.MeasurementRecord;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
+import sk.uniza.fri.telemedicine.exception.NotFoundException;
+import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementRecordRepository;
+import sk.uniza.fri.telemedicine.repository.MeasurementTypePlanRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,23 +26,33 @@ public class MeasurementRecordService {
 
     private final PatientService patientService;
     private final MeasurementRecordRepository measurementRecordRepository;
+    private final MeasurementPlanRepository measurementPlanRepository;
+    private final MeasurementTypePlanRepository measurementTypePlanRepository;
     private final TypeOfMeasurementService typeOfMeasurementService;
     private final EmailService emailService;
 
     public MeasurementRecordService(PatientService patientService, MeasurementRecordRepository measurementRecordRepository,
-                                  TypeOfMeasurementService typeOfMeasurementService, EmailService emailService) {
+                                    MeasurementPlanRepository measurementPlanRepository, MeasurementTypePlanRepository measurementTypePlanRepository,
+                                    TypeOfMeasurementService typeOfMeasurementService, EmailService emailService) {
         this.patientService = patientService;
         this.measurementRecordRepository = measurementRecordRepository;
+        this.measurementPlanRepository = measurementPlanRepository;
+        this.measurementTypePlanRepository = measurementTypePlanRepository;
         this.typeOfMeasurementService = typeOfMeasurementService;
         this.emailService = emailService;
     }
 
     @Transactional
-    public MeasurementRecordResponse trackNewMeasurement(MeasurementRecordRequest request) {
+    public MeasurementRecordResponse createMeasurementRecord(MeasurementRecordRequest request) {
+        if (!measurementPlanRepository.existsActivePlanByPersonalNumber(request.getPersonalNumber())) {
+            throw new NotFoundException("Patient does not have an active measurement plan");
+        }
+        if (!measurementTypePlanRepository.existsByActivePlanAndTypeId(request.getPersonalNumber(), request.getTypeOfMeasurementId())) {
+            throw new IllegalArgumentException("Measurement type is not part of the patient's active plan");
+        }
         Patient patient = patientService.findByPersonalNumber(request.getPersonalNumber());
         TypeOfMeasurement typeOfMeasurement = typeOfMeasurementService.findTypeOfMeasurementById(request.getTypeOfMeasurementId());
-
-        MeasurementRecord measurementRecord = this.mapToMeasurementRecord(request, patient, typeOfMeasurement);
+        MeasurementRecord measurementRecord = mapToMeasurementRecord(request, patient, typeOfMeasurement);
 
         if (!checkIfRecordIsInRange(request.getValue(), typeOfMeasurement)) {
             measurementRecord.setMeasurementStatus(MeasurementStatus.ABNORMAL);
@@ -51,29 +64,29 @@ public class MeasurementRecordService {
             measurementRecord.setMeasurementStatus(MeasurementStatus.NORMAL);
         }
         measurementRecordRepository.save(measurementRecord);
-        return this.mapToMeasurementRecordResponse(measurementRecord);
+        return mapToMeasurementRecordResponse(measurementRecord);
     }
 
-    private boolean checkIfRecordIsInRange(Double value, TypeOfMeasurement typeOfMeasurement) {
-        return value >= typeOfMeasurement.getMinValue() && value <= typeOfMeasurement.getMaxValue();
-    }
-
-    public List<MeasurementRecordResponse> getMeasurementRecordForPatient(String personalNumber, Integer typeId, LocalDate period) {
+    public List<MeasurementRecordResponse> getMeasurementRecords(String personalNumber, Integer typeId, LocalDate period) {
         LocalDate from = period.withDayOfMonth(1);
         LocalDate to = period.withDayOfMonth(period.lengthOfMonth());
         return measurementRecordRepository
                 .findAllByPatientAndTimeBetween(personalNumber,typeId, from, to).stream()
-                .map(record -> this.mapToMeasurementRecordResponse(record))
+                .map(record -> mapToMeasurementRecordResponse(record))
                 .toList();
     }
 
-    public Page<MeasurementRecordResponse> getAllMeasurementRecords(String personalNumber, int page, int size, Integer typeId) {
+    public Page<MeasurementRecordResponse> getPagedMeasurementRecords(String personalNumber, int page, int size, Integer typeId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement").ascending());
         if (typeId != null) {
-            return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeContainingIgnoreCaseOrderByTimeOfMeasurementDesc(personalNumber, typeId, pageable)
+            return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeId(personalNumber, typeId, pageable)
                     .map(patient -> mapToMeasurementRecordResponse(patient));
         }
-        return measurementRecordRepository.findByPersonalNumberContainingIgnoreCaseOrderByTimeOfMeasurementDesc(personalNumber, pageable).map(p -> mapToMeasurementRecordResponse(p));
+        return measurementRecordRepository.findByPersonalNumber(personalNumber, pageable).map(p -> mapToMeasurementRecordResponse(p));
+    }
+
+    private boolean checkIfRecordIsInRange(Double value, TypeOfMeasurement typeOfMeasurement) {
+        return value >= typeOfMeasurement.getMinValue() && value <= typeOfMeasurement.getMaxValue();
     }
 
     private MeasurementRecord mapToMeasurementRecord(MeasurementRecordRequest request, Patient patient, TypeOfMeasurement typeOfMeasurement) {

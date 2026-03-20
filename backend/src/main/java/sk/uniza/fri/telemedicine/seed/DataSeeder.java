@@ -64,7 +64,7 @@ public class DataSeeder implements CommandLineRunner {
     private void seedArticles() {
         if (articleRepository.count() > 0) return;
 
-        Doctor doctor = doctorRepository.findByPanNumber("9032121546798143")
+        Doctor doctor = doctorRepository.findById("9032121546798143")
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
         try {

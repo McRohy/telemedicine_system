@@ -24,7 +24,8 @@ services:
     depends_on:
       - postgre-db
     volumes:
-      - article-data:/mediroh/articles
+      - postgres-data:/var/lib/postgresql/data #nemenné cesta PostgreSQL imagom
+      - article-data:/mediroh/articles #moja cesta pre články
     environment:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}

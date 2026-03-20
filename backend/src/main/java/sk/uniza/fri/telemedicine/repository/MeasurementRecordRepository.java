@@ -14,9 +14,9 @@ public interface MeasurementRecordRepository extends JpaRepository<MeasurementRe
     @Query("SELECT m FROM MeasurementRecord m WHERE m.patient.personalNumber = :personalNumber AND m.typeOfMeasurement.typeId= :typeId AND CAST(m.timeOfMeasurement AS LocalDate) BETWEEN :from AND :to")
     List<MeasurementRecord> findAllByPatientAndTimeBetween(String personalNumber, Integer typeId, LocalDate from, LocalDate to);
 
-    @Query("SELECT m FROM MeasurementRecord m WHERE m.patient.personalNumber = :personalNumber  ORDER BY m.timeOfMeasurement DESC")
-    Page<MeasurementRecord> findByPersonalNumberContainingIgnoreCaseOrderByTimeOfMeasurementDesc(String personalNumber, Pageable pageable);
+    @Query("SELECT m FROM MeasurementRecord m WHERE m.patient.personalNumber = :personalNumber")
+    Page<MeasurementRecord> findByPersonalNumber(String personalNumber, Pageable pageable);
 
-    @Query("SELECT m FROM MeasurementRecord m WHERE m.patient.personalNumber = :personalNumber AND m.typeOfMeasurement.typeId = :typeId ORDER BY m.timeOfMeasurement DESC")
-    Page<MeasurementRecord> findByPersonalNumberAndMeasurementTypeContainingIgnoreCaseOrderByTimeOfMeasurementDesc(String personalNumber, Integer typeId, Pageable pageable);
+    @Query("SELECT m FROM MeasurementRecord m WHERE m.patient.personalNumber = :personalNumber AND m.typeOfMeasurement.typeId = :typeId")
+    Page<MeasurementRecord> findByPersonalNumberAndMeasurementTypeId(String personalNumber, Integer typeId, Pageable pageable);
 }

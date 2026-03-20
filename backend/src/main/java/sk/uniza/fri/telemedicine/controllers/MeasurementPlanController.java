@@ -2,7 +2,6 @@ package sk.uniza.fri.telemedicine.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
@@ -35,6 +34,6 @@ public class MeasurementPlanController {
     @GetMapping("/{personalNumber}")
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
     public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(@PathVariable String personalNumber) {
-        return measurementPlanService.findMeasurementPlanByPersonalNumber(personalNumber);
+        return measurementPlanService.getMeasurementPlanByPersonalNumber(personalNumber);
     }
 }

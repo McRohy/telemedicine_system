@@ -34,6 +34,13 @@ public class SystemExceptionHandler {
         return new ErrorResponse(400, "Validation failed", fieldErrors);
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
+    public ErrorResponse handleIllegalArgument(IllegalArgumentException ex) {
+        return new ErrorResponse(422, ex.getMessage());  //422 - business rule violation
+                                                                                                            // request is valid but cannot be processed due to business logic violation
+    }
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(NotFoundException ex) {

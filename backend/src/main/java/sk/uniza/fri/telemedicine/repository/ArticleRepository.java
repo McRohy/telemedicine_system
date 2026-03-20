@@ -8,6 +8,6 @@ import sk.uniza.fri.telemedicine.entities.Article;
 
 public interface ArticleRepository extends JpaRepository<Article, Long> {
 
-    @Query("SELECT a FROM Article a WHERE a.doctor.PanNumber = :panNumber")
+    @Query("SELECT a FROM Article a WHERE a.doctor.panNumber = :panNumber")
     Page<Article> findAllByPanNumber(String panNumber, Pageable pageable);
 }

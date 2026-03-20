@@ -6,18 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import sk.uniza.fri.telemedicine.entities.Patient;
 
-import java.util.List;
 import java.util.Optional;
 
-public interface PatientRepository extends JpaRepository<Patient, Integer> {
+public interface PatientRepository extends JpaRepository<Patient, String> {
 
-    @Query("SELECT COUNT(p) > 0 FROM Patient p WHERE p.personalNumber = :personalNumber")
-    boolean existsByPersonalNumber(String personalNumber);
-
-    @Query("SELECT p FROM Patient p WHERE p.personalNumber = :personalNumber")
-    Optional<Patient> findByPersonalNumber(String personalNumber);
-
-    @Query("SELECT p FROM Patient p WHERE p.doctor.PanNumber = :panNumber")
+    @Query("SELECT p FROM Patient p WHERE p.doctor.panNumber = :panNumber")
     Page<Patient> findAllByPanNumber(String panNumber, Pageable pageable);
 
     @Query("SELECT pd.email FROM Patient p JOIN p.doctor d JOIN d.personalData pd WHERE p.personalNumber = :personalNumber")
@@ -30,8 +23,8 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
     Optional<String> findPersonalNumberByEmail(String email);
 
     @Query("SELECT p FROM Patient p JOIN p.personalData pd WHERE LOWER(pd.lastName) LIKE LOWER(CONCAT(:searchLastName, '%'))")
-    Page<Patient> findByPersonalDataLastNameContainingIgnoreCase(String searchLastName, Pageable pageable);
+    Page<Patient> findByPersonalDataLastNameStartingWithIgnoreCase(String searchLastName, Pageable pageable);
 
-    @Query("SELECT p FROM Patient p JOIN p.personalData pd WHERE p.doctor.PanNumber = :panNumber AND LOWER(pd.lastName) LIKE LOWER(CONCAT(:searchLastName, '%'))")
-    Page<Patient>findByPanNumberAndPersonalDataLastNameContainingIgnoreCase(String panNumber, String searchLastName, Pageable pageable);
+    @Query("SELECT p FROM Patient p JOIN p.personalData pd WHERE p.doctor.panNumber = :panNumber AND LOWER(pd.lastName) LIKE LOWER(CONCAT(:searchLastName, '%'))")
+    Page<Patient> findByPanNumberAndPersonalDataLastNameStartingWithIgnoreCase(String panNumber, String searchLastName, Pageable pageable);
 }

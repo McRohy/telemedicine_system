@@ -11,5 +11,6 @@ public interface MeasurementTypePlanRepository extends JpaRepository<Measurement
     @Query("SELECT mType FROM MeasurementTypePlan mType WHERE mType.measurementPlan.planId = :planId")
     List<MeasurementTypePlan> findAllByPlanId(Integer planId);
 
-
+    @Query("SELECT COUNT(mtp) > 0 FROM MeasurementTypePlan mtp WHERE mtp.measurementPlan.patient.personalNumber = :personalNumber AND mtp.measurementPlan.validTo IS NULL AND mtp.typeOfMeasurement.typeId = :typeId")
+    boolean existsByActivePlanAndTypeId(String personalNumber, Integer typeId);
 }
