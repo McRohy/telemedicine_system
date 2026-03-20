@@ -1,6 +1,6 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -12,10 +12,7 @@ import sk.uniza.fri.telemedicine.entities.MeasurementRecord;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
-import sk.uniza.fri.telemedicine.exception.NotFoundException;
-import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementRecordRepository;
-import sk.uniza.fri.telemedicine.repository.MeasurementTypePlanRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,32 +23,26 @@ public class MeasurementRecordService {
 
     private final PatientService patientService;
     private final MeasurementRecordRepository measurementRecordRepository;
-    private final MeasurementPlanRepository measurementPlanRepository;
-    private final MeasurementTypePlanRepository measurementTypePlanRepository;
+    private final MeasurementPlanService measurementPlanService;
     private final TypeOfMeasurementService typeOfMeasurementService;
     private final EmailService emailService;
 
     public MeasurementRecordService(PatientService patientService, MeasurementRecordRepository measurementRecordRepository,
-                                    MeasurementPlanRepository measurementPlanRepository, MeasurementTypePlanRepository measurementTypePlanRepository,
+                                    MeasurementPlanService measurementPlanService,
                                     TypeOfMeasurementService typeOfMeasurementService, EmailService emailService) {
         this.patientService = patientService;
         this.measurementRecordRepository = measurementRecordRepository;
-        this.measurementPlanRepository = measurementPlanRepository;
-        this.measurementTypePlanRepository = measurementTypePlanRepository;
+        this.measurementPlanService = measurementPlanService;
         this.typeOfMeasurementService = typeOfMeasurementService;
         this.emailService = emailService;
     }
 
     @Transactional
     public MeasurementRecordResponse createMeasurementRecord(MeasurementRecordRequest request) {
-        if (!measurementPlanRepository.existsActivePlanByPersonalNumber(request.getPersonalNumber())) {
-            throw new NotFoundException("Patient does not have an active measurement plan");
-        }
-        if (!measurementTypePlanRepository.existsByActivePlanAndTypeId(request.getPersonalNumber(), request.getTypeOfMeasurementId())) {
-            throw new IllegalArgumentException("Measurement type is not part of the patient's active plan");
-        }
-        Patient patient = patientService.findByPersonalNumber(request.getPersonalNumber());
-        TypeOfMeasurement typeOfMeasurement = typeOfMeasurementService.findTypeOfMeasurementById(request.getTypeOfMeasurementId());
+        measurementPlanService.validateActivePlanAndType(request.getPersonalNumber(), request.getTypeOfMeasurementId());
+
+        Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
+        TypeOfMeasurement typeOfMeasurement = typeOfMeasurementService.getTypeOfMeasurementById(request.getTypeOfMeasurementId());
         MeasurementRecord measurementRecord = mapToMeasurementRecord(request, patient, typeOfMeasurement);
 
         if (!checkIfRecordIsInRange(request.getValue(), typeOfMeasurement)) {

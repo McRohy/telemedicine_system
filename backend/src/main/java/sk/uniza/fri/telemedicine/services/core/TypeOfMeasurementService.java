@@ -1,6 +1,6 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +54,7 @@ public class TypeOfMeasurementService {
         return mapToTypeOfMeasurementResponse(typeOfMeasurement);
     }
 
-    public TypeOfMeasurement findTypeOfMeasurementById(Long id) {
+    public TypeOfMeasurement getTypeOfMeasurementById(Long id) {
         return typeOfMeasurementRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Type of measurement not found"));
     }

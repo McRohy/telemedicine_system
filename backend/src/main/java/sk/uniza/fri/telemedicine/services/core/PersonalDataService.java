@@ -1,6 +1,6 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.PasswordRequest;

@@ -1,6 +1,6 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -69,19 +69,19 @@ public class ArticleService {
         return mapToArticleResponse(article);
     }
 
-    public Page<ArticleResponse> findAllArticlesByPanNumber(String panNumber, int page, int size) {
+    public Page<ArticleResponse> getAllArticlesByPanNumber(String panNumber, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("timeOfCreation").descending());
         return articleRepository.findAllByPanNumber(panNumber, pageable)
-                .map(this::mapToArticleResponse);
+                .map(article -> mapToArticleResponse(article));
     }
 
-    public Page<ArticleResponse> findAllArticles(int page, int size) {
+    public Page<ArticleResponse> getAllArticles(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("timeOfCreation").descending());
         return articleRepository.findAll(pageable)
-                .map(this::mapToArticleResponse);
+                .map(article -> mapToArticleResponse(article));
     }
 
-    public ArticleResponse findArticleById(Long articleId) {
+    public ArticleResponse getArticleById(Long articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new NotFoundException("Article not found"));
         return mapToArticleResponse(article);

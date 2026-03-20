@@ -33,7 +33,7 @@ public class ArticleController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return articleService.findAllArticlesByPanNumber(panNumber, page, size);
+        return articleService.getAllArticlesByPanNumber(panNumber, page, size);
     }
 
     @GetMapping
@@ -41,14 +41,14 @@ public class ArticleController {
     public Page<ArticleResponse> getArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return articleService.findAllArticles(page, size);
+        return articleService.getAllArticles(page, size);
     }
 
 
     @GetMapping("/{articleId}")
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
     public ArticleResponse getArticleById(@PathVariable Long articleId) {
-        return articleService.findArticleById(articleId);
+        return articleService.getArticleById(articleId);
     }
 
     @DeleteMapping("/{articleId}")

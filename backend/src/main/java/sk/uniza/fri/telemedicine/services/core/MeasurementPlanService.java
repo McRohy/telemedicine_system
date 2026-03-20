@@ -1,6 +1,6 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
@@ -39,6 +39,7 @@ public class MeasurementPlanService {
         this.emailService = emailService;
     }
 
+    @Transactional(readOnly = true)  //reads in one transaction to keep data consistent
     public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(String personalNumber) {
         MeasurementPlan plan = measurementPlanRepository.findActivePlanByPersonalNumber(personalNumber)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
@@ -51,7 +52,7 @@ public class MeasurementPlanService {
 
     @Transactional
     public MeasurementPlanResponse createMeasurementPlan(MeasurementPlanRequest request) {
-        Patient patient = patientService.findByPersonalNumber(request.getPersonalNumber());
+        Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
 
         if (measurementPlanRepository.existsActivePlanByPersonalNumber(request.getPersonalNumber())) {
             throw new DuplicateException("Patient already has an active measurement plan");
@@ -86,6 +87,15 @@ public class MeasurementPlanService {
         return mapToMeasurementPlanResponse(newPlan, newMeasurementTypes, newMeasurementTimes);
     }
 
+    public void validateActivePlanAndType(String personalNumber, Long typeId) {
+        if (!measurementPlanRepository.existsActivePlanByPersonalNumber(personalNumber)) {
+            throw new NotFoundException("Patient does not have an active measurement plan");
+        }
+        if (!measurementTypePlanRepository.existsByActivePlanAndTypeId(personalNumber, typeId)) {
+            throw new IllegalArgumentException("Measurement type is not part of the patient's active plan");
+        }
+    }
+
     private MeasurementPlan createPlan(MeasurementPlanRequest request, Patient patient) {
         MeasurementPlan plan = new MeasurementPlan();
         plan.setPatient(patient);
@@ -110,7 +120,7 @@ public class MeasurementPlanService {
     private List<MeasurementTypePlan> createTypesForPlan(MeasurementPlan plan, MeasurementPlanRequest request) {
         List<MeasurementTypePlan> newTypes = new ArrayList<>();
         for (Long typeId : request.getTypeOfMeasurementIds()) {
-            TypeOfMeasurement type = typeOfMeasurementService.findTypeOfMeasurementById(typeId);
+            TypeOfMeasurement type = typeOfMeasurementService.getTypeOfMeasurementById(typeId);
             MeasurementTypePlan typePlan = new MeasurementTypePlan();
             typePlan.setMeasurementPlan(plan);
             typePlan.setTypeOfMeasurement(type);

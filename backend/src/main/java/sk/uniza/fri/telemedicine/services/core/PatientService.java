@@ -1,6 +1,6 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,10 +60,10 @@ public class PatientService {
     }
 
     public PatientResponse getPatientByPersonalNumber(String personalNumber) {
-        return mapToPatientResponse(findByPersonalNumber(personalNumber));
+        return mapToPatientResponse(getByPersonalNumber(personalNumber));
     }
 
-    public Patient findByPersonalNumber(String personalNumber) {
+    public Patient getByPersonalNumber(String personalNumber) {
         return patientRepository.findById(personalNumber).orElseThrow(
                 () -> new NotFoundException("Patient with personal number not found"));
     }
@@ -93,7 +93,7 @@ public class PatientService {
         return patient;
     }
 
-    public PatientResponse mapToPatientResponse(Patient patient) {
+    private PatientResponse mapToPatientResponse(Patient patient) {
         return new PatientResponse(
                 patient.getPersonalNumber(),
                 personalDataService.mapToPersonalDataResponse(patient.getPersonalData()),
