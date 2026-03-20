@@ -33,7 +33,7 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
-    @Value("${app.cors.allowed-origins}")
+    @Value("${app.frontend.base-url}")
     private String allowedOrigins;
 
     public SecurityConfig(JwtAuthFilter jwtAuthFilter) {

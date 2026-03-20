@@ -1,6 +1,7 @@
 package sk.uniza.fri.telemedicine.services.core;
 
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.PasswordRequest;
 import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
@@ -15,6 +16,9 @@ import java.util.UUID;
 
 @Service
 public class PersonalDataService {
+
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
 
     private final PersonalDataRepository personalDataRepository;
     private final EmailService emailService;
@@ -41,7 +45,7 @@ public class PersonalDataService {
         personalData.setPassword(null);
         String token = UUID.randomUUID().toString();
         personalData.setSetupToken(token);
-        String link = "http://localhost:5173/password/" + token;
+        String link = frontendBaseUrl + "/password/" + token;
         emailService.sendEmailWithTokenPassword(email, link);
     }
 
