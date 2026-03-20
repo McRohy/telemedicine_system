@@ -3,7 +3,7 @@ package sk.uniza.fri.telemedicine.seed;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import sk.uniza.fri.telemedicine.config.PasswordEncoderConfig;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
@@ -24,10 +24,10 @@ public class UserSeeder implements CommandLineRunner {
     private final PersonalDataRepository personalDataRepository;
     private final DoctorRepository doctorRepository;
     private final PatientRepository patientRepository;
-    private final PasswordEncoderConfig passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     private UserSeeder(PersonalDataRepository personalDataRepository, DoctorRepository doctorRepository,
-                       PatientRepository patientRepository, PasswordEncoderConfig passwordEncoder) {
+                       PatientRepository patientRepository, PasswordEncoder passwordEncoder) {
         this.personalDataRepository = personalDataRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
@@ -49,7 +49,7 @@ public class UserSeeder implements CommandLineRunner {
         pdAdmin.setFirstName("Matej");
         pdAdmin.setLastName("Adminovský");
         pdAdmin.setEmail("admin@mediroh.sk");
-        pdAdmin.setPassword(passwordEncoder.passwordEncoder().encode("medirohAdmin"));
+        pdAdmin.setPassword(passwordEncoder.encode("medirohAdmin"));
         pdAdmin.setRole(sk.uniza.fri.telemedicine.enums.Role.ADMIN);
         personalDataRepository.save(pdAdmin);
 
@@ -57,7 +57,7 @@ public class UserSeeder implements CommandLineRunner {
         pdDoctor.setFirstName("Lubos");
         pdDoctor.setLastName("Roh");
         pdDoctor.setEmail("doctor@mediroh.sk");
-        pdDoctor.setPassword(passwordEncoder.passwordEncoder().encode("medirohDoctor"));
+        pdDoctor.setPassword(passwordEncoder.encode("medirohDoctor"));
         pdDoctor.setRole(sk.uniza.fri.telemedicine.enums.Role.DOCTOR);
         personalDataRepository.save(pdDoctor);
 
@@ -71,7 +71,7 @@ public class UserSeeder implements CommandLineRunner {
         pdPatient.setFirstName("Emma");
         pdPatient.setLastName("Roh");
         pdPatient.setEmail("roh@gmail.com");
-        pdPatient.setPassword(passwordEncoder.passwordEncoder().encode("mediroh"));
+        pdPatient.setPassword(passwordEncoder.encode("mediroh"));
         pdPatient.setRole(sk.uniza.fri.telemedicine.enums.Role.PATIENT);
         personalDataRepository.save(pdPatient);
 
