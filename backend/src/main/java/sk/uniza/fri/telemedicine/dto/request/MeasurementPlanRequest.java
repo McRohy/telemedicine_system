@@ -12,7 +12,7 @@ import java.util.List;
 @Getter @AllArgsConstructor
 public class MeasurementPlanRequest {
 
-    @NotNull(message = "Personal number is mandatory")
+    @NotBlank(message = "Personal number is mandatory")
     @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 10 digits")
     private  String personalNumber;
 

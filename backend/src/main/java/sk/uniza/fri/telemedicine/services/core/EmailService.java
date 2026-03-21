@@ -1,6 +1,7 @@
 package sk.uniza.fri.telemedicine.services.core;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
 
+    @Value("${spring.mail.username}")
+    private String fromEmail;
     private final JavaMailSender mailSender;
 
     public EmailService(JavaMailSender javaMailSender) {
@@ -21,65 +24,61 @@ public class EmailService {
     @Async
     public void sendMeasurementRecordAlert(String careProviderEmail, String patientFullName, Double value, String units) {
         String subject = "Upozornenie na meranie mimo normy";
-        String content = "Dobrý deň,\n" +
-                "Pacient" + patientFullName + " zaznamenal meranie s hodnotou" + value + " " + units + ", čo je mimo normálneho rozsahu. \n" +
-                "Prosím, skontrolujte meranie pacienta.\n\n" +
-                "S pozdravom,\n Tím MediRoh";
-
-        sendMail(careProviderEmail, subject, content);
+        String body = "Pacient " + patientFullName + " zaznamenal meranie s hodnotou " + value + " " + units + ", čo je mimo normálneho rozsahu.\n" +
+                "Prosím, skontrolujte meranie pacienta.";
+        sendEmail(careProviderEmail, subject, createEmailContent(body));
     }
 
     @Async
     public void sendEmailWithTokenPassword(String to, String passwordUrl) {
         String subject = "Nastavenie hesla pre váš účet";
-        String content = "Dobrý deň,\n" +
-                "Zasielame link pre nastavenie hesla vášho účtu.\n" +
-                "Kliknite na následujíci odkaz pre nastavenie hesla:\n" +
-                passwordUrl + "\n\n" +
-                "S pozdravom,\n Tím MediRoh";
-        sendMail(to, subject, content);
+        String body = "Zasielame link pre nastavenie hesla vášho účtu.\n" +
+                "Kliknite na nasledujúci odkaz pre nastavenie hesla:\n" +
+                passwordUrl;
+        sendEmail(to, subject, createEmailContent(body));
     }
 
     @Async
     public void sendEmailSuccessfulPasswordSetUp(String to) {
         String subject = "Úspešné nastavenie hesla";
-        String content = "Dobrý deň,\n" +
-                "Vaše heslo bolo úspešne nastavené. \n " +
-                "Môzte sa prihlásiť do systému a využívať telemedicínsky systém naplno.\n\n" +
-                "S pozdravom,\n Tím MediRoh";
-        sendMail(to, subject, content);
+        String body = "Vaše heslo bolo úspešne nastavené.\n" +
+                "Môžte sa prihlásiť do systému a využívať telemedicínsky systém naplno.";
+        sendEmail(to, subject, createEmailContent(body));
     }
 
     @Async
     public void sendEmailCreatedPlan(String to) {
         String subject = "Plán vytvorený";
-        String content = "Dobrý deň,\n" +
-                "Váš plán pre vzdialené monitorovanie bol  vytvorený." +
-                " \n Prihláste sa do systému a skontrolujte svoj plán pre vzdialené monitorovanie.\n\n" +
-                "S pozdravom,\n Tím MediRoh";
-        sendMail(to, subject, content);
+        String body = "Váš plán pre vzdialené monitorovanie bol vytvorený.\n" +
+                "Prihláste sa do systému a skontrolujte svoj plán pre vzdialené monitorovanie.";
+        sendEmail(to, subject, createEmailContent(body));
     }
 
     @Async
     public void sendEmailUpdatedPlan(String to) {
         String subject = "Plán upravený";
-        String content = "Dobrý deň,\n" +
-                "Váš plán pre vzdialené monitorovanie bol upravený." +
-                "\n Skontrolujte si svoj plán pre vzdialené monitorovanie.\n\n" +
-                "S pozdravom,\n Tím MediRoh";
-        sendMail(to, subject, content);
+        String body = "Váš plán pre vzdialené monitorovanie bol upravený.\n" +
+                "Skontrolujte si svoj plán pre vzdialené monitorovanie.";
+        sendEmail(to, subject, createEmailContent(body));
     }
 
-    private void sendMail(String to, String subject, String content) {
+    private String createEmailContent(String body) {
+        return "Dobrý deň,\n\n" +
+                body + "\n\n" +
+                "S pozdravom,\n Tím MediRoh";
+    }
+
+    private void sendEmail(String to, String subject, String content) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(fromEmail);
             message.setTo(to);
             message.setText(content);
             message.setSubject(subject);
             mailSender.send(message);
-            log.error("Email sent - OK");
+            log.info("Email was sent to {}", to);
         } catch (Exception e) {
-            log.error("Failed to send email {}", e.getMessage());
+            log.error("Failed to send email to {}: {}", to, e.getMessage());
         }
     }
 }

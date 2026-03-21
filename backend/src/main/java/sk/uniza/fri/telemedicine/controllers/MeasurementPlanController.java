@@ -25,10 +25,10 @@ public class MeasurementPlanController {
         return measurementPlanService.createMeasurementPlan(request);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{planId}")
     @PreAuthorize("hasRole('DOCTOR')")
-    public MeasurementPlanResponse updateMeasurementPlan(@PathVariable Long id, @Valid @RequestBody MeasurementPlanRequest request) {
-        return measurementPlanService.updateMeasurementPlan(id, request);
+    public MeasurementPlanResponse updateMeasurementPlan(@PathVariable Long planId, @Valid @RequestBody MeasurementPlanRequest request) {
+        return measurementPlanService.updateMeasurementPlan(planId, request);
     }
 
     @GetMapping("/{personalNumber}")
