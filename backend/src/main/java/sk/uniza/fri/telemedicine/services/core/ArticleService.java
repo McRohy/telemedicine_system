@@ -66,25 +66,25 @@ public class ArticleService {
             throw new ArticleException("Failed to save article file");
         }
 
-        return mapToArticleResponse(article);
+        return mapToArticleResponse(article, true);
     }
 
     public Page<ArticleResponse> getAllArticlesByPanNumber(String panNumber, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("timeOfCreation").descending());
         return articleRepository.findAllByPanNumber(panNumber, pageable)
-                .map(article -> mapToArticleResponse(article));
+                .map(article -> mapToArticleResponse(article, false));
     }
 
     public Page<ArticleResponse> getAllArticles(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("timeOfCreation").descending());
         return articleRepository.findAll(pageable)
-                .map(article -> mapToArticleResponse(article));
+                .map(article -> mapToArticleResponse(article, false));
     }
 
     public ArticleResponse getArticleById(Long articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new NotFoundException("Article not found"));
-        return mapToArticleResponse(article);
+        return mapToArticleResponse(article, true);
     }
 
     @Transactional
@@ -100,12 +100,14 @@ public class ArticleService {
         articleRepository.delete(article);
     }
 
-    private ArticleResponse mapToArticleResponse(Article article) {
-        String content;
-        try {
-            content = Files.readString(Paths.get(storagePath).resolve(article.getFilePath()));
-        } catch (IOException e) {
-            throw new ArticleException("Failed to read article content");
+    private ArticleResponse mapToArticleResponse(Article article, boolean withContent) {
+        String content = null;
+        if (withContent) {
+            try {
+                content = Files.readString(Paths.get(storagePath).resolve(article.getFilePath()));
+            } catch (IOException e) {
+                throw new ArticleException("Failed to read article content");
+            }
         }
         return new ArticleResponse(
                 article.getArticleId(),
