@@ -14,7 +14,6 @@ export default function AddDoctorModal({ opened, onClose, onSuccess }) {
         firstName: '',
         lastName: '',
         email: '',
-        role: 'DOCTOR',
       },
       specialization: null,
     },

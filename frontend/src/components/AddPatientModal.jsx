@@ -14,7 +14,6 @@ export default function AddPatientModal({opened, onClose, onSuccess, doctorPanNu
         firstName: '',
         lastName: '',
         email: '',
-        role: 'PATIENT',
       },
       panNumber: doctorPanNumber || '',
       gender: null,
