@@ -53,6 +53,7 @@ public class MeasurementPlanService {
 
     @Transactional
     public MeasurementPlanResponse createMeasurementPlan(MeasurementPlanRequest request) {
+        validateFrequencyAndTimes(request);
         Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
 
         if (measurementPlanRepository.existsActivePlanByPersonalNumber(request.getPersonalNumber())) {
@@ -69,6 +70,7 @@ public class MeasurementPlanService {
 
     @Transactional
     public MeasurementPlanResponse updateMeasurementPlan(Long id, MeasurementPlanRequest request) {
+        validateFrequencyAndTimes(request);
         MeasurementPlan plan = measurementPlanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
 
@@ -94,6 +96,14 @@ public class MeasurementPlanService {
         }
         if (!measurementTypePlanRepository.existsByActivePlanAndTypeId(personalNumber, typeId)) {
             throw new BusinessRuleException("Measurement type is not part of the patient's active plan");
+        }
+    }
+
+    private void validateFrequencyAndTimes(MeasurementPlanRequest request) {
+        int expected = request.getFrequency().getExpectedTimes();
+        int actual = request.getTimesOfPlannedMeasurements().size();
+        if (actual != expected) {
+            throw new BusinessRuleException("Frequency do not have required time/ times");
         }
     }
 
