@@ -19,7 +19,9 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
 /**
- * Inicializácia demo dát pre typy merania a články.
+ * Inserts default data when the application starts.
+ * Runs after UserSeeder (Order 2) and only adds data if the tables are empty.
+ * Seeds measurement types and a demo article.
  */
 @Component
 @Order(2)
@@ -37,8 +39,11 @@ public class DataSeeder implements CommandLineRunner {
         this.articleRepository = articleRepository;
     }
 
+    /**
+     * Runs data seeding at application startup.
+     */
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         seedMeasurementTypes();
         seedArticles();
     }

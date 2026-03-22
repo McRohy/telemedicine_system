@@ -14,8 +14,10 @@ import sk.uniza.fri.telemedicine.repository.PatientRepository;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
 /**
- * Inicializácia demo dát používateľov.
- * Vzor: https://www.javapro.academy/loading-initial-data-with-spring-boot/
+ * Inserts default data when the application starts.
+ * Runs  first (Order 1) and only adds data if the tables are empty.
+ * Seeds one admin,  doctor and patient.
+ * pattern: https://www.baeldung.com/spring-boot-data-initialization
  */
 @Component
 @Order(1)
@@ -26,7 +28,7 @@ public class UserSeeder implements CommandLineRunner {
     private final PatientRepository patientRepository;
     private final PasswordEncoder passwordEncoder;
 
-    private UserSeeder(PersonalDataRepository personalDataRepository, DoctorRepository doctorRepository,
+    public UserSeeder(PersonalDataRepository personalDataRepository, DoctorRepository doctorRepository,
                        PatientRepository patientRepository, PasswordEncoder passwordEncoder) {
         this.personalDataRepository = personalDataRepository;
         this.doctorRepository = doctorRepository;
@@ -35,10 +37,10 @@ public class UserSeeder implements CommandLineRunner {
     }
 
     /**
-     * Spustí inicializáciu používateľov pri štarte aplikácie.
+     * Runs data seeding at application startup.
      */
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         seedUsers();
     }
 
