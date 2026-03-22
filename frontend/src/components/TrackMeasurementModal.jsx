@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useForm } from '@mantine/form';
-import { Modal, Stack, TextInput, Select, Button, NumberInput } from '@mantine/core';
+import { Modal, Stack, TextInput, Select, Button, NumberInput, Group } from '@mantine/core';
 import { notifySuccess, notifyError } from '../helpers/notificationHelper';
 import { postMeasurement } from '../api/measurementsApi';
 
@@ -67,14 +67,25 @@ export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan
             {...form.getInputProps('typeOfMeasurementId')}
           />
 
-          <NumberInput
-            label="Hodnota merania"
-            placeholder="Zadejte hodnotu merania"
-            size="md"
-            ta="left"
-            withAsterisk
-            {...form.getInputProps('value')}
-          />
+          <Group grow>
+            <NumberInput
+              label="Hodnota merania"
+              placeholder="Zadejte hodnotu"
+              size="md"
+              ta="left"
+              withAsterisk
+              {...form.getInputProps('value')}
+            />
+
+            <TextInput
+              label="Jednotka"
+              type="text"
+              ta="left"
+              size="md"
+              value={plan?.typesOfMeasurements.find((t) => String(t.id) === form.values.typeOfMeasurementId)?.units || ''}
+              disabled
+            />
+          </Group>
 
           <TextInput
             label="Poznámka"
