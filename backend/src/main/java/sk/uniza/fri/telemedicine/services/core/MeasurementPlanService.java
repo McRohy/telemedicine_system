@@ -70,13 +70,18 @@ public class MeasurementPlanService {
 
     @Transactional
     public MeasurementPlanResponse updateMeasurementPlan(Long id, MeasurementPlanRequest request) {
-        validateFrequencyAndTimes(request);
         MeasurementPlan plan = measurementPlanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
+
+        if (plan.getValidTo() != null) {
+            throw new BusinessRuleException("Plan is already deactivated");
+        }
 
         if (!plan.getPatient().getPersonalNumber().equals(request.getPersonalNumber())) {
             throw new BusinessRuleException("Plan does not belong to this patient");
         }
+
+        validateFrequencyAndTimes(request);
 
         LocalDateTime now = LocalDateTime.now();
         plan.setValidTo(now);

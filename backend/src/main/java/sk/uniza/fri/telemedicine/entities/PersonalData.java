@@ -1,7 +1,6 @@
 package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,7 +11,6 @@ import sk.uniza.fri.telemedicine.enums.Role;
 public class PersonalData {
 
     @Id
-    @Email
     @Column(length = 70)
     private String email;
 
@@ -29,6 +27,7 @@ public class PersonalData {
     @Column(length = 60)
     private String password;
 
+    @Column(length = 36)
     private String setupToken;
 
 }

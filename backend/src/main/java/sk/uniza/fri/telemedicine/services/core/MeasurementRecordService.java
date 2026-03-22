@@ -71,9 +71,9 @@ public class MeasurementRecordService {
         Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement.typeName").ascending());
         if (typeId != null) {
             return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeId(personalNumber, typeId, pageable)
-                    .map(patient -> mapToMeasurementRecordResponse(patient));
+                    .map(record -> mapToMeasurementRecordResponse(record));
         }
-        return measurementRecordRepository.findByPersonalNumber(personalNumber, pageable).map(p -> mapToMeasurementRecordResponse(p));
+        return measurementRecordRepository.findByPersonalNumber(personalNumber, pageable).map(record -> mapToMeasurementRecordResponse(record));
     }
 
     private boolean checkIfRecordIsInRange(Double value, TypeOfMeasurement typeOfMeasurement) {
