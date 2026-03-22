@@ -34,11 +34,10 @@ public class SystemExceptionHandler {
         return new ErrorResponse(400, "Validation failed", fieldErrors);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(BusinessRuleException.class)
     @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
-    public ErrorResponse handleIllegalArgument(IllegalArgumentException ex) {
-        return new ErrorResponse(422, ex.getMessage());  //422 - business rule violation
-                                                                                                            // request is valid but cannot be processed due to business logic violation
+    public ErrorResponse handleBusinessRule(BusinessRuleException ex) {
+        return new ErrorResponse(422, ex.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -57,6 +56,12 @@ public class SystemExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDenied(AccessDeniedException ex) {
         return new ErrorResponse(403, "Access denied");
+    }
+
+    @ExceptionHandler(ArticleException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleArticleException(ArticleException ex) {
+        return new ErrorResponse(500, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

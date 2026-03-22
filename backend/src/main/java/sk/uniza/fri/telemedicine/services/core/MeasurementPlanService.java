@@ -6,6 +6,7 @@ import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
 import sk.uniza.fri.telemedicine.entities.*;
+import sk.uniza.fri.telemedicine.exception.BusinessRuleException;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
@@ -72,7 +73,7 @@ public class MeasurementPlanService {
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
 
         if (!plan.getPatient().getPersonalNumber().equals(request.getPersonalNumber())) {
-            throw new IllegalArgumentException("Plan does not belong to this patient");
+            throw new BusinessRuleException("Plan does not belong to this patient");
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -92,7 +93,7 @@ public class MeasurementPlanService {
             throw new NotFoundException("Patient does not have an active measurement plan");
         }
         if (!measurementTypePlanRepository.existsByActivePlanAndTypeId(personalNumber, typeId)) {
-            throw new IllegalArgumentException("Measurement type is not part of the patient's active plan");
+            throw new BusinessRuleException("Measurement type is not part of the patient's active plan");
         }
     }
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
 import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
+import sk.uniza.fri.telemedicine.exception.BusinessRuleException;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.TypeOfMeasurementRepository;
@@ -43,7 +44,7 @@ public class TypeOfMeasurementService {
     @Transactional
     public TypeOfMeasurementResponse createTypeOfMeasurement(TypeOfMeasurementRequest request) {
         if (request.getMinValue() >= request.getMaxValue()) {
-            throw new IllegalArgumentException("Min value must be less than max value");
+            throw new BusinessRuleException("Min value must be less than max value");
         }
         if (typeOfMeasurementRepository.existsByTypeName(request.getTypeName())) {
             throw new DuplicateException("Type of measurement already exists");
