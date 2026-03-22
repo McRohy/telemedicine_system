@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
+import sk.uniza.fri.telemedicine.enums.Role;
 import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
@@ -30,7 +31,7 @@ public class DoctorService {
         if (doctorRepository.existsById(request.getPanNumber())) {
             throw new DuplicateException("Doctor with this PAN number already exists");
         }
-        PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData());
+        PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData(), Role.DOCTOR);
         Doctor doctor = mapToDoctor(request, personalData);
         doctorRepository.save(doctor);
         return mapToDoctorResponse(doctor);

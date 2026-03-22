@@ -8,6 +8,7 @@ import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
 import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import sk.uniza.fri.telemedicine.enums.Role;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
@@ -32,11 +33,11 @@ public class PersonalDataService {
     }
 
     @Transactional
-    public PersonalData createPersonalData(PersonalDataRequest request) {
+    public PersonalData createPersonalData(PersonalDataRequest request, Role role) {
         if (personalDataRepository.existsById(request.getEmail())){
             throw new DuplicateException("Personal data with this email already exists");
         }
-        PersonalData personalData = mapToPersonalData(request);
+        PersonalData personalData = mapToPersonalData(request, role);
         setUpPassword(personalData, request.getEmail());
         return personalDataRepository.save(personalData);
     }
@@ -66,12 +67,12 @@ public class PersonalDataService {
                 .orElseThrow(() -> new NotFoundException("Personal data with this email not found"));
     }
 
-    private PersonalData mapToPersonalData(PersonalDataRequest request) {
+    private PersonalData mapToPersonalData(PersonalDataRequest request, Role role) {
         PersonalData personalData = new PersonalData();
         personalData.setEmail(request.getEmail());
         personalData.setFirstName(request.getFirstName());
         personalData.setLastName(request.getLastName());
-        personalData.setRole(request.getRole());
+        personalData.setRole(role);
         return personalData;
     }
 
