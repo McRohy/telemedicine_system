@@ -12,7 +12,7 @@ const theme = createTheme({
   primaryColor: 'primary',
   autoContrast: true,
   colors: {
-    primary: generateColors('#3badaba2'),
+    primary: generateColors('#ccedec'),
   },
   components: {
     Modal: {
@@ -21,7 +21,7 @@ const theme = createTheme({
         overlayProps: {
           backgroundOpacity: 0.8,
           blur: 5,
-          color: '#2b7d7ca2',
+          color: '#ccedec',
         },
       },
     },

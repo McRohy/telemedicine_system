@@ -51,6 +51,7 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
           'Monitorovaci plan bol uspesne upraveny.',
         );
       } else {
+        console.log('Creating plan:', form.values);
         const res = await createMeasurementPlan(form.values);
         notifySuccess(
           'Plan merani pridany',

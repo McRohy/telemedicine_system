@@ -8,9 +8,9 @@ export function createMeasurementPlan(data) {
   });
 }
 
-export function updateMeasurementPlan(id, data) {
+export function updateMeasurementPlan(planId, data) {
   return api({
-    url: `/measurement-plans/${id}`,
+    url: `/measurement-plans/${planId}`,
     method: 'put',
     data: data,
   });
