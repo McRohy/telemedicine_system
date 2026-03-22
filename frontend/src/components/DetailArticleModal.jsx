@@ -36,9 +36,9 @@ export default function DetailArticleModal({ opened, onClose, onSuccess, article
       notifySuccess('Článok odstránený', `Článok bol úspešne odstránený.`);
       onClose();
       onSuccess();
-    } catch (err) {
-      console.log(err.response);
-      notifyError(err);
+    } catch (error) {
+      console.log(error.response);
+      notifyError(error);
     } finally {
       setLoading(false);
     }
@@ -52,7 +52,7 @@ export default function DetailArticleModal({ opened, onClose, onSuccess, article
       size="lg"
       closeOnClickOutside={false}
     >
-      {loading == true ? (
+      {loading === true ? (
         <Center>
           <Loader />
         </Center>

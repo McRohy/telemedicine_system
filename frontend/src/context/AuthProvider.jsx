@@ -39,8 +39,8 @@ export function AuthProvider({ children }) {
       } else {
         navigate(`/${userData.role.toLowerCase()}/dashboard`);
       }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Nastala chyba pri prihlásovaní');
+    } catch (error) {
+      setError(error.response?.data?.message || 'Nastala chyba pri prihlásovaní');
     } finally {
       setLoading(false);
     }

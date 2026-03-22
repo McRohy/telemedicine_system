@@ -6,7 +6,7 @@ import { useForm } from '@mantine/form';
 
 export default function AddTypeModal({ opened, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
-  const form = useForm({
+  const formRequest = useForm({
     initialValues: {
       typeName: '',
       units: '',
@@ -24,22 +24,22 @@ export default function AddTypeModal({ opened, onClose, onSuccess }) {
   async function handleCreateType() {
     setLoading(true);
     try {
-      const res = await createMeasurementType(form.values);
+      const res = await createMeasurementType(formRequest.values);
       notifySuccess(
         'Typ merania pridaný',
         `${res.data.typeName} s min: ${res.data.minValue} a max: ${res.data.maxValue} jednotkou ${res.data.units} bol úspešne pridaný.`,
       );
-      form.reset();
+      formRequest.reset();
       onClose();
       onSuccess();
-    } catch (err) {
-      console.log(err.response);
-      const status = err.response?.status;
+    } catch (error) {
+      console.log(error.response);
+      const status = error.response?.status;
 
       if (status === 400) {
-        form.setErrors(err.response.data.fieldErrors);
+        formRequest.setErrors(error.response.data.fieldErrors);
       } else {
-        notifyError(err);
+        notifyError(error);
       }
     } finally {
       setLoading(false);
@@ -50,12 +50,12 @@ export default function AddTypeModal({ opened, onClose, onSuccess }) {
     <Modal
       opened={opened}
       onClose={() => {
-        form.reset();
+        formRequest.reset();
         onClose();
       }}
       title="Pridať typ merania"
     >
-      <form onSubmit={form.onSubmit(handleCreateType)}>
+      <form onSubmit={formRequest.onSubmit(handleCreateType)}>
         <Stack gap="md">
           <TextInput
             label="Názov typu merania"
@@ -64,7 +64,7 @@ export default function AddTypeModal({ opened, onClose, onSuccess }) {
             ta="left"
             size="md"
             withAsterisk
-            {...form.getInputProps('typeName')}
+            {...formRequest.getInputProps('typeName')}
           />
 
           <TextInput
@@ -73,7 +73,7 @@ export default function AddTypeModal({ opened, onClose, onSuccess }) {
             ta="left"
             size="md"
             withAsterisk
-            {...form.getInputProps('units')}
+            {...formRequest.getInputProps('units')}
           />
           <NumberInput
             label="Minimálna hodnota"
@@ -82,7 +82,7 @@ export default function AddTypeModal({ opened, onClose, onSuccess }) {
             size="md"
             min={0}
             withAsterisk
-            {...form.getInputProps('minValue')}
+            {...formRequest.getInputProps('minValue')}
           />
 
           <NumberInput
@@ -92,7 +92,7 @@ export default function AddTypeModal({ opened, onClose, onSuccess }) {
             size="md"
             min={0}
             withAsterisk
-            {...form.getInputProps('maxValue')}
+            {...formRequest.getInputProps('maxValue')}
           />
 
           <Button type="submit" p="xs" size="md" loading={loading}>

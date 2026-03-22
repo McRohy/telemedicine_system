@@ -8,7 +8,7 @@ export function getMeasurementTypes(page, search) {
     params: {
       page: page - 1,
       size: PAGINATION_SIZE,
-      search: search || undefined,
+      searchTypeName: search || undefined,
     },
   });
 }

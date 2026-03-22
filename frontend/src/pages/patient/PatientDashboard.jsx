@@ -68,28 +68,26 @@ export default function PatientDashboard() {
             </Title>
             {plan === null ? (
               <Text size="sm" c="dimmed">
-                Aktuálne žiaden monitorovací plán.
+                Aktuálne žiadny monitorovací plán.
               </Text>
             ) : (
               <Group mb="xs">
-                <Group>
-                  <Stack>
-                    <Text size="sm">Frekvencia:</Text>
-                    <Text size="sm">Čas plánu merania:</Text>
-                    <Text size="sm">Typy meraní:</Text>
-                  </Stack>
-                  <Stack>
-                    <Text size="sm">
-                      {plan?.frequency === 'ONE_TIME_DAILY'? '1x denne' : '2x denne'}
-                    </Text>
-                    <Text size="sm">
-                      {plan?.timesOfPlannedMeasurements.join(', ')}
-                    </Text>
-                    <Text size="sm">
-                      {plan?.typesOfMeasurements .map((t) => t.typeName).join(', ')}
-                    </Text>
-                  </Stack>
-                </Group>
+                <Stack>
+                  <Text size="sm">Frekvencia:</Text>
+                  <Text size="sm">Čas plánu merania:</Text>
+                  <Text size="sm">Typy meraní:</Text>
+                </Stack>
+                <Stack>
+                  <Text size="sm">
+                    {plan?.frequency === 'ONE_TIME_DAILY' ? '1x denne' : '2x denne'}
+                  </Text>
+                  <Text size="sm">
+                    {plan?.timesOfPlannedMeasurements.join(', ')}
+                  </Text>
+                  <Text size="sm">
+                    {plan?.typesOfMeasurements.map((t) => t.typeName).join(', ')}
+                  </Text>
+                </Stack>
               </Group>
             )}
           </Stack>

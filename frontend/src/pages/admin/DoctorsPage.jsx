@@ -6,7 +6,7 @@ import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import { notifyError } from '../../helpers/notificationHelper';
 import { getDoctors } from '../../api/doctorApi';
 
-export default function PreviewOfDoctors() {
+export default function DoctorsPage() {
   const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(0); // hack to trigger refresh after adding doctor 

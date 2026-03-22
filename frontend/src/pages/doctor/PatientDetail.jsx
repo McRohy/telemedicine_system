@@ -126,11 +126,11 @@ export default function PatientDetail() {
                   <Text size="sm">Frekvencia:</Text>
                   <Text size="sm">Čas plánu merania:</Text>
                   <Text size="sm">Typy meraní:</Text>
-                  <Text size="sm">Vytvoreny: </Text>
+                  <Text size="sm">Vytvorený: </Text>
                 </Stack>
                 <Stack>
                   <Text size="sm">
-                    {plan?.frequency === 'ONE_TIME_DAILY' ? '1x denne': '2x denne'}
+                    {plan?.frequency === 'ONE_TIME_DAILY' ? '1x denne' : '2x denne'}
                   </Text>
                   <Text size="sm">
                     {plan?.timesOfPlannedMeasurements?.join(', ')}

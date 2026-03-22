@@ -6,7 +6,7 @@ import { notifyError } from '../../helpers/notificationHelper';
 import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import { getPatients } from '../../api/patientApi';
 
-export default function PreviewOfPatients() {
+export default function PatientPage() {
   const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
   const [refresh, setRefresh] = useState(0);

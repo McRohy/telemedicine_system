@@ -6,7 +6,7 @@ import { LineChart } from '@mantine/charts';
 import { notifyError } from '../helpers/notificationHelper';
 import 'dayjs/locale/sk';
 
-export default function Chart({ personalNumber, plan }) {
+export default function MeasurementChart({ personalNumber, plan }) {
   const [measurements, setMeasurements] = useState([]);
   const [period, setPeriod] = useState(null);
   const [filterType, setFilterType] = useState('');

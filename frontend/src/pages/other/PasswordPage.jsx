@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, Stack, PasswordInput, Title, Text, Center } from '@mantine/core';
-import { Notifications } from '@mantine/notifications';
 import { notifySuccess, notifyError } from '../../helpers/notificationHelper';
 import { setPassword } from '../../api/authApi';
 
@@ -37,7 +36,6 @@ export default function PasswordPage() {
 
   return (
     <Center w="100vw" h="100vh" bg="primary">
-      <Notifications />
       <Card p="lg" radius="lg" maw={{ base: 300, xs: 450 }}>
         <Stack gap="xl">
           <Stack align="center" gap="xs" m="xs">

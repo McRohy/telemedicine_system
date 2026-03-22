@@ -30,14 +30,14 @@ export default function AddArticle({opened, onClose, onSuccess, doctorPanNumber,
       formRequest.reset();
       onClose();
       onSuccess();
-    } catch (err) {
-      console.log(err.response);
-      const status = err.response?.status;
+    } catch (error) {
+      console.log(error.response);
+      const status = error.response?.status;
 
       if (status === 400) {
-        formRequest.setErrors(err.response.data.fieldErrors);
+        formRequest.setErrors(error.response.data.fieldErrors);
       } else {
-        notifyError(err);
+        notifyError(error);
       }
     } finally {
       setLoading(false);

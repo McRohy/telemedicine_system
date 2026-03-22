@@ -1,6 +1,6 @@
 export const FREQUENCIES = [
-  { value: 'ONE_TIME_DAILY', label: 'denne'},
-  { value: 'TWO_TIMES_DAILY', label: '2x denne'},
+  { value: 'ONE_TIME_DAILY', label: 'denne' },
+  { value: 'TWO_TIMES_DAILY', label: '2x denne' },
 ];
 
 export const GENDERS = [
@@ -14,3 +14,9 @@ export const SPECIALIZATIONS = [
 ];
 
 export const PAGINATION_SIZE = 10;
+
+export const ROLES = {
+  ADMIN: 'Administrátor',
+  DOCTOR: 'Lekár',
+  PATIENT: 'Pacient',
+};

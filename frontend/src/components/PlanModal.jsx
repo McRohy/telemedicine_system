@@ -13,7 +13,8 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
 
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState([]);
-  const form = useForm({
+  const [typesLoading, setTypesLoading] = useState(true);
+  const formRequest = useForm({
     initialValues: {
       personalNumber: personalNumber,
       frequency: (isEdit ? plan.frequency : null),
@@ -32,8 +33,10 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
       try {
         const response = await getMeasurementTypesForSelect();
         setTypes(response.data);
-      } catch (err) {
-        notifyError(err);
+      } catch (error) {
+        notifyError(error);
+      } finally {
+        setTypesLoading(false);
       }
     }
     fetchTypes();
@@ -43,50 +46,51 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
     setLoading(true);
     try {
       if (isEdit) {
-        console.log('Updating plan:', form.values, plan.id);
+        console.log('Updating plan:', formRequest.values, plan.id);
 
-        await updateMeasurementPlan(plan.id, form.values);
+        await updateMeasurementPlan(plan.id, formRequest.values);
         notifySuccess(
-          'Plan upraveny',
-          'Monitorovaci plan bol uspesne upraveny.',
+          'Plán upravený',
+          'Monitorovací plán bol úspešne upravený.',
         );
       } else {
-        console.log('Creating plan:', form.values);
-        const res = await createMeasurementPlan(form.values);
+        console.log('Creating plan:', formRequest.values);
+        const res = await createMeasurementPlan(formRequest.values);
         notifySuccess(
-          'Plan merani pridany',
-          `Pacient ${res.data.personalNumber} ma plan s frekvenciou ${res.data.frequency} a casom planovanych merani ${res.data.timesOfPlannedMeasurements}.`,
+          'Plán meraní pridaný',
+          `Pacientovi ${res.data.personalNumber} bol úspešne pridaný monitorovací plán.`,
         );
       }
+      formRequest.reset();
       onClose();
       onSuccess();
-    } catch (err) {
-      if (err.response?.status === 400) {
-        form.setErrors(err.response.data.fieldErrors);
+    } catch (error) {
+      if (error.response?.status === 400) {
+        formRequest.setErrors(error.response.data.fieldErrors);
       } else {
-        notifyError(err);
+        notifyError(error);
       }
     } finally {
       setLoading(false);
     }
   }
 
-  const numberOfTimePickers = form.values.frequency === 'ONE_TIME_DAILY' ? 1 : form.values.frequency === 'TWO_TIMES_DAILY' ? 2 : 0;
+  const numberOfTimePickers = formRequest.values.frequency === 'ONE_TIME_DAILY' ? 1 : formRequest.values.frequency === 'TWO_TIMES_DAILY' ? 2 : 0;
 
   return (
     <Modal
       opened={opened}
-      onClose={onClose}
-      title={isEdit ? 'Upravit monitorovaci plan' : 'Vytvorit monitorovaci plan'}
+      onClose={() => { formRequest.reset(); onClose(); }}
+      title={isEdit ? 'Upraviť monitorovací plán' : 'Vytvoriť monitorovací plán'}
     >
-      <form onSubmit={form.onSubmit(handleSubmit)}>
+      <form onSubmit={formRequest.onSubmit(handleSubmit)}>
         <Stack gap="md">
           <TextInput
             label="Rodné číslo pacienta"
             type="text"
             ta="left"
             size="md"
-            value={form.values.personalNumber}
+            value={formRequest.values.personalNumber}
             disabled
           />
 
@@ -97,12 +101,12 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
             size="md"
             searchable
             clearable
-            value={form.values.frequency}
+            value={formRequest.values.frequency}
             onChange={(value) => {
-              form.setFieldValue('frequency', value);
-              form.removeListItem('timesOfPlannedMeasurements', 1);
+              formRequest.setFieldValue('frequency', value);
+              formRequest.removeListItem('timesOfPlannedMeasurements', 1);
             }}
-            error={form.errors.frequency}
+            error={formRequest.errors.frequency}
           />
 
           {numberOfTimePickers >= 1 && (
@@ -111,7 +115,7 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
               withDropdown
               ta="left"
               size="md"
-              {...form.getInputProps('timesOfPlannedMeasurements.0')}
+              {...formRequest.getInputProps('timesOfPlannedMeasurements.0')}
             />
           )}
 
@@ -121,7 +125,7 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
               withDropdown
               ta="left"
               size="md"
-              {...form.getInputProps('timesOfPlannedMeasurements.1')}
+              {...formRequest.getInputProps('timesOfPlannedMeasurements.1')}
             />
           )}
 
@@ -131,8 +135,10 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
             clearable
             ta="left"
             size="md"
+            disabled={typesLoading}
+            placeholder={typesLoading ? 'Načítavanie...' : 'Vyberte typy meraní'}
             data={types.map((type) => ({ value: String(type.id), label: type.typeName }))}
-            {...form.getInputProps('typeOfMeasurementIds')}
+            {...formRequest.getInputProps('typeOfMeasurementIds')}
           />
 
           <Button

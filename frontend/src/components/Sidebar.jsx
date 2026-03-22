@@ -12,6 +12,7 @@ import {
   IconStethoscope,
 } from '@tabler/icons-react';
 import { useAuth } from '../context/AuthContext';
+import { ROLES } from '../helpers/constants';
 
 const navLinks = {
   ADMIN: [
@@ -37,7 +38,7 @@ const navLinks = {
   ],
 };
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -54,7 +55,7 @@ export default function Sidebar() {
               {user?.firstName} {user?.lastName}
             </Text>
             <Text size="xs">
-              {user?.role}
+              {ROLES[user?.role]}
             </Text>
           </Stack>
         </Group>
@@ -69,7 +70,7 @@ export default function Sidebar() {
             }
             leftSection={<link.icon size={24} />}
             active={location.pathname === link.path}
-            onClick={() => navigate(link.path)}
+            onClick={() => { navigate(link.path); onClose(); }}
             p="md"
             color="#486d7c51"
             variant="filled"

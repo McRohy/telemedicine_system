@@ -6,7 +6,7 @@ import { postMeasurement } from '../api/measurementsApi';
 
 export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan,}) {
   const [loading, setLoading] = useState(false);
-  const form = useForm({
+  const formRequest = useForm({
     initialValues: {
       personalNumber: plan?.personalNumber || '',
       typeOfMeasurementId: null,
@@ -22,18 +22,18 @@ export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan
   async function handleTrackMeasurement() {
     setLoading(true);
     try {
-      const res = await postMeasurement(form.values);
+      const res = await postMeasurement(formRequest.values);
       notifySuccess(
         'Meranie zaznamenané',
         `${res.data.typeName} - ${res.data.value} ${res.data.units} je 
          ${res.data.status === 'NORMAL' ? 'v norme' : 'mimo normy - lekár bol informovaný notifikáciou'}`,
       );
-      form.reset();
+      formRequest.reset();
       onClose();
       onSuccess();
     } catch (error) {
       if (error.response?.status === 400) {
-        form.setErrors(error.response.data.fieldErrors);
+        formRequest.setErrors(error.response.data.fieldErrors);
       } else {
         notifyError(error);
       }
@@ -46,12 +46,12 @@ export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan
     <Modal
       opened={opened}
       onClose={() => {
-        form.reset();
+        formRequest.reset();
         onClose();
       }}
       title="Zaznamenať meranie"
     >
-      <form onSubmit={form.onSubmit(handleTrackMeasurement)}>
+      <form onSubmit={formRequest.onSubmit(handleTrackMeasurement)}>
         <Stack gap="md">
           <Select
             label="Typ merania"
@@ -64,7 +64,7 @@ export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan
             searchable
             clearable
             withAsterisk
-            {...form.getInputProps('typeOfMeasurementId')}
+            {...formRequest.getInputProps('typeOfMeasurementId')}
           />
 
           <Group grow>
@@ -74,7 +74,7 @@ export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan
               size="md"
               ta="left"
               withAsterisk
-              {...form.getInputProps('value')}
+              {...formRequest.getInputProps('value')}
             />
 
             <TextInput
@@ -82,7 +82,7 @@ export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan
               type="text"
               ta="left"
               size="md"
-              value={plan?.typesOfMeasurements.find((t) => String(t.id) === form.values.typeOfMeasurementId)?.units || ''}
+              value={plan?.typesOfMeasurements.find((t) => String(t.id) === formRequest.values.typeOfMeasurementId)?.units || ''}
               disabled
             />
           </Group>
@@ -92,7 +92,7 @@ export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan
             type="text"
             ta="left"
             size="md"
-            {...form.getInputProps('note')}
+            {...formRequest.getInputProps('note')}
           />
 
           <Button type="submit" p="xs" size="md" loading={loading}>

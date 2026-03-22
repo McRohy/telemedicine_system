@@ -3,10 +3,10 @@ import { useForm } from '@mantine/form';
 import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center, Alert } from '@mantine/core';
 import { useAuth } from '../../context/AuthContext';
 
-function LoginPage() {
+export default function LoginPage() {
   const { login, loading, error } = useAuth();
 
-  const form = useForm({
+  const formRequest = useForm({
     initialValues: {
       email: '',
       password: '',
@@ -30,7 +30,7 @@ function LoginPage() {
             </Text>
           </Stack>
 
-          <form onSubmit={form.onSubmit((values) => login(values))}>
+          <form onSubmit={formRequest.onSubmit((values) => login(values))}>
             <Stack gap="md">
               <TextInput
                 label="Email"
@@ -38,7 +38,7 @@ function LoginPage() {
                 type="email"
                 ta="left"
                 size="md"
-                {...form.getInputProps('email')}
+                {...formRequest.getInputProps('email')}
               />
 
               <PasswordInput
@@ -46,7 +46,7 @@ function LoginPage() {
                 placeholder="**********"
                 ta="left"
                 size="md"
-                {...form.getInputProps('password')}
+                {...formRequest.getInputProps('password')}
                 color="gray"
               />
 
@@ -61,5 +61,3 @@ function LoginPage() {
     </Center>
   );
 }
-
-export default LoginPage;
