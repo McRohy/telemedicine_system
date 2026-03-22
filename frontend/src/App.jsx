@@ -87,14 +87,7 @@ function App() {
           </Route>
           <Route path="/forbidden" element={<Forbidden />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route
-            path="/password/:token"
-            element={
-              <ProtectedRoute>
-                <PasswordPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/password/:token" element={<PasswordPage />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

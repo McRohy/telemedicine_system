@@ -1,6 +1,8 @@
 import { Stack, Group, Text } from '@mantine/core';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavLink } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import ConfirmModal from './ConfirmModal';
 import {
   IconArticle,
   IconActivity,
@@ -40,6 +42,7 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const links = user ? navLinks[user.role] : [];
+  const [isConfirmModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
 
   return (
     <Stack h="100%" justify="space-between">
@@ -80,13 +83,19 @@ export default function Sidebar() {
         ta="center"
         mb="sm"
         style={{ cursor: 'pointer' }}
-        onClick={() => {
-          logout();
-          navigate('/login');
-        }}
+        onClick={openModal}
       >
         Odhlásiť sa
       </Text>
+
+      <ConfirmModal
+        opened={isConfirmModalOpen}
+        onClose={closeModal}
+        onConfirm={() => logout()}
+        title="Potvrdenie odhlásenia"
+        message="Chcete sa odhlásiť?"
+        buttonText="Odhlásiť sa"
+      />
     </Stack>
   );
 }

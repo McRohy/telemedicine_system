@@ -1,10 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Stack, Title, Text, Center, Loader, Button } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { notifyError, notifySuccess } from '../helpers/notificationHelper';
 import { deleteArticle, getArticleById } from '../api/articleApi';
+import ConfirmModal from './ConfirmModal';
 
 export default function DetailArticleModal({ opened, onClose, onSuccess, articleId, isDoctorView}) {
   const [loading, setLoading] = useState(false);
+  const [isConfirmModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [article, setArticle] = useState({
     title: '',
     content: '',
@@ -62,13 +65,22 @@ export default function DetailArticleModal({ opened, onClose, onSuccess, article
             <Button
               variant="outline"
               color="red"
-              onClick={() => handleDeleteArticle()}
+              onClick={openModal}
             >
               Odstrániť článok
             </Button>
           )}
         </Stack>
       )}
+
+      <ConfirmModal
+        opened={isConfirmModalOpen}
+        onClose={closeModal}
+        onConfirm={handleDeleteArticle}
+        title="Potvrdenie odstránenia"
+        message="Chcete odstrániť tento článok? Zmeny nie je možné vrátiť späť."
+        buttonText="Odstrániť"
+      />
     </Modal>
   );
 }
