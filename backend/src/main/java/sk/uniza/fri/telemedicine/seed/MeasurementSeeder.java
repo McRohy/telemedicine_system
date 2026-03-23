@@ -61,7 +61,7 @@ public class MeasurementSeeder  implements CommandLineRunner {
 
         MeasurementTimePlan timePlan = new MeasurementTimePlan();
         timePlan.setMeasurementPlan(plan);
-        timePlan.setTime(LocalTime.now().withHour(8).withMinute(0).withSecond(0).withNano(0));
+        timePlan.setTime(LocalTime.now().withHour(7).withMinute(30).withSecond(0).withNano(0));
         measurementTimePlanRepository.save(timePlan);
 
         TypeOfMeasurement typeOfMeasurement = typeOfMeasurementRepository.findById(1L)
@@ -86,14 +86,15 @@ public class MeasurementSeeder  implements CommandLineRunner {
             MeasurementRecord record = new MeasurementRecord();
             record.setPatient(patient);
             record.setTypeOfMeasurement(typeOfMeasurement);
-            record.setTimeOfMeasurement(LocalDateTime.now().minusDays(20 - i));
+            record.setTimeOfMeasurement(LocalDateTime.now().minusDays(20 - i)
+                    .withHour(7).withMinute((int)(Math.random() * 60)));
 
             if(i % 5 == 0) {
-                record.setValue(37.5 + Math.random() * 1.5);
+                record.setValue(Math.round((37.5 + Math.random() * 1.5) * 10.0) / 10.0);
                 record.setMeasurementStatus(MeasurementStatus.ABNORMAL);
-                record.setNote("Zle mi je celú noc");
+                record.setNote("Zle mi bolo celú noc");
             } else {
-                record.setValue(36.0 + Math.random() * 0.9);
+                record.setValue(Math.round((36.0 + Math.random() * 0.9) * 10.0) / 10.0);
                 record.setMeasurementStatus(MeasurementStatus.NORMAL);
                 if (i % 4 == 0) {
                     record.setNote("všetko v poriadku");
