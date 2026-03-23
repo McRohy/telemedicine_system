@@ -3,18 +3,18 @@ package sk.uniza.fri.telemedicine.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
+import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
 
 import java.time.LocalDateTime;
 
 @Getter //for Json serialization
 @AllArgsConstructor
 public class MeasurementRecordResponse {
-        private Integer id;
+        private Long id;
         private String typeName;
         private Double value;
         private String units;
-        @JsonFormat(pattern = "MM.dd. HH:mm:ss")
+        @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
         private LocalDateTime timeOfMeasurement;
         private MeasurementStatus status;
         private String note;

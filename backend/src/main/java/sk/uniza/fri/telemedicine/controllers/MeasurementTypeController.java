@@ -13,27 +13,27 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/measurement-types")
-public class TypeOfMeasurementController {
+public class MeasurementTypeController {
 
     private final TypeOfMeasurementService typeOfMeasurementService;
 
-    public TypeOfMeasurementController(TypeOfMeasurementService typeOfMeasurementService) {
+    public MeasurementTypeController(TypeOfMeasurementService typeOfMeasurementService) {
         this.typeOfMeasurementService = typeOfMeasurementService;
     }
 
     @GetMapping("/select")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
-    public List<TypeOfMeasurementResponse> getAllTypesOfMeasurementForSelect() {
-        return typeOfMeasurementService.getAllTypesOfMeasurementForSelect();
+    public List<TypeOfMeasurementResponse> getTypesOfMeasurement() {
+        return typeOfMeasurementService.getTypesOfMeasurement();
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public Page<TypeOfMeasurementResponse> getAllTypesOfMeasurement(
+    public Page<TypeOfMeasurementResponse> getPagedTypesOfMeasurement(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String searchTypeName) {
-        return typeOfMeasurementService.getAllTypesOfMeasurement(page, size, searchTypeName);
+        return typeOfMeasurementService.getPagedTypesOfMeasurement(page, size, searchTypeName);
     }
 
     @PostMapping

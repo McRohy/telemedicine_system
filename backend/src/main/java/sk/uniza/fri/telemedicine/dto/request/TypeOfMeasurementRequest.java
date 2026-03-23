@@ -19,11 +19,9 @@ public class TypeOfMeasurementRequest {
     private String units;
 
     @NotNull(message = "Minimum value is mandatory")
-    @Positive
     private Double minValue;
 
     @NotNull(message = "Maximum value is mandatory")
-    @Positive
     private Double maxValue;
 
 }

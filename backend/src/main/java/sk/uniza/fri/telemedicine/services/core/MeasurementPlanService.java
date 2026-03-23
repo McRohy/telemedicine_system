@@ -1,184 +1,159 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
 import sk.uniza.fri.telemedicine.entities.*;
+import sk.uniza.fri.telemedicine.exception.BusinessRuleException;
+import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
-import sk.uniza.fri.telemedicine.repository.MeasurementPlanTypesRepository;
-import sk.uniza.fri.telemedicine.repository.MeasurementTimeRepository;
+import sk.uniza.fri.telemedicine.repository.MeasurementTypePlanRepository;
+import sk.uniza.fri.telemedicine.repository.MeasurementTimePlanRepository;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MeasurementPlanService {
 
     private final MeasurementPlanRepository measurementPlanRepository;
-    private final MeasurementPlanTypesRepository measurementPlanTypesRepository;
-    private final MeasurementTimeRepository measurementTimeRepository;
+    private final MeasurementTypePlanRepository measurementTypePlanRepository;
+    private final MeasurementTimePlanRepository measurementTimePlanRepository;
 
     private final TypeOfMeasurementService typeOfMeasurementService;
-    private final DoctorService doctorService;
     private final PatientService patientService;
+    private final EmailService emailService;
 
-    public MeasurementPlanService(MeasurementPlanRepository measurementPlanRepository,
-                                  TypeOfMeasurementService typeOfMeasurementService, MeasurementPlanTypesRepository measurementPlanTypesRepository,
-                                  DoctorService doctorService, PatientService patientService, MeasurementTimeRepository measurementTimeRepository) {
+    public MeasurementPlanService(MeasurementPlanRepository measurementPlanRepository, TypeOfMeasurementService typeOfMeasurementService,
+                                  MeasurementTypePlanRepository measurementTypePlanRepository, MeasurementTimePlanRepository measurementTimePlanRepository,
+                                  PatientService patientService, EmailService emailService) {
         this.measurementPlanRepository = measurementPlanRepository;
         this.typeOfMeasurementService = typeOfMeasurementService;
-        this.measurementPlanTypesRepository = measurementPlanTypesRepository;
-        this.measurementTimeRepository = measurementTimeRepository;
-        this.doctorService = doctorService;
+        this.measurementTypePlanRepository = measurementTypePlanRepository;
+        this.measurementTimePlanRepository = measurementTimePlanRepository;
         this.patientService = patientService;
+        this.emailService = emailService;
+    }
+
+    @Transactional(readOnly = true)  //reads in one transaction to keep data consistent
+    public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(String personalNumber) {
+        MeasurementPlan plan = measurementPlanRepository.findActivePlanByPersonalNumber(personalNumber)
+                .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
+
+        List<MeasurementTypePlan> measurementTypes = measurementTypePlanRepository.findAllByPlanId(plan.getPlanId());
+        List<MeasurementTimePlan> measurementTimes = measurementTimePlanRepository.findAllByPlanId(plan.getPlanId());
+
+        return mapToMeasurementPlanResponse(plan, measurementTypes, measurementTimes);
     }
 
     @Transactional
     public MeasurementPlanResponse createMeasurementPlan(MeasurementPlanRequest request) {
-        Patient patient = patientService.findByPersonalNumber(request.getPersonalNumber());
-        Doctor doctor = doctorService.findByPanNumber(request.getPanNumber());
+        validateFrequencyAndTimes(request);
+        Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
 
-        MeasurementPlan plan = mapToMeasurementPlan(request, patient, doctor);
-        plan.setCreatedAt(LocalDateTime.now());
-        plan.setLastUpdateAt(LocalDateTime.now());
-        measurementPlanRepository.save(plan);
-
-        List<MeasurementTime> measurementTimes = new ArrayList<>();
-        for(LocalTime time : request.getTimesOfPlannedMeasurements()){
-            MeasurementTime mt = new MeasurementTime();
-            mt.setPlan(plan);
-            mt.setTime(time);
-            mt.setValidFrom(LocalDateTime.now());
-            measurementTimeRepository.save(mt);
+        if (measurementPlanRepository.existsActivePlanByPersonalNumber(request.getPersonalNumber())) {
+            throw new DuplicateException("Patient already has an active measurement plan");
         }
 
-        List<MeasurementPlanTypes> activeTypes = new ArrayList<>();
-        for (Integer typeId : request.getTypeOfMeasurementIds()) {
-            TypeOfMeasurement type = typeOfMeasurementService.findTypeOfMeasurementById(typeId);
-            MeasurementPlanTypes planType = new MeasurementPlanTypes();
-            planType.setMeasurementPlan(plan);
-            planType.setTypeOfMeasurement(type);
-            planType.setValidFrom(LocalDateTime.now());
-            measurementPlanTypesRepository.save(planType);
-        }
+        MeasurementPlan plan = createPlan(request, patient);
+        List<MeasurementTimePlan> measurementTimes = createTimeForPlan(plan, request);
+        List<MeasurementTypePlan> measurementTypes = createTypesForPlan(plan, request);
+        emailService.sendEmailCreatedPlan(patient.getPersonalData().getEmail());
 
-        return mapToMeasurementPlanResponse(plan, activeTypes, measurementTimes);
+        return mapToMeasurementPlanResponse(plan, measurementTypes, measurementTimes);
     }
 
-
     @Transactional
-    public MeasurementPlanResponse updateMeasurementPlan(Integer id, MeasurementPlanRequest request) {
+    public MeasurementPlanResponse updateMeasurementPlan(Long id, MeasurementPlanRequest request) {
         MeasurementPlan plan = measurementPlanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
 
+        if (plan.getValidTo() != null) {
+            throw new BusinessRuleException("Plan is already deactivated");
+        }
+
+        if (!plan.getPatient().getPersonalNumber().equals(request.getPersonalNumber())) {
+            throw new BusinessRuleException("Plan does not belong to this patient");
+        }
+
+        validateFrequencyAndTimes(request);
+
         LocalDateTime now = LocalDateTime.now();
-        plan.setFrequency(request.getFrequency());
-        plan.setLastUpdateAt(now);
+        plan.setValidTo(now);
         measurementPlanRepository.save(plan);
 
-        List<MeasurementTime> existingTimes = measurementTimeRepository.findAllActiveTimesByMeasurementPlanId(plan.getPlanId());
-        List<LocalTime> requestedTimes = request.getTimesOfPlannedMeasurements();
-        List<MeasurementTime> activeTimes = new ArrayList<>();
+        MeasurementPlan newPlan = createPlan(request, plan.getPatient());
+        List<MeasurementTimePlan> newMeasurementTimes = createTimeForPlan(newPlan, request);
+        List<MeasurementTypePlan> newMeasurementTypes = createTypesForPlan(newPlan, request);
+        emailService.sendEmailUpdatedPlan(plan.getPatient().getPersonalData().getEmail());
 
-        for (MeasurementTime existing : existingTimes) {
-            if (!requestedTimes.contains(existing.getTime())) {
-                existing.setValidTo(now);
-            } else {
-                activeTimes.add(existing);
-            }
-        }
-        measurementTimeRepository.saveAll(existingTimes);
-
-        for (LocalTime time : requestedTimes) {
-            boolean exists = false;
-            for (MeasurementTime active : activeTimes) {
-                if (active.getTime().equals(time)) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                MeasurementTime mt = new MeasurementTime();
-                mt.setPlan(plan);
-                mt.setTime(time);
-                mt.setValidFrom(now);
-                activeTimes.add(mt);
-            }
-        }
-        measurementTimeRepository.saveAll(activeTimes);
-
-        List<MeasurementPlanTypes> existingTypes = measurementPlanTypesRepository.findAllActiveTypesByMeasurementPlanId(plan.getPlanId());
-        List<Integer> requestedTypeIds = request.getTypeOfMeasurementIds();
-        List<MeasurementPlanTypes> activeTypes = new ArrayList<>();
-
-        for (MeasurementPlanTypes existing : existingTypes) {
-            if (!requestedTypeIds.contains(existing.getTypeOfMeasurement().getTypeId())) {
-                existing.setValidTo(now);
-            } else {
-                activeTypes.add(existing);
-            }
-        }
-        measurementPlanTypesRepository.saveAll(existingTypes);
-
-        for (Integer typeId : requestedTypeIds) {
-            boolean exists = false;
-            for (MeasurementPlanTypes active : activeTypes) {
-                if (active.getTypeOfMeasurement().getTypeId() == typeId) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                TypeOfMeasurement type = typeOfMeasurementService.findTypeOfMeasurementById(typeId);
-                MeasurementPlanTypes pt = new MeasurementPlanTypes();
-                pt.setMeasurementPlan(plan);
-                pt.setTypeOfMeasurement(type);
-                pt.setValidFrom(now);
-                activeTypes.add(pt);
-            }
-        }
-        measurementPlanTypesRepository.saveAll(activeTypes);
-
-        return mapToMeasurementPlanResponse(plan, activeTypes, activeTimes);
+        return mapToMeasurementPlanResponse(newPlan, newMeasurementTypes, newMeasurementTimes);
     }
 
-    public Optional<MeasurementPlanResponse>  findMeasurementPlanByPersonalNumber(String personalNumber) {
-        Optional<MeasurementPlan> optionalPlan = measurementPlanRepository.findByPersonalNumber(personalNumber);
-        if (optionalPlan.isEmpty()) {
-            return Optional.empty();
+    public void validateActivePlanAndType(String personalNumber, Long typeId) {
+        if (!measurementPlanRepository.existsActivePlanByPersonalNumber(personalNumber)) {
+            throw new NotFoundException("Patient does not have an active measurement plan");
         }
-        MeasurementPlan plan = optionalPlan.get();
-        List<MeasurementPlanTypes> activePlanTypes = measurementPlanTypesRepository.findAllActiveTypesByMeasurementPlanId(plan.getPlanId());
-        List<MeasurementTime> measurementTimes = measurementTimeRepository.findAllActiveTimesByMeasurementPlanId(plan.getPlanId());
-
-        return Optional.of( mapToMeasurementPlanResponse(plan, activePlanTypes, measurementTimes));
+        if (!measurementTypePlanRepository.existsByActivePlanAndTypeId(personalNumber, typeId)) {
+            throw new BusinessRuleException("Measurement type is not part of the patient's active plan");
+        }
     }
 
-    private MeasurementPlan mapToMeasurementPlan(MeasurementPlanRequest request, Patient patient, Doctor doctor) {
+    private void validateFrequencyAndTimes(MeasurementPlanRequest request) {
+        int expected = request.getFrequency().getExpectedTimes();
+        int actual = request.getTimesOfPlannedMeasurements().size();
+        if (actual != expected) {
+            throw new BusinessRuleException("Frequency do not have required time/ times");
+        }
+    }
+
+    private MeasurementPlan createPlan(MeasurementPlanRequest request, Patient patient) {
         MeasurementPlan plan = new MeasurementPlan();
         plan.setPatient(patient);
-        plan.setDoctor(doctor);
         plan.setFrequency(request.getFrequency());
+        plan.setValidFrom(LocalDateTime.now());
+        measurementPlanRepository.save(plan);
         return plan;
     }
 
+    private List<MeasurementTimePlan> createTimeForPlan(MeasurementPlan plan, MeasurementPlanRequest request) {
+        List<MeasurementTimePlan> newTimes = new ArrayList<>();
+        for (LocalTime time : request.getTimesOfPlannedMeasurements()) {
+            MeasurementTimePlan timePlan = new MeasurementTimePlan();
+            timePlan.setMeasurementPlan(plan);
+            timePlan.setTime(time);
+            newTimes.add(timePlan);
+        }
+        measurementTimePlanRepository.saveAll(newTimes);
+        return newTimes;
+    }
 
-    private MeasurementPlanResponse mapToMeasurementPlanResponse(MeasurementPlan plan, List<MeasurementPlanTypes> planTypes, List<MeasurementTime> measurementTimes) {
+    private List<MeasurementTypePlan> createTypesForPlan(MeasurementPlan plan, MeasurementPlanRequest request) {
+        List<MeasurementTypePlan> newTypes = new ArrayList<>();
+        for (Long typeId : request.getTypeOfMeasurementIds()) {
+            TypeOfMeasurement type = typeOfMeasurementService.getTypeOfMeasurementById(typeId);
+            MeasurementTypePlan typePlan = new MeasurementTypePlan();
+            typePlan.setMeasurementPlan(plan);
+            typePlan.setTypeOfMeasurement(type);
+            newTypes.add(typePlan);
+        }
+        measurementTypePlanRepository.saveAll(newTypes);
+        return newTypes;
+    }
+
+    private MeasurementPlanResponse mapToMeasurementPlanResponse(MeasurementPlan plan, List<MeasurementTypePlan> planTypes, List<MeasurementTimePlan> measurementTimePlans) {
         return new MeasurementPlanResponse(
                 plan.getPlanId(),
                 plan.getPatient().getPersonalNumber(),
-                plan.getDoctor().getPanNumber(),
                 plan.getFrequency(),
                 planTypes.stream().map(pt -> new MeasurementPlanTypesResponse(pt.getTypeOfMeasurement().getTypeId(), pt.getTypeOfMeasurement().getTypeName(), pt.getTypeOfMeasurement().getUnits())).toList(),
-                measurementTimes.stream().map(t -> t.getTime()).toList(),
-                plan.getCreatedAt(),
-                plan.getLastUpdateAt()
+                measurementTimePlans.stream().map(t -> t.getTime()).toList(),
+                plan.getValidFrom()
         );
     }
 }

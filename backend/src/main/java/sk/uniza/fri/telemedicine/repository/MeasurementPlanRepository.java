@@ -6,8 +6,11 @@ import sk.uniza.fri.telemedicine.entities.MeasurementPlan;
 
 import java.util.Optional;
 
-public interface MeasurementPlanRepository extends JpaRepository<MeasurementPlan, Integer> {
+public interface MeasurementPlanRepository extends JpaRepository<MeasurementPlan, Long> {
 
-    @Query("SELECT m FROM MeasurementPlan m WHERE m.patient.personalNumber = :personalNumber")
-    Optional<MeasurementPlan>findByPersonalNumber(String personalNumber);
+    @Query("SELECT m FROM MeasurementPlan m WHERE m.patient.personalNumber = :personalNumber AND m.validTo IS NULL")
+    Optional<MeasurementPlan> findActivePlanByPersonalNumber(String personalNumber);
+
+    @Query("SELECT COUNT(m) > 0 FROM MeasurementPlan m WHERE m.patient.personalNumber = :personalNumber AND m.validTo IS NULL")
+    boolean existsActivePlanByPersonalNumber(String personalNumber);
 }

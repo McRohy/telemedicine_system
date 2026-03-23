@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sk.uniza.fri.telemedicine.enums.constrains.Frequency;
+import sk.uniza.fri.telemedicine.enums.Frequency;
 
 import java.time.LocalDateTime;
 
@@ -14,23 +14,18 @@ public class MeasurementPlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer planId;
-
-    @OneToOne
-    @JoinColumn(name = "personal_number", nullable = false)
-    private Patient patient;
+    private Long planId;
 
     @ManyToOne
-    @JoinColumn(name = "pan_number", nullable = false)
-    private Doctor doctor;
+    @JoinColumn(name = "personal_number", nullable = false)
+    private Patient patient;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 20, nullable = false)
     private Frequency frequency;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime validFrom;
 
-    @Column(nullable = false)
-    private LocalDateTime lastUpdateAt;
+    private LocalDateTime validTo;
 }

@@ -1,8 +1,6 @@
 package sk.uniza.fri.telemedicine.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDateTime;
@@ -12,19 +10,19 @@ import java.time.LocalDateTime;
 public class Article {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment ID
+    private Long articleId;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime timeOfCreation;
 
     @ManyToOne
-    @JoinColumn(name = "pan_cislo", nullable = false)
+    @JoinColumn(name = "pan_number", nullable = false)
     private Doctor doctor;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 220, nullable = false)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(nullable = false)
+    private String filePath;
 }

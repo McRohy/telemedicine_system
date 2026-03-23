@@ -8,9 +8,6 @@ import java.util.Optional;
 
 public interface PersonalDataRepository extends JpaRepository<PersonalData, String> {
 
-     @Query("SELECT pd FROM PersonalData pd WHERE pd.setupToken = :setupToken")
-        Optional<PersonalData> findBySetupToken(String setupToken);
-
-     @Query("SELECT pd FROM PersonalData pd WHERE pd.email = :email")
-      Optional<PersonalData> findByEmail(String email);
+    @Query("SELECT pd FROM PersonalData pd WHERE pd.setupToken = :setupToken")
+    Optional<PersonalData> findBySetupToken(String setupToken);
 }

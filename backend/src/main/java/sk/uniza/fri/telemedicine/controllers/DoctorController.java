@@ -28,11 +28,11 @@ public class DoctorController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public Page<DoctorResponse> getAllDoctors(
-                                              @RequestParam(defaultValue = "0") int page,
-                                              @RequestParam(defaultValue = "10") int size,
-                                              @RequestParam(required = false) String searchLastName) {
-        return doctorService.getAllDoctors(page, size, searchLastName);
+    public Page<DoctorResponse> getDoctors(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchLastName) {
+        return doctorService.getDoctors(page, size, searchLastName);
     }
 }
 

@@ -2,7 +2,6 @@ package sk.uniza.fri.telemedicine.controllers;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
@@ -26,17 +25,15 @@ public class MeasurementPlanController {
         return measurementPlanService.createMeasurementPlan(request);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{planId}")
     @PreAuthorize("hasRole('DOCTOR')")
-    public MeasurementPlanResponse updateMeasurementPlan(@PathVariable Integer id, @Valid @RequestBody MeasurementPlanRequest request) {
-        return measurementPlanService.updateMeasurementPlan(id, request);
+    public MeasurementPlanResponse updateMeasurementPlan(@PathVariable Long planId, @Valid @RequestBody MeasurementPlanRequest request) {
+        return measurementPlanService.updateMeasurementPlan(planId, request);
     }
 
     @GetMapping("/{personalNumber}")
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
-    public ResponseEntity<MeasurementPlanResponse> getMeasurementPlanByPersonalNumber(@PathVariable String personalNumber) {
-        return measurementPlanService.findMeasurementPlanByPersonalNumber(personalNumber)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.noContent().build());
+    public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(@PathVariable String personalNumber) {
+        return measurementPlanService.getMeasurementPlanByPersonalNumber(personalNumber);
     }
 }

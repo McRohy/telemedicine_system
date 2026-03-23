@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import sk.uniza.fri.telemedicine.enums.constrains.Gender;
+import sk.uniza.fri.telemedicine.enums.Gender;
 
 @Entity
 @Setter @Getter @NoArgsConstructor

@@ -34,6 +34,12 @@ public class SystemExceptionHandler {
         return new ErrorResponse(400, "Validation failed", fieldErrors);
     }
 
+    @ExceptionHandler(BusinessRuleException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_CONTENT)
+    public ErrorResponse handleBusinessRule(BusinessRuleException ex) {
+        return new ErrorResponse(422, ex.getMessage());
+    }
+
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(NotFoundException ex) {
@@ -50,6 +56,12 @@ public class SystemExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDenied(AccessDeniedException ex) {
         return new ErrorResponse(403, "Access denied");
+    }
+
+    @ExceptionHandler(ArticleException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleArticleException(ArticleException ex) {
+        return new ErrorResponse(500, ex.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

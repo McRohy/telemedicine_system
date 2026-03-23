@@ -1,6 +1,6 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -8,12 +8,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
+import sk.uniza.fri.telemedicine.enums.Role;
 import sk.uniza.fri.telemedicine.entities.Doctor;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.DoctorRepository;
-import java.util.List;
 
 @Service
 public class DoctorService {
@@ -28,20 +28,20 @@ public class DoctorService {
 
     @Transactional
     public DoctorResponse createDoctor(DoctorRequest request) {
-        if (doctorRepository.existsByPanNumber(request.getPanNumber())) {
+        if (doctorRepository.existsById(request.getPanNumber())) {
             throw new DuplicateException("Doctor with this PAN number already exists");
         }
-        PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData());
+        PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData(), Role.DOCTOR);
         Doctor doctor = mapToDoctor(request, personalData);
         doctorRepository.save(doctor);
         return mapToDoctorResponse(doctor);
     }
 
-    public Page<DoctorResponse> getAllDoctors(int page, int size, String searchLastName) {
+    public Page<DoctorResponse> getDoctors(int page, int size, String searchLastName) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("personalData.lastName").ascending());
 
         if (searchLastName != null && !searchLastName.isBlank()) {
-            return doctorRepository.findByPersonalDataLastNameContainingIgnoreCase(searchLastName, pageable)
+            return doctorRepository.findByPersonalDataLastNameStartingWithIgnoreCase(searchLastName, pageable)
                     .map(doctor -> mapToDoctorResponse(doctor));
         }
         return doctorRepository.findAll(pageable)
@@ -50,16 +50,7 @@ public class DoctorService {
     }
 
     public Doctor findByPanNumber(String panNumber) {
-        return doctorRepository.findByPanNumber(panNumber).orElseThrow(
-                () -> new NotFoundException("Doctor with PAN number not found"));
-    }
-
-    public DoctorResponse findDoctorByPanNumberResponse(String panNumber) {
-        return mapToDoctorResponse(findByPanNumber(panNumber));
-    }
-
-    public String getFullNameByPanNumber(String panNumber) {
-        return doctorRepository.findFullNameByPanNumber(panNumber).orElseThrow(
+        return doctorRepository.findById(panNumber).orElseThrow(
                 () -> new NotFoundException("Doctor with PAN number not found"));
     }
 
@@ -76,9 +67,11 @@ public class DoctorService {
         return doctor;
     }
 
-    public DoctorResponse mapToDoctorResponse(Doctor doctor) {
-        return new DoctorResponse(doctor.getPanNumber(),
+    private DoctorResponse mapToDoctorResponse(Doctor doctor) {
+        return new DoctorResponse(
+                doctor.getPanNumber(),
                 personalDataService.mapToPersonalDataResponse(doctor.getPersonalData()),
-                doctor.getSpecialization());
+                doctor.getSpecialization()
+        );
     }
 }

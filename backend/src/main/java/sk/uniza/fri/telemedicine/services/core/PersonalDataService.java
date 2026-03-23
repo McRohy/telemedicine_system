@@ -1,15 +1,16 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.PasswordRequest;
 import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
 import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import sk.uniza.fri.telemedicine.enums.Role;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
-import sk.uniza.fri.telemedicine.helpers.EmailSender;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
 import java.util.UUID;
@@ -17,23 +18,27 @@ import java.util.UUID;
 @Service
 public class PersonalDataService {
 
+    @Value("${app.frontend.base-url}")
+    private String frontendBaseUrl;
+
     private final PersonalDataRepository personalDataRepository;
-    private final EmailSender emailSender;
+    private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
 
-    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailSender emailSender, PasswordEncoder passwordEncoder) {
+    public PersonalDataService(PersonalDataRepository personalDataRepository, EmailService emailService,
+                               PasswordEncoder passwordEncoder) {
         this.personalDataRepository = personalDataRepository;
-        this.emailSender = emailSender;
+        this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
-    public PersonalData createPersonalData(PersonalDataRequest request) {
+    public PersonalData createPersonalData(PersonalDataRequest request, Role role) {
         if (personalDataRepository.existsById(request.getEmail())){
             throw new DuplicateException("Personal data with this email already exists");
         }
-        PersonalData personalData = this.mapToPersonalData(request);
-        this.setUpPassword(personalData, request.getEmail());
+        PersonalData personalData = mapToPersonalData(request, role);
+        setUpPassword(personalData, request.getEmail());
         return personalDataRepository.save(personalData);
     }
 
@@ -41,8 +46,8 @@ public class PersonalDataService {
         personalData.setPassword(null);
         String token = UUID.randomUUID().toString();
         personalData.setSetupToken(token);
-        String link = "http://localhost:5173/password/" + token;
-        emailSender.sendEmailWithPassword(email, link);
+        String link = frontendBaseUrl + "/password/" + token;
+        emailService.sendEmailWithTokenPassword(email, link);
     }
 
     @Transactional
@@ -54,24 +59,28 @@ public class PersonalDataService {
        personalData.setPassword(password);
        personalData.setSetupToken(null);
        personalDataRepository.save(personalData);
+       emailService.sendEmailSuccessfulPasswordSetUp(personalData.getEmail());
     }
 
     public PersonalData getByEmail(String email) {
-        return personalDataRepository.findByEmail(email)
+        return personalDataRepository.findById(email)
                 .orElseThrow(() -> new NotFoundException("Personal data with this email not found"));
     }
 
-    private PersonalData mapToPersonalData(PersonalDataRequest request) {
+    private PersonalData mapToPersonalData(PersonalDataRequest request, Role role) {
         PersonalData personalData = new PersonalData();
         personalData.setEmail(request.getEmail());
         personalData.setFirstName(request.getFirstName());
         personalData.setLastName(request.getLastName());
-        personalData.setRole(request.getRole());
+        personalData.setRole(role);
         return personalData;
     }
 
     public PersonalDataResponse mapToPersonalDataResponse(PersonalData personalData) {
-        return new PersonalDataResponse(personalData.getEmail(), personalData.getFirstName(),
-                personalData.getLastName());
+        return new PersonalDataResponse(
+                personalData.getEmail(),
+                personalData.getFirstName(),
+                personalData.getLastName()
+        );
     }
 }

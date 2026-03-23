@@ -1,6 +1,6 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -8,12 +8,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementRecordRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementRecordResponse;
-import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
 import sk.uniza.fri.telemedicine.entities.MeasurementRecord;
 import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
-import sk.uniza.fri.telemedicine.enums.constrains.MeasurementStatus;
-import sk.uniza.fri.telemedicine.helpers.EmailSender;
+import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
 import sk.uniza.fri.telemedicine.repository.MeasurementRecordRepository;
 
 import java.time.LocalDate;
@@ -25,27 +23,31 @@ public class MeasurementRecordService {
 
     private final PatientService patientService;
     private final MeasurementRecordRepository measurementRecordRepository;
+    private final MeasurementPlanService measurementPlanService;
     private final TypeOfMeasurementService typeOfMeasurementService;
-    private final EmailSender emailSender;
+    private final EmailService emailService;
 
     public MeasurementRecordService(PatientService patientService, MeasurementRecordRepository measurementRecordRepository,
-                                  TypeOfMeasurementService typeOfMeasurementService, EmailSender emailSender) {
+                                    MeasurementPlanService measurementPlanService,
+                                    TypeOfMeasurementService typeOfMeasurementService, EmailService emailService) {
         this.patientService = patientService;
         this.measurementRecordRepository = measurementRecordRepository;
+        this.measurementPlanService = measurementPlanService;
         this.typeOfMeasurementService = typeOfMeasurementService;
-        this.emailSender = emailSender;
+        this.emailService = emailService;
     }
 
     @Transactional
-    public MeasurementRecordResponse trackNewMeasurement(MeasurementRecordRequest request) {
-        Patient patient = patientService.findByPersonalNumber(request.getPersonalNumber());
-        TypeOfMeasurement typeOfMeasurement = typeOfMeasurementService.findTypeOfMeasurementById(request.getTypeOfMeasurementId());
+    public MeasurementRecordResponse createMeasurementRecord(MeasurementRecordRequest request) {
+        measurementPlanService.validateActivePlanAndType(request.getPersonalNumber(), request.getTypeOfMeasurementId());
 
-        MeasurementRecord measurementRecord = this.mapToMeasurementRecord(request, patient, typeOfMeasurement);
+        Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
+        TypeOfMeasurement typeOfMeasurement = typeOfMeasurementService.getTypeOfMeasurementById(request.getTypeOfMeasurementId());
+        MeasurementRecord measurementRecord = mapToMeasurementRecord(request, patient, typeOfMeasurement);
 
         if (!checkIfRecordIsInRange(request.getValue(), typeOfMeasurement)) {
             measurementRecord.setMeasurementStatus(MeasurementStatus.ABNORMAL);
-            emailSender.sendMeasurementRecordAlert(
+            emailService.sendMeasurementRecordAlert(
                     patientService.getCareProviderEmailByPatientPersonalNumber(patient.getPersonalNumber()),
                     patientService.getPatientFullNameByPersonalNumber(patient.getPersonalNumber()),
                     request.getValue(), typeOfMeasurement.getUnits());
@@ -53,29 +55,29 @@ public class MeasurementRecordService {
             measurementRecord.setMeasurementStatus(MeasurementStatus.NORMAL);
         }
         measurementRecordRepository.save(measurementRecord);
-        return this.mapToMeasurementRecordResponse(measurementRecord);
+        return mapToMeasurementRecordResponse(measurementRecord);
+    }
+
+    public List<MeasurementRecordResponse> getMeasurementRecords(String personalNumber, Long typeId, LocalDate period) {
+        LocalDate from = period.withDayOfMonth(1);
+        LocalDate to = period.withDayOfMonth(period.lengthOfMonth());
+        return measurementRecordRepository
+                .findAllByPatientAndTimeBetween(personalNumber, typeId, from, to).stream()
+                .map(record -> mapToMeasurementRecordResponse(record))
+                .toList();
+    }
+
+    public Page<MeasurementRecordResponse> getPagedMeasurementRecords(String personalNumber, int page, int size, Long typeId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement.typeName").ascending());
+        if (typeId != null) {
+            return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeId(personalNumber, typeId, pageable)
+                    .map(record -> mapToMeasurementRecordResponse(record));
+        }
+        return measurementRecordRepository.findByPersonalNumber(personalNumber, pageable).map(record -> mapToMeasurementRecordResponse(record));
     }
 
     private boolean checkIfRecordIsInRange(Double value, TypeOfMeasurement typeOfMeasurement) {
         return value >= typeOfMeasurement.getMinValue() && value <= typeOfMeasurement.getMaxValue();
-    }
-
-    public List<MeasurementRecordResponse> getMeasurementRecordForPatient(String personalNumber, Integer typeId, LocalDate period) {
-        LocalDate from = period.withDayOfMonth(1);
-        LocalDate to = period.withDayOfMonth(period.lengthOfMonth());
-        return measurementRecordRepository
-                .findAllByPatientAndTimeBetween(personalNumber,typeId, from, to).stream()
-                .map(record -> this.mapToMeasurementRecordResponse(record))
-                .toList();
-    }
-
-    public Page<MeasurementRecordResponse> getAllMeasurementRecords(String personalNumber, int page, int size, Integer typeId) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement").ascending());
-        if (typeId != null) {
-            return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeContainingIgnoreCaseOrderByTimeOfMeasurementDesc(personalNumber, typeId, pageable)
-                    .map(patient -> mapToMeasurementRecordResponse(patient));
-        }
-        return measurementRecordRepository.findByPersonalNumberContainingIgnoreCaseOrderByTimeOfMeasurementDesc(personalNumber, pageable).map(p -> mapToMeasurementRecordResponse(p));
     }
 
     private MeasurementRecord mapToMeasurementRecord(MeasurementRecordRequest request, Patient patient, TypeOfMeasurement typeOfMeasurement) {
@@ -89,8 +91,13 @@ public class MeasurementRecordService {
     }
 
     private MeasurementRecordResponse mapToMeasurementRecordResponse(MeasurementRecord measurementRecord) {
-        return new MeasurementRecordResponse(measurementRecord.getId(), measurementRecord.getTypeOfMeasurement().getTypeName(),
-                measurementRecord.getValue(), measurementRecord.getTypeOfMeasurement().getUnits(),
-                measurementRecord.getTimeOfMeasurement(), measurementRecord.getMeasurementStatus(), measurementRecord.getNote());
+        return new MeasurementRecordResponse(
+                measurementRecord.getRecordId(),
+                measurementRecord.getTypeOfMeasurement().getTypeName(),
+                measurementRecord.getValue(),
+                measurementRecord.getTypeOfMeasurement().getUnits(),
+                measurementRecord.getTimeOfMeasurement(),
+                measurementRecord.getMeasurementStatus(), measurementRecord.getNote()
+        );
     }
 }

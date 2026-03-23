@@ -10,12 +10,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ArticleRequest {
 
-    @NotBlank(message = "Personal number is mandatory")
+    @NotBlank(message = "Pan number is mandatory")
     @Pattern(regexp = "\\d{16}", message = "PAN number must consist from 16 digits")
     private String panNumber;
 
     @NotBlank(message = "Title is mandatory")
-    @Size(max=100)
+    @Size(max=220)
     private String title;
 
     @NotBlank(message = "Content is mandatory")

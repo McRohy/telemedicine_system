@@ -1,15 +1,15 @@
 package sk.uniza.fri.telemedicine.services.core;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
-import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
 import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
+import sk.uniza.fri.telemedicine.exception.BusinessRuleException;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.TypeOfMeasurementRepository;
@@ -24,18 +24,18 @@ public class TypeOfMeasurementService {
         this.typeOfMeasurementRepository = typeOfMeasurementRepository;
     }
 
-    public List<TypeOfMeasurementResponse> getAllTypesOfMeasurementForSelect() {
+    public List<TypeOfMeasurementResponse> getTypesOfMeasurement() {
         return typeOfMeasurementRepository.findAll()
                 .stream()
-                .map(t -> this.mapToTypeOfMeasurementResponse(t))
+                .map(t -> mapToTypeOfMeasurementResponse(t))
                 .toList();
     }
 
-    public Page<TypeOfMeasurementResponse> getAllTypesOfMeasurement(int page, int size, String searchTypeName) {
+    public Page<TypeOfMeasurementResponse> getPagedTypesOfMeasurement(int page, int size, String searchTypeName) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("typeName").ascending());
 
         if (searchTypeName != null && !searchTypeName.isBlank()) {
-            return typeOfMeasurementRepository.findByTypeNameContainingIgnoreCase(searchTypeName, pageable)
+            return typeOfMeasurementRepository.findByTypeNameStartingWithIgnoreCase(searchTypeName, pageable)
                     .map(type -> mapToTypeOfMeasurementResponse(type));
         }
         return typeOfMeasurementRepository.findAll(pageable).map(type -> mapToTypeOfMeasurementResponse(type));
@@ -43,18 +43,21 @@ public class TypeOfMeasurementService {
 
     @Transactional
     public TypeOfMeasurementResponse createTypeOfMeasurement(TypeOfMeasurementRequest request) {
-       if (typeOfMeasurementRepository.existsByTypeName(request.getTypeName())){
-           throw  new DuplicateException(("Type of measurement already exists"));
-       }
-       TypeOfMeasurement typeOfMeasurement = this.mapToTypeOfMeasurement(request);
+        if (request.getMinValue() >= request.getMaxValue()) {
+            throw new BusinessRuleException("Min value must be less than max value");
+        }
+        if (typeOfMeasurementRepository.existsByTypeName(request.getTypeName())) {
+            throw new DuplicateException("Type of measurement already exists");
+        }
+        TypeOfMeasurement typeOfMeasurement = mapToTypeOfMeasurement(request);
         typeOfMeasurementRepository.save(typeOfMeasurement);
 
-       return this.mapToTypeOfMeasurementResponse(typeOfMeasurement);
+        return mapToTypeOfMeasurementResponse(typeOfMeasurement);
     }
 
-    public TypeOfMeasurement findTypeOfMeasurementById(Integer id){
+    public TypeOfMeasurement getTypeOfMeasurementById(Long id) {
         return typeOfMeasurementRepository.findById(id).orElseThrow(
-                () -> new NotFoundException("Type of measurement with id : " + id + " not found"));
+                () -> new NotFoundException("Type of measurement not found"));
     }
 
     private TypeOfMeasurement mapToTypeOfMeasurement(TypeOfMeasurementRequest request) {
@@ -66,9 +69,13 @@ public class TypeOfMeasurementService {
         return typeOfMeasurement;
     }
 
-    private  TypeOfMeasurementResponse mapToTypeOfMeasurementResponse(TypeOfMeasurement typeOfMeasurement) {
-        return new TypeOfMeasurementResponse(typeOfMeasurement.getTypeId(), typeOfMeasurement.getTypeName(),
-                typeOfMeasurement.getUnits(), typeOfMeasurement.getMinValue(), typeOfMeasurement.getMaxValue());
+    private TypeOfMeasurementResponse mapToTypeOfMeasurementResponse(TypeOfMeasurement typeOfMeasurement) {
+        return new TypeOfMeasurementResponse(
+                typeOfMeasurement.getTypeId(),
+                typeOfMeasurement.getTypeName(),
+                typeOfMeasurement.getUnits(),
+                typeOfMeasurement.getMinValue(),
+                typeOfMeasurement.getMaxValue()
+        );
     }
-
 }

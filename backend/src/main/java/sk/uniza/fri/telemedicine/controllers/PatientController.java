@@ -9,8 +9,6 @@ import sk.uniza.fri.telemedicine.dto.request.PatientRequest;
 import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
 import sk.uniza.fri.telemedicine.services.core.PatientService;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {
@@ -36,20 +34,20 @@ public class PatientController {
 
     @GetMapping(params = "panNumber")
     @PreAuthorize("hasRole('DOCTOR')")
-    public Page<PatientResponse> getPatientsByPanNumber(
-                                                @RequestParam(required = true) String panNumber,
-                                                @RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size,
-                                                @RequestParam(required = false) String searchLastName) {
-        return patientService.getAllByDoctorsPanNumber(panNumber, page, size, searchLastName);
+    public Page<PatientResponse> getPatientsByDoctorPanNumber(
+            @RequestParam String panNumber,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchLastName) {
+        return patientService.getPatientsByDoctorPanNumber(panNumber, page, size, searchLastName);
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public Page<PatientResponse> getAllPatients(
-                                                @RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "10") int size,
-                                                @RequestParam(required = false) String searchLastName) {
-        return patientService.getAllPatients(page, size, searchLastName);
+    public Page<PatientResponse> getPatients(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchLastName) {
+        return patientService.getPatients(page, size, searchLastName);
     }
 }
