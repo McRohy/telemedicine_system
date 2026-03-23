@@ -26,7 +26,7 @@ export default function PasswordPage() {
     try {
       await setPassword(form.values);
       notifySuccess('Heslo nastavené', 'Vaše heslo bolo úspešne nastavené.');
-      setTimeout(() => navigate('/login'), 2000); //dealay because of notification to be shown
+      setTimeout(() => navigate('/login'), 2000); //delay because of notification to be shown
     } catch (error) {
       notifyError(error);
     } finally {

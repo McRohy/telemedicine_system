@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Group, Stack, Title, Text, Loader, Center, Alert, Card, Pagination } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { IconFirstAidKit, IconTrash } from '@tabler/icons-react';
+import { IconFirstAidKit } from '@tabler/icons-react';
 import { notifyError } from '../../helpers/notificationHelper';
 import { getArticles } from '../../api/articleApi';
 import DetailArticleModal from '../../components/DetailArticleModal';

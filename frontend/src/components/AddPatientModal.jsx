@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Modal, Stack, TextInput, Select, Button, Alert } from '@mantine/core';
+import { Modal, Stack, TextInput, Select, Button } from '@mantine/core';
 import { notifySuccess, notifyError } from '../helpers/notificationHelper';
 import { GENDERS } from '../helpers/constants';
 import { createPatient } from '../api/patientApi';

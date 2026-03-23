@@ -70,7 +70,7 @@ export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan
           <Group grow>
             <NumberInput
               label="Hodnota merania"
-              placeholder="Zadejte hodnotu"
+              placeholder="Zadajte hodnotu"
               size="md"
               ta="left"
               withAsterisk

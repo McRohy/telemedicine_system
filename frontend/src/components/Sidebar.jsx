@@ -3,14 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import ConfirmModal from './ConfirmModal';
-import {
-  IconArticle,
-  IconActivity,
-  IconClipboardHeart,
-  IconUserCircle,
-  IconUsers,
-  IconStethoscope,
-} from '@tabler/icons-react';
+import { IconArticle, IconActivity, IconUserCircle, IconUsers, IconStethoscope } from '@tabler/icons-react';
 import { useAuth } from '../context/AuthContext';
 import { ROLES } from '../helpers/constants';
 
@@ -29,11 +22,7 @@ const navLinks = {
     { label: 'Články', path: '/doctor/articles', icon: IconArticle },
   ],
   PATIENT: [
-    {
-      label: 'Prehľad meraní',
-      path: '/patient/dashboard',
-      icon: IconActivity,
-    },
+    { label: 'Prehľad meraní', path: '/patient/dashboard', icon: IconActivity},
     { label: 'Články', path: '/patient/articles', icon: IconArticle },
   ],
 };

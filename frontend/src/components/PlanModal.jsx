@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useForm } from '@mantine/form';
-import { Modal, Stack, TextInput, Select, Button, Group, MultiSelect } from '@mantine/core';
+import { Modal, Stack, TextInput, Select, Button, MultiSelect } from '@mantine/core';
 import { TimePicker } from '@mantine/dates';
 import { notifySuccess, notifyError } from '../helpers/notificationHelper';
 import { FREQUENCIES } from '../helpers/constants';

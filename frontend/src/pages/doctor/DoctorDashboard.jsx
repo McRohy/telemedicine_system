@@ -61,7 +61,10 @@ export default function DoctorDashboard() {
         placeholder="Hľadať podľa priezviska"
         leftSection={<IconSearch size={16} />}
         value={search}
-        onChange={(e) => setSearch(e.currentTarget.value)}
+        onChange={(e) => {
+          setSearch(e.currentTarget.value);
+          setPage(1);
+        }}
       />
 
       {data.content.length === 0 ? (

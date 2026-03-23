@@ -1,6 +1,6 @@
 import { Stack, Title, Text, Center } from "@mantine/core";
 
-function Unauthorized() {
+export default function Forbidden() {
   return (
     <Center w="100vw" h="100vh" bg="primary">
         <Stack gap="xl" align="center">
@@ -11,5 +11,3 @@ function Unauthorized() {
     </Center>
   );
 }
-
-export default Unauthorized;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Group, Stack, Button, Title, Text, Loader, Center, Alert, Card, Pagination } from '@mantine/core';
-import AddArticle from '../../components/AddArticle';
+import AddArticle from '../../components/AddArticleModal';
 import { useDisclosure } from '@mantine/hooks';
 import { IconFirstAidKit } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
