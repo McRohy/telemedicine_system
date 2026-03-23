@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AppLayout from './components/AppLayout';
 import PasswordPage from './pages/other/PasswordPage';
 import LoginPage from './pages/other/LoginPage';
@@ -20,6 +20,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<AppLayout />}>
+            <Route index element={<Navigate to="/login" />} /> {/* default route url */}
             <Route
               path="/admin/doctors"
               element={
