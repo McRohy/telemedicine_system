@@ -5,7 +5,7 @@ import { GENDERS } from '../helpers/constants';
 import { createPatient } from '../api/patientApi';
 import { useForm } from '@mantine/form';
 
-export default function AddPatientModal({opened, onClose, onSuccess, doctorPanNumber,}) {
+export default function AddPatientModal({opened, onClose, onSuccess, doctorPanNumber}) {
   const [loading, setLoading] = useState(false);
   const formRequest = useForm({
     initialValues: {
@@ -112,6 +112,7 @@ export default function AddPatientModal({opened, onClose, onSuccess, doctorPanNu
             {...formRequest.getInputProps('gender')}
           />
 
+         {!doctorPanNumber && (
           <TextInput
             label="PAN číslo lekára"
             placeholder="123456789"
@@ -121,6 +122,7 @@ export default function AddPatientModal({opened, onClose, onSuccess, doctorPanNu
             withAsterisk
             {...formRequest.getInputProps('panNumber')}
           />
+          )}
 
           <Button type="submit" p="xs" size="md" loading={loading}>
             Pridať Pacienta
