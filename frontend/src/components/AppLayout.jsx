@@ -1,8 +1,8 @@
 import Sidebar from './Sidebar';
-import { AppShell, Burger, Group, Title } from '@mantine/core';
+import { AppShell, Burger, Group } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Outlet } from 'react-router-dom';
-import { BsHeartPulse } from 'react-icons/bs';
+import { IconHeartbeat } from '@tabler/icons-react';
 import { Notifications } from '@mantine/notifications';
 
 export default function AppLayout() {
@@ -27,7 +27,7 @@ export default function AppLayout() {
               hiddenFrom="sm"
               size="sm"
             />
-            <BsHeartPulse size={24} />
+            <IconHeartbeat size={32} stroke={1.5}/>
           </Group>
         </AppShell.Header>
 

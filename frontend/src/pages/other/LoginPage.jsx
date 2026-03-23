@@ -1,6 +1,6 @@
-import { BsHeartPulse } from 'react-icons/bs';
+import { IconHeartbeat } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
-import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center, Alert } from '@mantine/core';
+import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center, Alert, Box } from '@mantine/core';
 import { useAuth } from '../../context/AuthContext';
 
 export default function LoginPage() {
@@ -22,7 +22,8 @@ export default function LoginPage() {
       <Card p="lg" radius="lg" maw={{ base: 300, xs: 450 }}>
         <Stack gap="xl">
           <Stack align="center" gap="xs" m="xs">
-            <BsHeartPulse size={96} />
+            <Box hiddenFrom="sm"><IconHeartbeat size={48} stroke={1.5}/></Box>
+            <Box visibleFrom="sm"><IconHeartbeat size={96} stroke={1.5}/></Box>
             <Title order={1}>MediRoh</Title>
             <Text align="center">
               Vitajte, pre používanie telemedicínskeho systému sa prosím

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Group, Stack, Button, Title, Card, Loader, Center, Text } from '@mantine/core';
+import { Group, Stack, Button, Title, Card, Loader, Center, Text, Box } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconCalendarEvent } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
@@ -8,6 +8,7 @@ import TrackMeasurementModal from '../../components/TrackMeasurementModal';
 import { notifyError } from '../../helpers/notificationHelper';
 import MeasurementChart from '../../components/MeasurementChart';
 import MeasurementTable from '../../components/MeasurementTable';
+import PlanInfoCard from '../../components/PlanInfoCard';
 
 export default function PatientDashboard() {
   const { user } = useAuth();
@@ -61,35 +62,13 @@ export default function PatientDashboard() {
 
       <Card withBorder radius="md" shadow="sm" p="md" mt="md">
         <Group>
-          <IconCalendarEvent size={96} />
+          <Box hiddenFrom="sm"><IconCalendarEvent size={48} /></Box>
+          <Box visibleFrom="sm"><IconCalendarEvent size={96} /></Box>
           <Stack>
             <Title order={4} mt="sm">
               Aktuálny plán meraní
             </Title>
-            {plan === null ? (
-              <Text size="sm" c="dimmed">
-                Aktuálne žiadny monitorovací plán.
-              </Text>
-            ) : (
-              <Group mb="xs">
-                <Stack>
-                  <Text size="sm">Frekvencia:</Text>
-                  <Text size="sm">Čas plánu merania:</Text>
-                  <Text size="sm">Typy meraní:</Text>
-                </Stack>
-                <Stack>
-                  <Text size="sm">
-                    {plan?.frequency === 'ONE_TIME_DAILY' ? '1x denne' : '2x denne'}
-                  </Text>
-                  <Text size="sm">
-                    {plan?.timesOfPlannedMeasurements.join(', ')}
-                  </Text>
-                  <Text size="sm">
-                    {plan?.typesOfMeasurements.map((t) => t.typeName).join(', ')}
-                  </Text>
-                </Stack>
-              </Group>
-            )}
+            <PlanInfoCard plan={plan} />
           </Stack>
         </Group>
       </Card>

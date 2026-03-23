@@ -1,8 +1,8 @@
-import { BsHeartPulse } from 'react-icons/bs';
+import { IconHeartbeat } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button, Card, Stack, PasswordInput, Title, Text, Center } from '@mantine/core';
+import { Button, Card, Stack, PasswordInput, Title, Text, Center, Box } from '@mantine/core';
 import { notifySuccess, notifyError } from '../../helpers/notificationHelper';
 import { setPassword } from '../../api/authApi';
 
@@ -39,7 +39,8 @@ export default function PasswordPage() {
       <Card p="lg" radius="lg" maw={{ base: 300, xs: 450 }}>
         <Stack gap="xl">
           <Stack align="center" gap="xs" m="xs">
-            <BsHeartPulse size={96} />
+            <Box hiddenFrom="sm"><IconHeartbeat size={48} stroke={1.5}/></Box>
+            <Box visibleFrom="sm"><IconHeartbeat size={96} stroke={1.5}/></Box>
             <Title order={1}>MediRoh</Title>
             <Text align="center">
               Vitajte, pre používanie telemedicínskeho systému si prosím

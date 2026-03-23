@@ -136,7 +136,7 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
             ta="left"
             size="md"
             disabled={typesLoading}
-            placeholder={typesLoading ? 'Načítavanie...' : 'Vyberte typy meraní'}
+            placeholder={typesLoading ? 'Načítavanie...' : isEdit ? null : 'Vyberte typy meraní'}
             data={types.map((type) => ({ value: String(type.id), label: type.typeName }))}
             {...formRequest.getInputProps('typeOfMeasurementIds')}
           />
