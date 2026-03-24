@@ -2,10 +2,12 @@ package sk.uniza.fri.telemedicine.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,6 +34,18 @@ public class SystemExceptionHandler {
             fieldErrors.put(error.getField(), error.getDefaultMessage());
         }
         return new ErrorResponse(400, "Validation failed", fieldErrors);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUnreadable(HttpMessageNotReadableException ex) {
+        return new ErrorResponse(400, "Invalid input that cannot be deserialized");
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMissingParam(MissingServletRequestParameterException ex) {
+        return new ErrorResponse(400, "Required parameter '" + ex.getParameterName() + "' is missing");
     }
 
     @ExceptionHandler(BusinessRuleException.class)
