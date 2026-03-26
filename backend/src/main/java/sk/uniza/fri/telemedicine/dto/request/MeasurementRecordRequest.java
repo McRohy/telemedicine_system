@@ -1,8 +1,6 @@
 package sk.uniza.fri.telemedicine.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -16,8 +14,10 @@ public class MeasurementRecordRequest {
     @NotNull(message = "Type of measurement is mandatory")
     private Long typeOfMeasurementId;
 
+    @Positive
     @NotNull(message = "Value is mandatory")
     private Double value;
 
+    @Size(max = 220, message = "Note has maximum 220 characters")
     private String note;
 }

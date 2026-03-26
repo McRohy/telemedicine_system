@@ -19,5 +19,6 @@ public class ArticleRequest {
     private String title;
 
     @NotBlank(message = "Content is mandatory")
+    @Size(max = 50000, message = "Content must be max 50000 characters")
     private String content;
 }

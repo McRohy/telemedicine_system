@@ -1,9 +1,6 @@
 package sk.uniza.fri.telemedicine.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,9 +15,11 @@ public class TypeOfMeasurementRequest {
     @Size(max=4)
     private String units;
 
+    @Positive
     @NotNull(message = "Minimum value is mandatory")
     private Double minValue;
 
+    @Positive
     @NotNull(message = "Maximum value is mandatory")
     private Double maxValue;
 
