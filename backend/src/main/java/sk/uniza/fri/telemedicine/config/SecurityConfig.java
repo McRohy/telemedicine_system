@@ -89,7 +89,7 @@ public class SecurityConfig {
 
     /**
      * Makes AuthenticationManager available as a bean
-     * so that AuthService can use it for login verification.
+     * so that AuthenticationService can use it for login verification.
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) {

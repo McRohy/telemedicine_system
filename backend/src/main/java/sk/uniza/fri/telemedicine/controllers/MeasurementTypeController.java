@@ -11,6 +11,10 @@ import sk.uniza.fri.telemedicine.services.core.TypeOfMeasurementService;
 
 import java.util.List;
 
+/**
+ * REST controller for measurement type management.
+ * Provides endpoints for creating and viewing measurement types.
+ */
 @RestController
 @RequestMapping("/api/measurement-types")
 public class MeasurementTypeController {

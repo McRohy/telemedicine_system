@@ -8,8 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import sk.uniza.fri.telemedicine.enums.Gender;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Request DTO for creating a patient.
+ */
+@Getter @AllArgsConstructor
 public class PatientRequest {
     @NotBlank(message = "Personal number is mandatory")
     @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 10 digits")

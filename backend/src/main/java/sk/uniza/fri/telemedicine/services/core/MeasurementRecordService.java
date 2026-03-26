@@ -19,6 +19,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Service for managing measurement records.
+ */
 @Service
 public class MeasurementRecordService {
 
@@ -41,6 +44,9 @@ public class MeasurementRecordService {
         this.authorizationService = authorizationService;
     }
 
+    /**
+     * Creates new measurement record and sends email alert if the value is out of range defined in type of measurement.
+     */
     @Transactional
     public MeasurementRecordResponse createMeasurementRecord(MeasurementRecordRequest request) {
         authorizationService.authorizePatientDataAccess(request.getPersonalNumber());
@@ -63,6 +69,9 @@ public class MeasurementRecordService {
         return mapToMeasurementRecordResponse(measurementRecord);
     }
 
+    /**
+     * Returns a list of measurement records for specific patient, type of measurement and month of measurement.
+     */
     public List<MeasurementRecordResponse> getMeasurementRecords(String personalNumber, Long typeId, LocalDate period) {
         authorizationService.authorizePatientDataAccess(personalNumber);
         LocalDate from = period.withDayOfMonth(1);
@@ -73,6 +82,9 @@ public class MeasurementRecordService {
                 .toList();
     }
 
+    /**
+     * Returns a paginated list of measurement records for specific patient with optional type of measurement filter.
+     */
     public Page<MeasurementRecordResponse> getPagedMeasurementRecords(String personalNumber, int page, int size, Long typeId) {
         authorizationService.authorizePatientDataAccess(personalNumber);
         Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement.typeName").ascending());

@@ -15,6 +15,9 @@ import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
 import java.util.UUID;
 
+/**
+ * Service for managing personal data of users.
+ */
 @Service
 public class PersonalDataService {
 
@@ -32,6 +35,9 @@ public class PersonalDataService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Creates personal data of new user and sends email for password setup.
+     */
     @Transactional
     public PersonalData createPersonalData(PersonalDataRequest request, Role role) {
         if (personalDataRepository.existsById(request.getEmail())){
@@ -42,14 +48,10 @@ public class PersonalDataService {
         return personalDataRepository.save(personalData);
     }
 
-    private void setUpPassword(PersonalData personalData, String email) {
-        personalData.setPassword(null);
-        String token = UUID.randomUUID().toString();
-        personalData.setSetupToken(token);
-        String link = frontendBaseUrl + "/password/" + token;
-        emailService.sendEmailWithTokenPassword(email, link);
-    }
-
+    /**
+     * Sets the password for user using setup token.
+     * The token is invalidated after successful password setup.
+     */
     @Transactional
     public void setPassword(PasswordRequest request) {
        PersonalData personalData = personalDataRepository.findBySetupToken(request.getToken())
@@ -62,9 +64,12 @@ public class PersonalDataService {
        emailService.sendEmailSuccessfulPasswordSetUp(personalData.getEmail());
     }
 
-    public PersonalData getByEmail(String email) {
-        return personalDataRepository.findById(email)
-                .orElseThrow(() -> new NotFoundException("Personal data with this email not found"));
+    private void setUpPassword(PersonalData personalData, String email) {
+        personalData.setPassword(null);
+        String token = UUID.randomUUID().toString();
+        personalData.setSetupToken(token);
+        String link = frontendBaseUrl + "/password/" + token;
+        emailService.sendEmailWithTokenPassword(email, link);
     }
 
     private PersonalData mapToPersonalData(PersonalDataRequest request, Role role) {

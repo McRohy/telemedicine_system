@@ -15,6 +15,9 @@ import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.DoctorRepository;
 
+/**
+ * Service for managing doctors.
+ */
 @Service
 public class DoctorService {
 
@@ -26,6 +29,10 @@ public class DoctorService {
         this.doctorRepository = doctorRepository;
     }
 
+    /**
+     * Creates new doctor and sends email for password setup.
+     * The PAN number must be unique.
+     */
     @Transactional
     public DoctorResponse createDoctor(DoctorRequest request) {
         if (doctorRepository.existsById(request.getPanNumber())) {
@@ -37,6 +44,9 @@ public class DoctorService {
         return mapToDoctorResponse(doctor);
     }
 
+    /**
+     * Returns a paginated list of doctors with optional last name search.
+     */
     public Page<DoctorResponse> getDoctors(int page, int size, String searchLastName) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("personalData.lastName").ascending());
 

@@ -6,6 +6,9 @@ import sk.uniza.fri.telemedicine.entities.MeasurementPlan;
 
 import java.util.Optional;
 
+/**
+ * Repository for accessing measurement plan data.
+ */
 public interface MeasurementPlanRepository extends JpaRepository<MeasurementPlan, Long> {
 
     @Query("SELECT m FROM MeasurementPlan m WHERE m.patient.personalNumber = :personalNumber AND m.validTo IS NULL")

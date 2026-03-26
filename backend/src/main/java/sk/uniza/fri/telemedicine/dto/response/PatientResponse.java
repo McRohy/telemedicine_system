@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import sk.uniza.fri.telemedicine.enums.Gender;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Response DTO containing patient details.
+ */
+@Getter @AllArgsConstructor
 public class PatientResponse {
     private String personalNumber;
     private PersonalDataResponse personalData;

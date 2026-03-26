@@ -12,6 +12,10 @@ import sk.uniza.fri.telemedicine.services.core.MeasurementRecordService;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * REST controller for measurement record management.
+ * Provides endpoints for recording and viewing measurements.
+ */
 @RestController
 @RequestMapping("/api/measurements")
 public class MeasurementRecordController {

@@ -4,6 +4,9 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Request DTO for recording health measurement.
+ */
 @Getter @AllArgsConstructor
 public class MeasurementRecordRequest {
 

@@ -8,6 +8,10 @@ import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.services.core.MeasurementPlanService;
 
+/**
+ * REST controller for measurement plan management.
+ * Provides endpoints for creating, updating and viewing measurement plans.
+ */
 @RestController
 @RequestMapping("/api/measurement-plans")
 public class MeasurementPlanController {

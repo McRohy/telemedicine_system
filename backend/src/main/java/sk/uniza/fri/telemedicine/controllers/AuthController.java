@@ -9,6 +9,10 @@ import sk.uniza.fri.telemedicine.dto.response.LoginResponse;
 import sk.uniza.fri.telemedicine.services.auth.AuthenticationService;
 import sk.uniza.fri.telemedicine.services.core.PersonalDataService;
 
+/**
+ * REST controller for authentication.
+ * Provides endpoints for login and password setup.
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

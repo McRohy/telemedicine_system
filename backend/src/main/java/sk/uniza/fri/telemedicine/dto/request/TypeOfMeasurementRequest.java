@@ -4,6 +4,9 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Request DTO for creating new type of measurement.
+ */
 @Getter @AllArgsConstructor
 public class TypeOfMeasurementRequest {
 

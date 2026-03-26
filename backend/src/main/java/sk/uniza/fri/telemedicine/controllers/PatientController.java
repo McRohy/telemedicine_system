@@ -9,6 +9,10 @@ import sk.uniza.fri.telemedicine.dto.request.PatientRequest;
 import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
 import sk.uniza.fri.telemedicine.services.core.PatientService;
 
+/**
+ * REST controller for patient management.
+ * Provides endpoints for patient registration and view patients.
+ */
 @RestController
 @RequestMapping("/api/patients")
 public class PatientController {

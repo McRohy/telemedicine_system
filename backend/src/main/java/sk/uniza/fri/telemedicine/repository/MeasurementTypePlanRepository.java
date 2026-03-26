@@ -6,6 +6,9 @@ import sk.uniza.fri.telemedicine.entities.MeasurementTypePlan;
 
 import java.util.List;
 
+/**
+ * Repository for accessing measurement type plan data.
+ */
 public interface MeasurementTypePlanRepository extends JpaRepository<MeasurementTypePlan, Long> {
 
     @Query("SELECT mType FROM MeasurementTypePlan mType WHERE mType.measurementPlan.planId = :planId")

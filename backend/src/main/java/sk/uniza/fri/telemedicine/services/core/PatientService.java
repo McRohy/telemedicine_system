@@ -17,6 +17,9 @@ import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.PatientRepository;
 import sk.uniza.fri.telemedicine.services.auth.AuthorizationService;
 
+/**
+ * Service for managing patients.
+ */
 @Service
 public class PatientService {
 
@@ -33,6 +36,10 @@ public class PatientService {
         this.authorizationService = authorizationService;
     }
 
+    /**
+     * Creates new patient and sends email for password setup.
+     * The personal number must be unique.
+     */
     @Transactional
     public PatientResponse createPatient(PatientRequest request) {
         if (patientRepository.existsById(request.getPersonalNumber())) {
@@ -45,6 +52,9 @@ public class PatientService {
         return mapToPatientResponse(patient);
     }
 
+    /**
+     * Returns paginated list of patients for specific doctor with optional last name search.
+     */
     public Page<PatientResponse> getPatientsByDoctorPanNumber(String panNumber, int page, int size, String searchLastName) {
         authorizationService.authorizeDoctorIdentity(panNumber);
         Pageable pageable = PageRequest.of(page, size, Sort.by("personalData.lastName").ascending());
@@ -55,6 +65,9 @@ public class PatientService {
         return patientRepository.findAllByPanNumber(panNumber, pageable).map(p -> mapToPatientResponse(p));
     }
 
+    /**
+     * Returns paginated list of patients with optional last name search.
+     */
     public Page<PatientResponse> getPatients(int page, int size, String searchLastName) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("personalData.lastName").ascending());
 

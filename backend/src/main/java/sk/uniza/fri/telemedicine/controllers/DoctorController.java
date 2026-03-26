@@ -9,6 +9,10 @@ import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
 import sk.uniza.fri.telemedicine.services.core.DoctorService;
 
+/**
+ * REST controller for doctor management.
+ * Provides endpoints for doctor registration and view doctors.
+ */
 @RestController
 @RequestMapping("/api/doctors")
 public class DoctorController {

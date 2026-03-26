@@ -9,8 +9,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Response DTO containing measurement plan details.
+ */
+@Getter @AllArgsConstructor
 public class MeasurementPlanResponse {
     private Long id;
     private String personalNumber;

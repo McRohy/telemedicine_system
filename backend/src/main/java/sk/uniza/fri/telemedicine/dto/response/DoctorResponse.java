@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import sk.uniza.fri.telemedicine.enums.Specialization;
 
+/**
+ * Response DTO containing doctor details.
+ */
 @Getter //for Json serialization
 @AllArgsConstructor
 public class DoctorResponse {

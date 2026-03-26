@@ -6,6 +6,9 @@ import sk.uniza.fri.telemedicine.entities.PersonalData;
 
 import java.util.Optional;
 
+/**
+ * Repository for accessing personal data.
+ */
 public interface PersonalDataRepository extends JpaRepository<PersonalData, String> {
 
     @Query("SELECT pd FROM PersonalData pd WHERE pd.setupToken = :setupToken")

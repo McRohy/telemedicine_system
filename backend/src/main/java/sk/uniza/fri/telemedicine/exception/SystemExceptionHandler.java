@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
-@RestControllerAdvice
+/**
+ * Global exception handler that catches all exceptions
+ * and returns a consistent error response format.
+ */
+@Slf4j @RestControllerAdvice
 public class SystemExceptionHandler {
 
     @ExceptionHandler(DuplicateException.class)

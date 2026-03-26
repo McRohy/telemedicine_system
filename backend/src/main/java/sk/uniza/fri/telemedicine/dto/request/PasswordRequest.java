@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * Request DTO for setting up a new password.
+ */
 @Getter @AllArgsConstructor
 public class PasswordRequest {
     @NotBlank

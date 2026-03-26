@@ -7,8 +7,10 @@ import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
 
 import java.time.LocalDateTime;
 
-@Getter //for Json serialization
-@AllArgsConstructor
+/**
+ * Response DTO containing a single measurement record details.
+ */
+@Getter @AllArgsConstructor
 public class MeasurementRecordResponse {
         private Long id;
         private String typeName;

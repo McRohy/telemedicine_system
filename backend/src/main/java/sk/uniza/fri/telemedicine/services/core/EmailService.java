@@ -7,8 +7,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-//podla: https://www.geeksforgeeks.org/springboot/spring-boot-sending-email-via-smtp/
-// https://mailtrap.io/blog/spring-send-email/
+/**
+ * Service for sending email notifications.
+ * All methods are asynchronous to avoid blocking HTTP responses.
+ * patterns: https://mailtrap.io/blog/spring-send-email/
+ * https://www.geeksforgeeks.org/springboot/spring-boot-sending-email-via-smtp/
+ */
 @Slf4j
 @Service
 public class EmailService {

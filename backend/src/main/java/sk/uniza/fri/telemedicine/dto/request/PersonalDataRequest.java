@@ -6,8 +6,10 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Request DTO for personal data used in patient and doctor creation.
+ */
+@Getter @AllArgsConstructor
 public class PersonalDataRequest {
     @Email
     @NotBlank(message = "Email is mandatory")

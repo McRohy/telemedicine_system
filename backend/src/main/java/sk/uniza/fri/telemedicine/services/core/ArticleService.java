@@ -22,10 +22,13 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Service for managing articles.
+ */
 @Service
 public class ArticleService {
 
-    //Cesta kam sa ukladajú články, v Dockeri mapovaná na volume "article-data"
+    //path for storing article files, in Docker mapped to volume "article-data"
     @Value("${app.article.storage-path}")
     private String storagePath;
 
@@ -40,9 +43,9 @@ public class ArticleService {
     }
 
     /**
-     * Súbor sa uloží na disk (Docker volume), do DB len dáta + filePath
-     * Vzor: https://howtodoinjava.com/java11/write-string-to-file/
-     * Vzor: https://foojay.io/today/exploring-file-storage-solutions-in-spring-boot-database-local-systems-cloud-services-and-beyond/
+     * Creates a new article by saving metadata to the database and content to a Docker volume.
+     * Pattern: https://howtodoinjava.com/java11/write-string-to-file/
+     * Pattern: https://foojay.io/today/exploring-file-storage-solutions-in-spring-boot-database-local-systems-cloud-services-and-beyond/
      */
     @Transactional
     public ArticleResponse createArticle(ArticleRequest request) {
@@ -73,6 +76,10 @@ public class ArticleService {
         return mapToArticleResponse(article, true);
     }
 
+    /**
+     * Returns a paginated list of articles for specific doctor.
+     * The content of the article is not included in the response to optimize performance.
+     */
     public Page<ArticleResponse> getAllArticlesByPanNumber(String panNumber, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("timeOfCreation").descending());
         authorizationService.authorizeDoctorIdentity(panNumber);
@@ -81,18 +88,28 @@ public class ArticleService {
                 .map(article -> mapToArticleResponse(article, false));
     }
 
+    /**
+     * Returns a paginated list of articles.
+     * The content of the article is not included in the response to optimize performance.
+     */
     public Page<ArticleResponse> getAllArticles(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("timeOfCreation").descending());
         return articleRepository.findAll(pageable)
                 .map(article -> mapToArticleResponse(article, false));
     }
 
+    /**
+     * Returns article by id with content.
+     */
     public ArticleResponse getArticleById(Long articleId) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new NotFoundException("Article not found"));
         return mapToArticleResponse(article, true);
     }
 
+    /**
+     * Deletes article by removing metadata from the database and deleting the file from Docker volume.
+     */
     @Transactional
     public void deleteArticle(Long articleId) {
         Article article = articleRepository.findById(articleId)

@@ -8,8 +8,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import sk.uniza.fri.telemedicine.enums.Specialization;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Request DTO for creating a doctor.
+ */
+@Getter @AllArgsConstructor
 public class DoctorRequest {
 
     @NotBlank(message = "Pan number is mandatory")

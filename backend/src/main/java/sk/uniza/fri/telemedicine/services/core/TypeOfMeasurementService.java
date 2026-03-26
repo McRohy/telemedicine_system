@@ -16,6 +16,9 @@ import sk.uniza.fri.telemedicine.repository.TypeOfMeasurementRepository;
 
 import java.util.List;
 
+/**
+ * Service for managing types of measurements.
+ */
 @Service
 public class TypeOfMeasurementService {
     private final TypeOfMeasurementRepository typeOfMeasurementRepository;
@@ -24,6 +27,9 @@ public class TypeOfMeasurementService {
         this.typeOfMeasurementRepository = typeOfMeasurementRepository;
     }
 
+    /**
+     * Returns a list of all types of measurement.
+     */
     public List<TypeOfMeasurementResponse> getTypesOfMeasurement() {
         return typeOfMeasurementRepository.findAll()
                 .stream()
@@ -31,6 +37,9 @@ public class TypeOfMeasurementService {
                 .toList();
     }
 
+    /**
+     * Returns a paginated list of types of measurement with optional type name search.
+     */
     public Page<TypeOfMeasurementResponse> getPagedTypesOfMeasurement(int page, int size, String searchTypeName) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("typeName").ascending());
 
@@ -41,6 +50,10 @@ public class TypeOfMeasurementService {
         return typeOfMeasurementRepository.findAll(pageable).map(type -> mapToTypeOfMeasurementResponse(type));
     }
 
+    /**
+     * Creates new type of measurement.
+     * The type name must be unique and min value must be less than max value.
+     */
     @Transactional
     public TypeOfMeasurementResponse createTypeOfMeasurement(TypeOfMeasurementRequest request) {
         if (request.getMinValue() >= request.getMaxValue()) {

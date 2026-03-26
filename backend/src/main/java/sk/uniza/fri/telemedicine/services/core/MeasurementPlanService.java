@@ -19,6 +19,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service for managing measurement plans for patients.
+ */
 @Service
 public class MeasurementPlanService {
 
@@ -43,6 +46,9 @@ public class MeasurementPlanService {
         this.authorizationService = authorizationService;
     }
 
+    /**
+     * Returns the active measurement plan for specific patient.
+     */
     @Transactional(readOnly = true)  //reads in one transaction to keep data consistent
     public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(String personalNumber) {
         authorizationService.authorizePatientDataAccess(personalNumber);
@@ -55,6 +61,10 @@ public class MeasurementPlanService {
         return mapToMeasurementPlanResponse(plan, measurementTypes, measurementTimes);
     }
 
+    /**
+     * Creates a new measurement plan for patient.
+     *  The patient can have only one active plan at a time.
+     */
     @Transactional
     public MeasurementPlanResponse createMeasurementPlan(MeasurementPlanRequest request) {
         authorizationService.authorizePatientDataAccess(request.getPersonalNumber());
@@ -73,6 +83,9 @@ public class MeasurementPlanService {
         return mapToMeasurementPlanResponse(plan, measurementTypes, measurementTimes);
     }
 
+    /**
+     * Updates a measurement plan by deactivating the current plan and creates a new version of plan.
+     */
     @Transactional
     public MeasurementPlanResponse updateMeasurementPlan(Long id, MeasurementPlanRequest request) {
         authorizationService.authorizePatientDataAccess(request.getPersonalNumber());

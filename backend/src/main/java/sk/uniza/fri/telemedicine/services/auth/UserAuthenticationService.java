@@ -24,7 +24,7 @@ public class UserAuthenticationService implements UserDetailsService {
 
     /**
      * Finds user by email and returns UserDetails with email, password and role
-     * which can used by Spring Security during authentication.
+     * which is used by Spring Security during authentication.
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

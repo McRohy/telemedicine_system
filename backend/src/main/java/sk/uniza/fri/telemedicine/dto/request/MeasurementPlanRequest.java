@@ -9,6 +9,9 @@ import sk.uniza.fri.telemedicine.enums.Frequency;
 import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Request DTO for creating and updating a measurement plan.
+ */
 @Getter @AllArgsConstructor
 public class MeasurementPlanRequest {
 

@@ -9,6 +9,10 @@ import sk.uniza.fri.telemedicine.dto.request.ArticleRequest;
 import sk.uniza.fri.telemedicine.dto.response.ArticleResponse;
 import sk.uniza.fri.telemedicine.services.core.ArticleService;
 
+/**
+ * REST controller for article management.
+ * Provides endpoints for creating, viewing and deleting articles.
+ */
 @RestController
 @RequestMapping("/api/articles")
 public class ArticleController {
