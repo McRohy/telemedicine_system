@@ -2,7 +2,7 @@ package sk.uniza.fri.telemedicine.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import sk.uniza.fri.telemedicine.entities.MeasurementTimePlan;
+import sk.uniza.fri.telemedicine.entity.MeasurementTimePlan;
 
 import java.util.List;
 

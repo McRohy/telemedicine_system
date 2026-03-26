@@ -3,9 +3,9 @@ package sk.uniza.fri.telemedicine.seed;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import sk.uniza.fri.telemedicine.entities.*;
-import sk.uniza.fri.telemedicine.enums.Frequency;
-import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
+import sk.uniza.fri.telemedicine.entity.*;
+import sk.uniza.fri.telemedicine.enumeration.Frequency;
+import sk.uniza.fri.telemedicine.enumeration.MeasurementStatus;
 import sk.uniza.fri.telemedicine.repository.*;
 
 import java.time.LocalDateTime;

@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.Specialization;
+import sk.uniza.fri.telemedicine.enumeration.Specialization;
 
 /**
  * Request DTO for creating a doctor.
