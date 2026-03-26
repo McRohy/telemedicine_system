@@ -14,7 +14,7 @@ import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 import sk.uniza.fri.telemedicine.security.JwtUtils;
 
 /**
- * Service for user authentication of users.
+ * Service for user authentication.
  * It provides verification of credentials, read user details
  * and generates JWT token with user information.
  * Uses repositories directly to follow the layer convention.
@@ -47,12 +47,13 @@ public class AuthenticationService {
         PersonalData pd = personalDataRepository.findById(request.getEmail())
                 .orElseThrow(() -> new NotFoundException("Personal data not found"));
 
+        String identificationNumber = getNumber(pd);
         return new LoginResponse(
-                jwtUtils.generateToken(request.getEmail(), "ROLE_" + pd.getRole().name(), getNumber(pd)),
+                jwtUtils.generateToken(request.getEmail(), "ROLE_" + pd.getRole().name(), identificationNumber),
                 pd.getFirstName(),
                 pd.getLastName(),
                 pd.getRole(),
-                getNumber(pd)
+                identificationNumber
         );
     }
 

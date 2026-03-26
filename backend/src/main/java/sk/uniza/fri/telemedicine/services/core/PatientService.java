@@ -39,7 +39,7 @@ public class PatientService {
             throw new DuplicateException("Patient with this personal number already exists");
         }
         PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData(), Role.PATIENT);
-        Doctor doctor = doctorService.findByPanNumber(request.getPanNumber());
+        Doctor doctor = doctorService.getByPanNumber(request.getPanNumber());
         Patient patient = mapToPatient(request, personalData, doctor);
         patientRepository.save(patient);
         return mapToPatientResponse(patient);
@@ -84,11 +84,6 @@ public class PatientService {
     public String getPatientFullNameByPersonalNumber(String personalNumber) {
         return patientRepository.findFullNameByPersonalNumber(personalNumber)
                 .orElseThrow(() -> new NotFoundException("Patient with personal number not found"));
-    }
-
-    public String getPatientPersonalNumberByEmail(String email) {
-        return patientRepository.findPersonalNumberByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Patient with email not found"));
     }
 
     private Patient mapToPatient(PatientRequest request, PersonalData personalData, Doctor doctor) {

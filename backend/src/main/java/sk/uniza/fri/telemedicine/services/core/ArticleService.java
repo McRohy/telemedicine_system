@@ -13,6 +13,7 @@ import sk.uniza.fri.telemedicine.entities.Article;
 import sk.uniza.fri.telemedicine.exception.ArticleException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.ArticleRepository;
+import sk.uniza.fri.telemedicine.services.auth.AuthorizationService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,10 +31,12 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final DoctorService doctorService;
+    private final AuthorizationService authorizationService;
 
-    public ArticleService(ArticleRepository articleRepository, DoctorService doctorService) {
+    public ArticleService(ArticleRepository articleRepository, DoctorService doctorService , AuthorizationService authorizationService) {
         this.articleRepository = articleRepository;
         this.doctorService = doctorService;
+        this.authorizationService = authorizationService;
     }
 
     /**
@@ -43,6 +46,7 @@ public class ArticleService {
      */
     @Transactional
     public ArticleResponse createArticle(ArticleRequest request) {
+        authorizationService.authorizeDoctorIdentity(request.getPanNumber());
         Article article = new Article();
         try {
             Path rootPath = Paths.get(storagePath);
@@ -56,7 +60,7 @@ public class ArticleService {
 
             article.setTitle(request.getTitle());
             article.setFilePath(fileName);
-            article.setDoctor(doctorService.findByPanNumber(request.getPanNumber()));
+            article.setDoctor(doctorService.getByPanNumber(request.getPanNumber()));
             article.setTimeOfCreation(now);
             articleRepository.save(article);
 
@@ -71,6 +75,8 @@ public class ArticleService {
 
     public Page<ArticleResponse> getAllArticlesByPanNumber(String panNumber, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("timeOfCreation").descending());
+        authorizationService.authorizeDoctorIdentity(panNumber);
+
         return articleRepository.findAllByPanNumber(panNumber, pageable)
                 .map(article -> mapToArticleResponse(article, false));
     }
@@ -92,6 +98,7 @@ public class ArticleService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new NotFoundException("Article not found"));
 
+        authorizationService.authorizeDoctorIdentity(article.getDoctor().getPanNumber());
         articleRepository.delete(article);
         try {
             Files.deleteIfExists(Paths.get(storagePath, article.getFilePath()));

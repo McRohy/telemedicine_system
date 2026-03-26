@@ -49,14 +49,9 @@ public class DoctorService {
 
     }
 
-    public Doctor findByPanNumber(String panNumber) {
+    public Doctor getByPanNumber(String panNumber) {
         return doctorRepository.findById(panNumber).orElseThrow(
                 () -> new NotFoundException("Doctor with PAN number not found"));
-    }
-
-    public String getPanNumberByEmail(String email) {
-        return doctorRepository.findPanNumberByEmail(email).orElseThrow(
-                () -> new NotFoundException("Doctor with email not found"));
     }
 
     private Doctor mapToDoctor(DoctorRequest request, PersonalData personalData) {
