@@ -92,12 +92,12 @@ public class ArticleService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new NotFoundException("Article not found"));
 
+        articleRepository.delete(article);
         try {
             Files.deleteIfExists(Paths.get(storagePath, article.getFilePath()));
         } catch (IOException e) {
             throw new ArticleException("Failed to delete article file");
         }
-        articleRepository.delete(article);
     }
 
     private ArticleResponse mapToArticleResponse(Article article, boolean withContent) {
