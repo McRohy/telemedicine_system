@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
-import sk.uniza.fri.telemedicine.services.core.PersonalDataService;
+import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 
 /**
  * Implementation of Spring Security's UserDetailsService.
@@ -16,10 +16,10 @@ import sk.uniza.fri.telemedicine.services.core.PersonalDataService;
 @Service
 public class UserAuthenticationService implements UserDetailsService {
 
-    private final PersonalDataService personalDataService;
+    private final PersonalDataRepository personalDataRepository;
 
-    public UserAuthenticationService(PersonalDataService personalDataService) {
-        this.personalDataService = personalDataService;
+    public UserAuthenticationService(PersonalDataRepository personalDataRepository) {
+        this.personalDataRepository = personalDataRepository;
     }
 
     /**
@@ -28,7 +28,8 @@ public class UserAuthenticationService implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        PersonalData pd = personalDataService.getByEmail(email);
+        PersonalData pd = personalDataRepository.findById(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return User
                 .withUsername(pd.getEmail())
                 .password(pd.getPassword())

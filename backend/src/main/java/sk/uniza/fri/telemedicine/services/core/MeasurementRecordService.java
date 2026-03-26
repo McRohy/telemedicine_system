@@ -13,6 +13,7 @@ import sk.uniza.fri.telemedicine.entities.Patient;
 import sk.uniza.fri.telemedicine.entities.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
 import sk.uniza.fri.telemedicine.repository.MeasurementRecordRepository;
+import sk.uniza.fri.telemedicine.services.auth.AuthorizationService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,19 +27,23 @@ public class MeasurementRecordService {
     private final MeasurementPlanService measurementPlanService;
     private final TypeOfMeasurementService typeOfMeasurementService;
     private final EmailService emailService;
+    private final AuthorizationService authorizationService;
 
     public MeasurementRecordService(PatientService patientService, MeasurementRecordRepository measurementRecordRepository,
                                     MeasurementPlanService measurementPlanService,
-                                    TypeOfMeasurementService typeOfMeasurementService, EmailService emailService) {
+                                    TypeOfMeasurementService typeOfMeasurementService, EmailService emailService,
+                                    AuthorizationService authorizationService) {
         this.patientService = patientService;
         this.measurementRecordRepository = measurementRecordRepository;
         this.measurementPlanService = measurementPlanService;
         this.typeOfMeasurementService = typeOfMeasurementService;
         this.emailService = emailService;
+        this.authorizationService = authorizationService;
     }
 
     @Transactional
     public MeasurementRecordResponse createMeasurementRecord(MeasurementRecordRequest request) {
+        authorizationService.authorizePatientDataAccess(request.getPersonalNumber());
         measurementPlanService.validateActivePlanAndType(request.getPersonalNumber(), request.getTypeOfMeasurementId());
 
         Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
@@ -59,6 +64,7 @@ public class MeasurementRecordService {
     }
 
     public List<MeasurementRecordResponse> getMeasurementRecords(String personalNumber, Long typeId, LocalDate period) {
+        authorizationService.authorizePatientDataAccess(personalNumber);
         LocalDate from = period.withDayOfMonth(1);
         LocalDate to = period.withDayOfMonth(period.lengthOfMonth());
         return measurementRecordRepository
@@ -68,6 +74,7 @@ public class MeasurementRecordService {
     }
 
     public Page<MeasurementRecordResponse> getPagedMeasurementRecords(String personalNumber, int page, int size, Long typeId) {
+        authorizationService.authorizePatientDataAccess(personalNumber);
         Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement.typeName").ascending());
         if (typeId != null) {
             return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeId(personalNumber, typeId, pageable)

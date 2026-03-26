@@ -12,6 +12,7 @@ import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.MeasurementPlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementTypePlanRepository;
 import sk.uniza.fri.telemedicine.repository.MeasurementTimePlanRepository;
+import sk.uniza.fri.telemedicine.services.auth.AuthorizationService;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,20 +29,23 @@ public class MeasurementPlanService {
     private final TypeOfMeasurementService typeOfMeasurementService;
     private final PatientService patientService;
     private final EmailService emailService;
+    private final AuthorizationService authorizationService;
 
     public MeasurementPlanService(MeasurementPlanRepository measurementPlanRepository, TypeOfMeasurementService typeOfMeasurementService,
                                   MeasurementTypePlanRepository measurementTypePlanRepository, MeasurementTimePlanRepository measurementTimePlanRepository,
-                                  PatientService patientService, EmailService emailService) {
+                                  PatientService patientService, EmailService emailService, AuthorizationService authorizationService) {
         this.measurementPlanRepository = measurementPlanRepository;
         this.typeOfMeasurementService = typeOfMeasurementService;
         this.measurementTypePlanRepository = measurementTypePlanRepository;
         this.measurementTimePlanRepository = measurementTimePlanRepository;
         this.patientService = patientService;
         this.emailService = emailService;
+        this.authorizationService = authorizationService;
     }
 
     @Transactional(readOnly = true)  //reads in one transaction to keep data consistent
     public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(String personalNumber) {
+        authorizationService.authorizePatientDataAccess(personalNumber);
         MeasurementPlan plan = measurementPlanRepository.findActivePlanByPersonalNumber(personalNumber)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
 
@@ -53,6 +57,7 @@ public class MeasurementPlanService {
 
     @Transactional
     public MeasurementPlanResponse createMeasurementPlan(MeasurementPlanRequest request) {
+        authorizationService.authorizePatientDataAccess(request.getPersonalNumber());
         validateFrequencyAndTimes(request);
         Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
 
@@ -70,6 +75,7 @@ public class MeasurementPlanService {
 
     @Transactional
     public MeasurementPlanResponse updateMeasurementPlan(Long id, MeasurementPlanRequest request) {
+        authorizationService.authorizePatientDataAccess(request.getPersonalNumber());
         MeasurementPlan plan = measurementPlanRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
 

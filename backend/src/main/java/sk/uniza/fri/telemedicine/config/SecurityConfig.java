@@ -49,8 +49,10 @@ public class SecurityConfig {
     }
 
     /**
-     * Configures the security filter chain with CORS, stateless sessions,
-     * public access for /api/auth/** and JWT filter for all other requests.
+     * Configures the security filter chain with CORS and stateless sessions.
+     * CSRF is disabled because the API uses stateless JWT authentication.
+     * JWT filter runs before Spring's default UsernamePasswordAuthenticationFilter.
+     * All endpoints require authentication except /api/auth/** which is public.
      * When authentication fails then 401 is returned.
      */
     @Bean
@@ -60,7 +62,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())    // use corsConfigurationSource bean
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()  //allow without token, other need token
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(e -> e

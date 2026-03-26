@@ -15,6 +15,7 @@ import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.PatientRepository;
+import sk.uniza.fri.telemedicine.services.auth.AuthorizationService;
 
 @Service
 public class PatientService {
@@ -22,11 +23,14 @@ public class PatientService {
     private final PatientRepository patientRepository;
     private final PersonalDataService personalDataService;
     private final DoctorService doctorService;
+    private final AuthorizationService authorizationService;
 
-    public PatientService(PersonalDataService personalDataService, PatientRepository patientRepository, DoctorService doctorService) {
+    public PatientService(PersonalDataService personalDataService, PatientRepository patientRepository,
+                          DoctorService doctorService, AuthorizationService authorizationService) {
         this.personalDataService = personalDataService;
         this.patientRepository = patientRepository;
         this.doctorService = doctorService;
+        this.authorizationService = authorizationService;
     }
 
     @Transactional
@@ -42,6 +46,7 @@ public class PatientService {
     }
 
     public Page<PatientResponse> getPatientsByDoctorPanNumber(String panNumber, int page, int size, String searchLastName) {
+        authorizationService.authorizeDoctorIdentity(panNumber);
         Pageable pageable = PageRequest.of(page, size, Sort.by("personalData.lastName").ascending());
         if (searchLastName != null && !searchLastName.isBlank()) {
             return patientRepository.findByPanNumberAndPersonalDataLastNameStartingWithIgnoreCase(panNumber, searchLastName, pageable)
@@ -61,6 +66,7 @@ public class PatientService {
     }
 
     public PatientResponse getPatientByPersonalNumber(String personalNumber) {
+        authorizationService.authorizePatientDataAccess(personalNumber);
         return mapToPatientResponse(getByPersonalNumber(personalNumber));
     }
 

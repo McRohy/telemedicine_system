@@ -7,34 +7,35 @@ import sk.uniza.fri.telemedicine.dto.request.LoginRequest;
 import sk.uniza.fri.telemedicine.dto.response.LoginResponse;
 import sk.uniza.fri.telemedicine.entities.PersonalData;
 import sk.uniza.fri.telemedicine.enums.Role;
+import sk.uniza.fri.telemedicine.exception.NotFoundException;
+import sk.uniza.fri.telemedicine.repository.DoctorRepository;
+import sk.uniza.fri.telemedicine.repository.PatientRepository;
+import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
 import sk.uniza.fri.telemedicine.security.JwtUtils;
-import sk.uniza.fri.telemedicine.services.core.DoctorService;
-import sk.uniza.fri.telemedicine.services.core.PatientService;
-import sk.uniza.fri.telemedicine.services.core.PersonalDataService;
-
 
 /**
  * Service for user authentication of users.
- * It  provides verification of credentials, read user details
+ * It provides verification of credentials, read user details
  * and generates JWT token with user information.
+ * Uses repositories directly to follow the layer convention.
  */
 @Service
-public class AuthService {
+public class AuthenticationService {
 
     private final AuthenticationManager authManager;
     private final JwtUtils jwtUtils;
-    private final PersonalDataService personalDataService;
-    private final PatientService patientService;
-    private final DoctorService doctorService;
+    private final PersonalDataRepository personalDataRepository;
+    private final PatientRepository patientRepository;
+    private final DoctorRepository doctorRepository;
 
-    public AuthService(AuthenticationManager authManager, JwtUtils jwtUtils,
-                       PersonalDataService personalDataService, PatientService patientService,
-                       DoctorService doctorService) {
-        this.personalDataService = personalDataService;
+    public AuthenticationService(AuthenticationManager authManager, JwtUtils jwtUtils,
+                                 PersonalDataRepository personalDataRepository, PatientRepository patientRepository,
+                                 DoctorRepository doctorRepository) {
+        this.personalDataRepository = personalDataRepository;
         this.authManager = authManager;
         this.jwtUtils = jwtUtils;
-        this.patientService = patientService;
-        this.doctorService = doctorService;
+        this.patientRepository = patientRepository;
+        this.doctorRepository = doctorRepository;
     }
 
     /**
@@ -43,10 +44,11 @@ public class AuthService {
      */
     public LoginResponse login(LoginRequest request) {
         verifyCredentials(request.getEmail(), request.getPassword());
-        PersonalData pd = personalDataService.getByEmail(request.getEmail());
+        PersonalData pd = personalDataRepository.findById(request.getEmail())
+                .orElseThrow(() -> new NotFoundException("Personal data not found"));
 
         return new LoginResponse(
-                jwtUtils.generateToken(request.getEmail(), "ROLE_" + pd.getRole().name()),  //create cards with email and role
+                jwtUtils.generateToken(request.getEmail(), "ROLE_" + pd.getRole().name(), getNumber(pd)),
                 pd.getFirstName(),
                 pd.getLastName(),
                 pd.getRole(),
@@ -67,10 +69,12 @@ public class AuthService {
 
     private String getNumber(PersonalData pd) {
         if (pd.getRole() == Role.PATIENT) {
-            return patientService.getPatientPersonalNumberByEmail(pd.getEmail());
+            return patientRepository.findPersonalNumberByEmail(pd.getEmail())
+                    .orElseThrow(() -> new NotFoundException("Patient not found"));
         }
         if (pd.getRole() == Role.DOCTOR) {
-            return doctorService.getPanNumberByEmail(pd.getEmail());
+            return doctorRepository.findPanNumberByEmail(pd.getEmail())
+                    .orElseThrow(() -> new NotFoundException("Doctor not found"));
         }
         return null;
     }
