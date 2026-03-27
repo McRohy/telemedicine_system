@@ -92,7 +92,7 @@ export default function DoctorDashboard() {
                     <Table.Td>
                       <Anchor
                         component={Link}
-                        to={`/doctor/patients/${d.personalNumber}`}
+                        to={`/doctor/patients/${encodeURIComponent(btoa(d.personalNumber))}`} //masking personal number in url
                         size="xs"
                       >
                         <IconArrowUpRight size={16} color="blue" />

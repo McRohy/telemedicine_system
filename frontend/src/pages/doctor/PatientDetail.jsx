@@ -12,7 +12,8 @@ import MeasurementTable from '../../components/MeasurementTable';
 import PlanInfoCard from '../../components/PlanInfoCard';
 
 export default function PatientDetail() {
-  const { personalNumber } = useParams();
+  const { id } = useParams();
+  const personalNumber = atob(decodeURIComponent(id)); //decode personal number from url
   const navigate = useNavigate();
   const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
 
