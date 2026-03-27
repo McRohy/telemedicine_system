@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class Article {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto-increment ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long articleId;
 
     @Column(nullable = false)

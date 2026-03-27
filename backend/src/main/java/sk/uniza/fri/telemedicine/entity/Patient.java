@@ -23,6 +23,6 @@ public class Patient {
     private Doctor doctor;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 15, nullable = false)
+    @Column(length = 10, nullable = false)
     private Gender gender;
 }
