@@ -57,7 +57,7 @@ public class UserSeeder implements CommandLineRunner {
 
         PersonalData pdDoctor = new PersonalData();
         pdDoctor.setFirstName("Lubos");
-        pdDoctor.setLastName("Roh");
+        pdDoctor.setLastName("Bohaty");
         pdDoctor.setEmail("doctor@mediroh.sk");
         pdDoctor.setPassword(passwordEncoder.encode("medirohDoctor"));
         pdDoctor.setRole(sk.uniza.fri.telemedicine.enumeration.Role.DOCTOR);
@@ -83,5 +83,19 @@ public class UserSeeder implements CommandLineRunner {
         patient.setDoctor(doctor);
         patient.setGender(Gender.FEMALE);
         patientRepository.save(patient);
+
+        PersonalData pdDoctorSecond = new PersonalData();
+        pdDoctorSecond.setFirstName("Jan");
+        pdDoctorSecond.setLastName("Rohaty");
+        pdDoctorSecond.setEmail("doctor2@mediroh.sk");
+        pdDoctorSecond.setPassword(passwordEncoder.encode("medirohDoctor"));
+        pdDoctorSecond.setRole(sk.uniza.fri.telemedicine.enumeration.Role.DOCTOR);
+        personalDataRepository.save(pdDoctorSecond);
+
+        Doctor doctorSecond = new Doctor();
+        doctorSecond.setPanNumber("9044121546798144");
+        doctorSecond.setPersonalData(pdDoctorSecond);
+        doctorSecond.setSpecialization(Specialization.CARDIOLOGIST);
+        doctorRepository.save(doctorSecond);
     }
 }
