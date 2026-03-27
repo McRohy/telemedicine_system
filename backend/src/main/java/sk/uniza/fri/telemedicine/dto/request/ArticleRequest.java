@@ -6,8 +6,10 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Request DTO for creating an article.
+ */
+@Getter @AllArgsConstructor
 public class ArticleRequest {
 
     @NotBlank(message = "Pan number is mandatory")
@@ -19,5 +21,6 @@ public class ArticleRequest {
     private String title;
 
     @NotBlank(message = "Content is mandatory")
+    @Size(max = 50000, message = "Content must be max 50000 characters")
     private String content;
 }

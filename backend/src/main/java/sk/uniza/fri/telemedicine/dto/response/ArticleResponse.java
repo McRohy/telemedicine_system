@@ -6,8 +6,10 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Response DTO containing article details.
+ */
+@Getter @AllArgsConstructor
 public class ArticleResponse {
     private Long id;
     @JsonFormat(pattern = "dd.MM.yyyy HH:mm")

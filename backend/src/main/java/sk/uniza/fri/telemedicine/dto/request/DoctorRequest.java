@@ -6,10 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.Specialization;
+import sk.uniza.fri.telemedicine.enumeration.Specialization;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Request DTO for creating a doctor.
+ */
+@Getter @AllArgsConstructor
 public class DoctorRequest {
 
     @NotBlank(message = "Pan number is mandatory")

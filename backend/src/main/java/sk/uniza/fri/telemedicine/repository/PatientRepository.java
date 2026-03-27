@@ -4,10 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import sk.uniza.fri.telemedicine.entities.Patient;
+import sk.uniza.fri.telemedicine.entity.Patient;
 
 import java.util.Optional;
 
+/**
+ * Repository for accessing patient data.
+ */
 public interface PatientRepository extends JpaRepository<Patient, String> {
 
     @Query("SELECT p FROM Patient p WHERE p.doctor.panNumber = :panNumber")

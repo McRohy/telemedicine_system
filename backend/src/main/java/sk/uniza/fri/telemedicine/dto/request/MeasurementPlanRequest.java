@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.Frequency;
+import sk.uniza.fri.telemedicine.enumeration.Frequency;
 
 import java.time.LocalTime;
 import java.util.List;
 
+/**
+ * Request DTO for creating and updating a measurement plan.
+ */
 @Getter @AllArgsConstructor
 public class MeasurementPlanRequest {
 

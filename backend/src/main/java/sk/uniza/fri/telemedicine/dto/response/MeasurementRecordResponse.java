@@ -3,12 +3,14 @@ package sk.uniza.fri.telemedicine.dto.response;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.MeasurementStatus;
+import sk.uniza.fri.telemedicine.enumeration.MeasurementStatus;
 
 import java.time.LocalDateTime;
 
-@Getter //for Json serialization
-@AllArgsConstructor
+/**
+ * Response DTO containing a single measurement record details.
+ */
+@Getter @AllArgsConstructor
 public class MeasurementRecordResponse {
         private Long id;
         private String typeName;

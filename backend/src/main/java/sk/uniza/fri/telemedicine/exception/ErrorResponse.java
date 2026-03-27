@@ -5,6 +5,9 @@ import lombok.Getter;
 
 import java.util.Map;
 
+/**
+ * Response DTO for error responses returned by the exception handler.
+ */
 @Getter @AllArgsConstructor
 public class ErrorResponse {
     private int status;

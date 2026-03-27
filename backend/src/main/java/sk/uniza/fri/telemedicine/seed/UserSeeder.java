@@ -4,11 +4,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import sk.uniza.fri.telemedicine.entities.Doctor;
-import sk.uniza.fri.telemedicine.entities.Patient;
-import sk.uniza.fri.telemedicine.entities.PersonalData;
-import sk.uniza.fri.telemedicine.enums.Gender;
-import sk.uniza.fri.telemedicine.enums.Specialization;
+import sk.uniza.fri.telemedicine.entity.Doctor;
+import sk.uniza.fri.telemedicine.entity.Patient;
+import sk.uniza.fri.telemedicine.entity.PersonalData;
+import sk.uniza.fri.telemedicine.enumeration.Gender;
+import sk.uniza.fri.telemedicine.enumeration.Specialization;
 import sk.uniza.fri.telemedicine.repository.DoctorRepository;
 import sk.uniza.fri.telemedicine.repository.PatientRepository;
 import sk.uniza.fri.telemedicine.repository.PersonalDataRepository;
@@ -52,15 +52,15 @@ public class UserSeeder implements CommandLineRunner {
         pdAdmin.setLastName("Adminovský");
         pdAdmin.setEmail("admin@mediroh.sk");
         pdAdmin.setPassword(passwordEncoder.encode("medirohAdmin"));
-        pdAdmin.setRole(sk.uniza.fri.telemedicine.enums.Role.ADMIN);
+        pdAdmin.setRole(sk.uniza.fri.telemedicine.enumeration.Role.ADMIN);
         personalDataRepository.save(pdAdmin);
 
         PersonalData pdDoctor = new PersonalData();
         pdDoctor.setFirstName("Lubos");
-        pdDoctor.setLastName("Roh");
+        pdDoctor.setLastName("Bohaty");
         pdDoctor.setEmail("doctor@mediroh.sk");
         pdDoctor.setPassword(passwordEncoder.encode("medirohDoctor"));
-        pdDoctor.setRole(sk.uniza.fri.telemedicine.enums.Role.DOCTOR);
+        pdDoctor.setRole(sk.uniza.fri.telemedicine.enumeration.Role.DOCTOR);
         personalDataRepository.save(pdDoctor);
 
         Doctor doctor = new Doctor();
@@ -74,7 +74,7 @@ public class UserSeeder implements CommandLineRunner {
         pdPatient.setLastName("Roh");
         pdPatient.setEmail("roh@gmail.com");
         pdPatient.setPassword(passwordEncoder.encode("mediroh"));
-        pdPatient.setRole(sk.uniza.fri.telemedicine.enums.Role.PATIENT);
+        pdPatient.setRole(sk.uniza.fri.telemedicine.enumeration.Role.PATIENT);
         personalDataRepository.save(pdPatient);
 
         Patient patient = new Patient();
@@ -83,5 +83,19 @@ public class UserSeeder implements CommandLineRunner {
         patient.setDoctor(doctor);
         patient.setGender(Gender.FEMALE);
         patientRepository.save(patient);
+
+        PersonalData pdDoctorSecond = new PersonalData();
+        pdDoctorSecond.setFirstName("Jan");
+        pdDoctorSecond.setLastName("Rohaty");
+        pdDoctorSecond.setEmail("doctor2@mediroh.sk");
+        pdDoctorSecond.setPassword(passwordEncoder.encode("medirohDoctor"));
+        pdDoctorSecond.setRole(sk.uniza.fri.telemedicine.enumeration.Role.DOCTOR);
+        personalDataRepository.save(pdDoctorSecond);
+
+        Doctor doctorSecond = new Doctor();
+        doctorSecond.setPanNumber("9044121546798144");
+        doctorSecond.setPersonalData(pdDoctorSecond);
+        doctorSecond.setSpecialization(Specialization.CARDIOLOGIST);
+        doctorRepository.save(doctorSecond);
     }
 }

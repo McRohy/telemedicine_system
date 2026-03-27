@@ -6,10 +6,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.Gender;
+import sk.uniza.fri.telemedicine.enumeration.Gender;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Request DTO for creating a patient.
+ */
+@Getter @AllArgsConstructor
 public class PatientRequest {
     @NotBlank(message = "Personal number is mandatory")
     @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 10 digits")

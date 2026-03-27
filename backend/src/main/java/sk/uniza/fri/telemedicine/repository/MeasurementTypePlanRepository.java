@@ -2,10 +2,13 @@ package sk.uniza.fri.telemedicine.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import sk.uniza.fri.telemedicine.entities.MeasurementTypePlan;
+import sk.uniza.fri.telemedicine.entity.MeasurementTypePlan;
 
 import java.util.List;
 
+/**
+ * Repository for accessing measurement type plan data.
+ */
 public interface MeasurementTypePlanRepository extends JpaRepository<MeasurementTypePlan, Long> {
 
     @Query("SELECT mType FROM MeasurementTypePlan mType WHERE mType.measurementPlan.planId = :planId")

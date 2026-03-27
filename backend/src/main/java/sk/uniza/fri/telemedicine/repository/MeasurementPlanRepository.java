@@ -2,10 +2,13 @@ package sk.uniza.fri.telemedicine.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import sk.uniza.fri.telemedicine.entities.MeasurementPlan;
+import sk.uniza.fri.telemedicine.entity.MeasurementPlan;
 
 import java.util.Optional;
 
+/**
+ * Repository for accessing measurement plan data.
+ */
 public interface MeasurementPlanRepository extends JpaRepository<MeasurementPlan, Long> {
 
     @Query("SELECT m FROM MeasurementPlan m WHERE m.patient.personalNumber = :personalNumber AND m.validTo IS NULL")

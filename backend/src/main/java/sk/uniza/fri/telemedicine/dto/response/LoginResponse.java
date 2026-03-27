@@ -2,10 +2,12 @@ package sk.uniza.fri.telemedicine.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import sk.uniza.fri.telemedicine.enums.Role;
+import sk.uniza.fri.telemedicine.enumeration.Role;
 
-@Getter
-@AllArgsConstructor
+/**
+ * Response DTO containing login details and authentication token.
+ */
+@Getter @AllArgsConstructor
 public class LoginResponse {
     private String token;
     private String firstName;
