@@ -70,8 +70,7 @@ export default function PatientDetail() {
       </Group>
 
      
-      {dataLoading === false && planLoading === false && (  
-        //render only when both are loaded, otherwise in modal will be missing data
+      {isModalOpen && (
         <PlanModal
           opened={isModalOpen}
           onClose={() => closeModal()}
