@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useForm } from '@mantine/form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button, Card, Stack, PasswordInput, Title, Text, Center, Box } from '@mantine/core';
+import { Notifications } from '@mantine/notifications';
 import { notifySuccess, notifyError } from '../../helpers/notificationHelper';
 import { setPassword } from '../../api/authApi';
 
@@ -14,27 +15,38 @@ export default function PasswordPage() {
   const form = useForm({
     initialValues: {
       password: '',
+      confirmPassword: '',
       token: token,
     },
     validate: {
       password: (value) => (value ? null : 'Povinné pole'),
+      confirmPassword: (value, values) =>
+        value === values.password ?  null : 'Heslá sa nezhodujú',
     },
   });
 
   async function postPassword() {
     setLoading(true);
     try {
-      await setPassword(form.values);
+      await setPassword({ password: form.values.password, token: form.values.token });
       notifySuccess('Heslo nastavené', 'Vaše heslo bolo úspešne nastavené.');
       setTimeout(() => navigate('/login'), 2000); //delay because of notification to be shown
     } catch (error) {
-      notifyError(error);
+      const status = error.response?.status;
+
+      if (status === 400) {
+        form.setErrors(error.response.data.fieldErrors);
+      } else {
+        notifyError(error);
+      }
     } finally {
       setLoading(false);
     }
   }
 
   return (
+    <>
+    <Notifications />
     <Center w="100vw" h="100vh" bg="primary">
       <Card p="lg" radius="lg" maw={{ base: 300, xs: 450 }}>
         <Stack gap="xl">
@@ -59,6 +71,15 @@ export default function PasswordPage() {
                 {...form.getInputProps('password')}
               />
 
+              <PasswordInput
+                label="Potvrdenie hesla"
+                placeholder="Zopakujte nové heslo"
+                ta="left"
+                size="md"
+                withAsterisk
+                {...form.getInputProps('confirmPassword')}
+              />
+
               <Button type="submit" size="md" loading={loading}>
                 Nastaviť heslo
               </Button>
@@ -67,5 +88,6 @@ export default function PasswordPage() {
         </Stack>
       </Card>
     </Center>
+    </>
   );
 }

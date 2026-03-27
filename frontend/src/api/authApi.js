@@ -1,10 +1,10 @@
 import api from './api';
 
-export function setPassword(data) {
+export function setPassword({ password, token }) {
   return api({
     url: '/auth/password',
     method: 'post',
-    data: data,
+    data: { password, token },
   });
 }
 
