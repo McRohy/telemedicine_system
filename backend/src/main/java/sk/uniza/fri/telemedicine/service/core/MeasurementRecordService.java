@@ -87,7 +87,7 @@ public class MeasurementRecordService {
      */
     public Page<MeasurementRecordResponse> getPagedMeasurementRecords(String personalNumber, int page, int size, Long typeId) {
         authorizationService.authorizePatientDataAccess(personalNumber);
-        Pageable pageable = PageRequest.of(page, size, Sort.by("typeOfMeasurement.typeName").ascending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("timeOfMeasurement").descending());
         if (typeId != null) {
             return measurementRecordRepository.findByPersonalNumberAndMeasurementTypeId(personalNumber, typeId, pageable)
                     .map(record -> mapToMeasurementRecordResponse(record));
