@@ -1,4 +1,4 @@
-import { Stack, Group, Text } from '@mantine/core';
+import { Stack, Group, Text, Button } from '@mantine/core';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavLink } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -67,16 +67,14 @@ export default function Sidebar({ onClose }) {
         ))}
       </Stack>
 
-      <Text
+      <Button
         fw={500}
         size="md"
         ta="center"
-        mb="sm"
-        style={{ cursor: 'pointer' }}
         onClick={openModal}
       >
         Odhlásiť sa
-      </Text>
+      </Button>
 
       <ConfirmModal
         opened={isConfirmModalOpen}
