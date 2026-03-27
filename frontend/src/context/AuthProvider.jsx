@@ -12,8 +12,14 @@ export function AuthProvider({ children }) {
   //survive page refresh by loading user from localStorage
   //without this, every refresh will logout the user
   function getInitialUser() {
-    const savedUser = localStorage.getItem('user');
-    return savedUser ? JSON.parse(savedUser) : null;
+    try {
+      const savedUser = localStorage.getItem('user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch {
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      return null;
+    }
   }
 
   async function login({ email, password }) {
