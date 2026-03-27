@@ -7,6 +7,7 @@ import PatientsPage from './pages/admin/PatientsPage';
 import DoctorDashboard from './pages/doctor/DoctorDashboard';
 import PatientDetail from './pages/doctor/PatientDetail';
 import Forbidden from './pages/other/Forbidden';
+import NotFound from './pages/other/NotFound';
 import MeasurementTypesPage from './pages/admin/MeasurementTypesPage';
 import DoctorArticles from './pages/doctor/ArticlePage';
 import PatientArticles from './pages/patient/ArticlePage';
@@ -89,6 +90,7 @@ function App() {
           <Route path="/forbidden" element={<Forbidden />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/password/:token" element={<PasswordPage />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
