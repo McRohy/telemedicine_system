@@ -32,6 +32,9 @@ api.interceptors.response.use(
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
+    if (status === 403) {
+      window.location.href = '/forbidden';
+    }
     return Promise.reject(error);
   }
 );
