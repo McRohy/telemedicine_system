@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { IconMoodPuzzled } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
 
+/** 
+ * 404 Not Found error page. 
+ * Contains a message button to go back to the previous page.
+ */
 export default function NotFound() {
   const navigate = useNavigate();
   const { user } = useAuth();

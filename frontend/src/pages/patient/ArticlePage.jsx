@@ -6,6 +6,10 @@ import { notifyError } from '../../helpers/notificationHelper';
 import { getArticles } from '../../api/articleApi';
 import DetailArticleModal from '../../components/DetailArticleModal';
 
+/**
+ * Patient page for viewing articles.
+ * Contains paginated table of articles.
+ */
 export default function ArticlePage() {
   const [ isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [selectedArticleId, setSelectedArticleId] = useState(null);

@@ -8,6 +8,10 @@ import { notifyError } from '../../helpers/notificationHelper';
 import { getArticlesByPanNumber } from '../../api/articleApi';
 import DetailArticleModal from '../../components/DetailArticleModal';
 
+/**
+ * Doctor page for managing articles.
+ * Contains paginated table of articles and button to open the AddArticleModal.
+ */
 export default function ArticlePage() {
   const { user } = useAuth();
   const actualDoctorPanNumber = user?.identificationNumber;

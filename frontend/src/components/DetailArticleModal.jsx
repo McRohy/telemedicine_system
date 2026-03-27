@@ -5,6 +5,10 @@ import { notifyError, notifySuccess } from '../helpers/notificationHelper';
 import { deleteArticle, getArticleById } from '../api/articleApi';
 import ConfirmModal from './ConfirmModal';
 
+/** 
+ * Modal for displaying article details.
+ * Contains also a delete button for doctor.
+ */
 export default function DetailArticleModal({ opened, onClose, onSuccess, articleId, isDoctorView}) {
   const [loading, setLoading] = useState(false);
   const [isConfirmModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);

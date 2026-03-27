@@ -7,6 +7,10 @@ import { Notifications } from '@mantine/notifications';
 import { notifySuccess, notifyError } from '../../helpers/notificationHelper';
 import { setPassword } from '../../api/authApi';
 
+/** 
+ * Password reset page for user authentication.
+ * Contains a form with password, confirm password fields and submit button to set new password.
+ */
 export default function PasswordPage() {
   const { token } = useParams();
   const [loading, setLoading] = useState(false);

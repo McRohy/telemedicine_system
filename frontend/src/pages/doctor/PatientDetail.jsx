@@ -11,6 +11,10 @@ import { getPatientByPersonalNumber } from '../../api/patientApi';
 import MeasurementTable from '../../components/MeasurementTable';
 import PlanInfoCard from '../../components/PlanInfoCard';
 
+/**
+ * Doctor page for viewing patient details.
+ * Contains patient information, measurement plan and measurement data.
+ */
 export default function PatientDetail() {
   const { id } = useParams();
   const personalNumber = atob(decodeURIComponent(id)); //decode personal number from url

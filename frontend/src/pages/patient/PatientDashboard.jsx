@@ -10,6 +10,10 @@ import MeasurementChart from '../../components/MeasurementChart';
 import MeasurementTable from '../../components/MeasurementTable';
 import PlanInfoCard from '../../components/PlanInfoCard';
 
+/**
+ * Patient page for viewing patient details.
+ * Contains measurement plan, measurement data and a button to track a new measurement if the plan is assigned.
+ */
 export default function PatientDashboard() {
   const { user } = useAuth();
   const personalNumber = user?.identificationNumber;

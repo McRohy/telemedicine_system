@@ -6,6 +6,10 @@ import { LineChart } from '@mantine/charts';
 import { notifyError } from '../helpers/notificationHelper';
 import 'dayjs/locale/sk';
 
+/** 
+ * Component for displaying measurements. 
+ * Contains a form with filters for month and measurement type with button to fetch and display the chart.
+ */
 export default function MeasurementChart({ personalNumber, plan }) {
   const [measurements, setMeasurements] = useState([]);
   const [period, setPeriod] = useState(null);

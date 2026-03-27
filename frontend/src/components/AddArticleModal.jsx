@@ -4,6 +4,10 @@ import { notifySuccess, notifyError } from '../helpers/notificationHelper';
 import { createArticle } from '../api/articleApi';
 import { useForm } from '@mantine/form';
 
+/** 
+ * Modal for creating a new article. 
+ * Contains a form with article details and a submit button to add the article.
+ */
 export default function AddArticle({opened, onClose, onSuccess, doctorPanNumber,}) {
   const [loading, setLoading] = useState(false);
   const formRequest = useForm({

@@ -6,6 +6,10 @@ import { notifyError } from '../../helpers/notificationHelper';
 import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import { getPatients } from '../../api/patientApi';
 
+/**
+ * Admin page for managing patients.
+ * Contains a searchable and paginated table of patients and a button to open the AddPatientModal.
+ */
 export default function PatientsPage() {
   const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);

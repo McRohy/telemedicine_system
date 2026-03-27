@@ -1,5 +1,8 @@
 import { Group, Stack, Text } from '@mantine/core';
 
+/** 
+ * Component for displaying details of monitoring plan.
+ */
 export default function PlanInfoCard({ plan }) {
   if (plan === null) {
     return (

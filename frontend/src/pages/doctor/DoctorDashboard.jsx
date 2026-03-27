@@ -8,6 +8,10 @@ import { useAuth } from '../../context/AuthContext';
 import { notifyError } from '../../helpers/notificationHelper';
 import { getPatientsByPanNumber } from '../../api/patientApi';
 
+/**
+ * Doctor dashboard for managing patients.
+ * Contains a searchable and paginated table of patients and a button to open the AddPatientModal.
+ */
 export default function DoctorDashboard() {
   const { user } = useAuth();
   const actualDoctorPanNumber = user?.identificationNumber;

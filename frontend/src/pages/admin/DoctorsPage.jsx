@@ -6,10 +6,14 @@ import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import { notifyError } from '../../helpers/notificationHelper';
 import { getDoctors } from '../../api/doctorApi';
 
+/**
+ * Admin page for managing doctors.
+ * Contains searchable and paginated table of doctors and button to open the AddDoctorModal.
+ */
 export default function DoctorsPage() {
   const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
-  const [refresh, setRefresh] = useState(0); // hack to trigger refresh after adding doctor 
+  const [refresh, setRefresh] = useState(0); //to trigger refresh after adding doctor
 
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ content: [], totalPages: 0 });

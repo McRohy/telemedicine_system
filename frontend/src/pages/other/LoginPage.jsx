@@ -3,6 +3,10 @@ import { useForm } from '@mantine/form';
 import { Button, Card, Stack, PasswordInput, Title, Text, TextInput, Center, Alert, Box } from '@mantine/core';
 import { useAuth } from '../../context/AuthContext';
 
+/** 
+ * Login page for user authentication.
+ * Contains a form with email and password fields and a submit button to log in.
+ */
 export default function LoginPage() {
   const { login, loading, error } = useAuth();
 

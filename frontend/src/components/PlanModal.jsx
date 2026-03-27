@@ -7,6 +7,10 @@ import { FREQUENCIES } from '../helpers/constants';
 import { getMeasurementTypesForSelect } from '../api/measurementTypeApi';
 import { createMeasurementPlan, updateMeasurementPlan } from '../api/measurementPlanApi';
 
+/** 
+ * Modal for creating or editing a measurement plan. 
+ * Contains a form with plan details and a submit button to add or update the plan.
+ */
 export default function PlanModal({ opened, onClose, onSuccess, personalNumber, plan }) {
   const isEdit = Boolean(plan ? plan.id : null);
   console.log('From page:',plan, personalNumber);

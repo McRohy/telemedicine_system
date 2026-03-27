@@ -3,6 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { IconHandStop } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
 
+
+/** 
+ * 403 Forbidden error page. 
+ * Contains a message button to go back to the previous page.
+ */
 export default function Forbidden() {
   const navigate = useNavigate();
   const { user } = useAuth();

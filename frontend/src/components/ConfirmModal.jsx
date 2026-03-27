@@ -1,5 +1,9 @@
 import { Modal, Stack, Text, Button, Group } from '@mantine/core';
 
+/** 
+ * Modal for confirming an action. 
+ * Contains a message and buttons to confirm or cancel the action.
+ */
 export default function ConfirmModal({ opened, onClose, onConfirm, title, message, buttonText}) {
   return (
     <Modal opened={opened} onClose={onClose} title={title} size="sm">

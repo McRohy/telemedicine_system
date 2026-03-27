@@ -5,6 +5,10 @@ import { GENDERS } from '../helpers/constants';
 import { createPatient } from '../api/patientApi';
 import { useForm } from '@mantine/form';
 
+/** 
+ * Modal for creating a new patient. 
+ * Contains a form with patient details and a submit button to add patient.
+ */
 export default function AddPatientModal({opened, onClose, onSuccess, doctorPanNumber}) {
   const [loading, setLoading] = useState(false);
   const formRequest = useForm({

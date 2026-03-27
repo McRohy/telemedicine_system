@@ -6,10 +6,14 @@ import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import { notifyError } from '../../helpers/notificationHelper';
 import { getMeasurementTypes } from '../../api/measurementTypeApi';
 
+/**
+ * Admin page for managing measurement types.
+ * Contains a searchable and paginated table of measurement types and a button to open the AddTypeModal.
+ */
 export default function MeasurementTypesPage() {
   const [isModalOpen, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [loading, setLoading] = useState(true);
-  const [refresh, setRefresh] = useState(0); // hack to trigger refresh after adding doctor
+  const [refresh, setRefresh] = useState(0);
 
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ content: [], totalPages: 0 });

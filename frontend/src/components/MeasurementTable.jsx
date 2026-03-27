@@ -3,6 +3,10 @@ import { Stack, Card, Text, Loader, Center, Select, Table, Pagination,} from '@m
 import { notifyError } from '../helpers/notificationHelper';
 import { getAllMeasurementsForTable } from '../api/measurementsApi';
 
+/** 
+ * Component for displaying measurements in a table. 
+ * Contains filter for measurement type.
+ */
 export default function MeasurementTable({ personalNumber, plan, refresh }) {
   const [page, setPage] = useState(1);
   const [data, setData] = useState({ content: [], totalPages: 0 });

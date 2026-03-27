@@ -4,6 +4,10 @@ import { notifySuccess, notifyError } from '../helpers/notificationHelper';
 import { createMeasurementType } from '../api/measurementTypeApi';
 import { useForm } from '@mantine/form';
 
+/** 
+ * Modal for creating a new measurement type. 
+ * Contains a form with measurement type details and a submit button to add the type.
+ */
 export default function AddTypeModal({ opened, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const formRequest = useForm({

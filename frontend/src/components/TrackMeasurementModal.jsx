@@ -4,6 +4,10 @@ import { Modal, Stack, TextInput, Select, Button, NumberInput, Group } from '@ma
 import { notifySuccess, notifyError } from '../helpers/notificationHelper';
 import { postMeasurement } from '../api/measurementsApi';
 
+/** 
+ * Modal for tracking a new measurement. 
+ * Contains a form with measurement details and a submit button to add the measurement.
+ */
 export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan,}) {
   const [loading, setLoading] = useState(false);
   const formRequest = useForm({

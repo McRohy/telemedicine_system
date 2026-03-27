@@ -5,6 +5,10 @@ import { SPECIALIZATIONS } from '../helpers/constants';
 import { createDoctor } from '../api/doctorApi';
 import { useForm } from '@mantine/form';
 
+/** 
+ * Modal for creating a new doctor. 
+ * Contains a form with doctor details and a submit button to add doctor.
+ */
 export default function AddDoctorModal({ opened, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const formRequest = useForm({
