@@ -7,26 +7,29 @@ import { IconArticle, IconActivity, IconUserCircle, IconUsers, IconStethoscope }
 import { useAuth } from '../context/AuthContext';
 import { ROLES } from '../helpers/constants';
 
+/**
+ * Navigation links grouped by user role for the sidebar.
+ */
 const navLinks = {
   ADMIN: [
     { label: 'Prehľad lekárov', path: '/admin/doctors', icon: IconStethoscope },
     { label: 'Prehľad pacientov', path: '/admin/patients', icon: IconUsers },
-    {
-      label: 'Prehľad typov meraní',
-      path: '/admin/types-of-measurements',
-      icon: IconActivity,
-    },
+    { label: 'Prehľad typov meraní', path: '/admin/types-of-measurements', icon: IconActivity },
   ],
   DOCTOR: [
     { label: 'Pacienti', path: '/doctor/dashboard', icon: IconUsers },
     { label: 'Články', path: '/doctor/articles', icon: IconArticle },
   ],
   PATIENT: [
-    { label: 'Prehľad meraní', path: '/patient/dashboard', icon: IconActivity},
+    { label: 'Prehľad meraní', path: '/patient/dashboard', icon: IconActivity },
     { label: 'Články', path: '/patient/articles', icon: IconArticle },
   ],
 };
 
+/**
+ * Sidebar component rendered inside AppLayout.
+ * Displays user info, navigation links based on role and logout button.
+ */
 export default function Sidebar({ onClose }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
@@ -43,9 +46,7 @@ export default function Sidebar({ onClose }) {
             <Text size="md" fw={600}>
               {user?.firstName} {user?.lastName}
             </Text>
-            <Text size="xs">
-              {ROLES[user?.role]}
-            </Text>
+            <Text size="xs">{ROLES[user?.role]}</Text>
           </Stack>
         </Group>
 
@@ -59,7 +60,10 @@ export default function Sidebar({ onClose }) {
             }
             leftSection={<link.icon size={24} />}
             active={location.pathname === link.path}
-            onClick={() => { navigate(link.path); onClose(); }}
+            onClick={() => {
+              navigate(link.path);
+              onClose();
+            }}
             p="md"
             color="#486d7c51"
             variant="filled"
@@ -67,12 +71,7 @@ export default function Sidebar({ onClose }) {
         ))}
       </Stack>
 
-      <Button
-        fw={500}
-        size="md"
-        ta="center"
-        onClick={openModal}
-      >
+      <Button fw={500} size="md" ta="center" onClick={openModal}>
         Odhlásiť sa
       </Button>
 

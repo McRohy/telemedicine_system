@@ -15,6 +15,11 @@ import PatientDashboard from './pages/patient/PatientDashboard';
 import ProtectedRoute from './components/ProtectedRoutes';
 import { AuthProvider } from './context/AuthProvider';
 
+/**
+ * Root component that defines all application routes.
+ * Protected pages are rendered inside AppLayout 
+ * and secured by ProtectedRoute based on user role.
+ */
 function App() {
   return (
     <BrowserRouter>

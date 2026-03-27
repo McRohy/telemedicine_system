@@ -8,6 +8,9 @@ import '@mantine/charts/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 
+/**
+ * Custom Mantine theme configuration.
+ */
 const theme = createTheme({
   primaryColor: 'primary',
   autoContrast: true,
@@ -28,6 +31,10 @@ const theme = createTheme({
   },
 });
 
+/**
+ * Entry point of the React application.
+ * Wraps the App component with MantineProvider for theming.
+ */
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <MantineProvider theme={theme}>

@@ -3,25 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { login as loginRequest } from '../api/authApi';
 import AuthContext from './AuthContext';
 
+/**
+ * AuthProvider is wrapper component that provides the authentication context to all child components.
+ */
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(getInitialUser);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  //survive page refresh by loading user from localStorage
-  //without this, every refresh will logout the user
+  /**
+   * Loads user data from localStorage on page refresh.
+   * This ensures that every refresh does not log the user out.
+   */
   function getInitialUser() {
-    try {
-      const savedUser = localStorage.getItem('user');
-      return savedUser ? JSON.parse(savedUser) : null;
-    } catch {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
-      return null;
-    }
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
   }
 
+  /**
+   * Authenticates the user with email and password via the backend API.
+   * It stores the JWT token and user data in localStorage when successful 
+   * and redirects. Otherwise it sets error message.
+   */
   async function login({ email, password }) {
     setError(null);
     setLoading(true);
@@ -52,6 +56,9 @@ export function AuthProvider({ children }) {
     }
   }
 
+  /**
+   * Logs out the user by clearing localStorage and resetting auth state.
+   */
   function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

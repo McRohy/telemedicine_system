@@ -5,8 +5,12 @@ import { Outlet } from 'react-router-dom';
 import { IconHeartbeat } from '@tabler/icons-react';
 import { Notifications } from '@mantine/notifications';
 
+/**
+ * AppLayout is layout component that defines structure for pages in the application.
+ * Contains a header with burger menu, a collapsible sidebar and a main content area.
+ */
 export default function AppLayout() {
-  const [opened, { toggle, close }] = useDisclosure();
+  const [isSidebarOpened, { toggle, close }] = useDisclosure();
 
   return (
     <>
@@ -16,13 +20,13 @@ export default function AppLayout() {
         navbar={{
           width: 300,
           breakpoint: 'sm',
-          collapsed: { mobile: !opened },
+          collapsed: { mobile: !isSidebarOpened },
         }}
       >
         <AppShell.Header>
           <Group h="100%" px="md">
             <Burger
-              opened={opened}
+              opened={isSidebarOpened}
               onClick={toggle}
               hiddenFrom="sm"
               size="sm"
@@ -36,7 +40,7 @@ export default function AppLayout() {
         </AppShell.Navbar>
 
         <AppShell.Main>
-          <Outlet />
+          <Outlet /> {/*placeholder for content of child routes */}
         </AppShell.Main>
       </AppShell>
     </>

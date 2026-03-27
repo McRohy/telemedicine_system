@@ -1,5 +1,6 @@
 import axios from 'axios';
 /*
+  Axios instance for all API requests.
   https://axios-http.com/docs/instance
   https://axios-http.com/docs/interceptors
 */
@@ -8,7 +9,9 @@ const api = axios.create({
   timeout: 10000, // to not wait infinitely for a response
 });
 
-// add token to every request
+/**
+ * Attaches JWT Bearer token from localStorage to every request.
+ */
 api.interceptors.request.use(
    function (config) {
     const token = localStorage.getItem('token');
@@ -19,13 +22,18 @@ api.interceptors.request.use(
   },
 );
 
-// handle response and logout on 401 globally
-// other errors are handling locally in request
+/**
+ * Handles API responses.
+ * 401 clears credentials and redirects to login page.
+ * 403 redirects to forbidden page.
+ * Other errors are handled locally in components.
+ */
 api.interceptors.response.use(
-  function onFulfilled(response) {
+  function handleSuccessfulResponse(response) {
     return response;
   },
-  function onRejected(error) {
+
+  function handleRejectedResponse(error) {
     const status = error.response?.status;
     const url = error.config?.url;
     if (status === 401 && url !== '/auth/login') {
