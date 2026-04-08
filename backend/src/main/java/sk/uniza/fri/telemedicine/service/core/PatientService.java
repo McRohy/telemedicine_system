@@ -45,8 +45,8 @@ public class PatientService {
         if (patientRepository.existsById(request.getPersonalNumber())) {
             throw new DuplicateException("Patient with this personal number already exists");
         }
-        PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData(), Role.PATIENT);
         Doctor doctor = doctorService.getByPanNumber(request.getPanNumber());
+        PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData(), Role.PATIENT);
         Patient patient = mapToPatient(request, personalData, doctor);
         patientRepository.save(patient);
         return mapToPatientResponse(patient);
