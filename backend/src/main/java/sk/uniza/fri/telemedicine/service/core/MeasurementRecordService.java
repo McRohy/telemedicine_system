@@ -58,14 +58,17 @@ public class MeasurementRecordService {
 
         if (!checkIfRecordIsInRange(request.getValue(), typeOfMeasurement)) {
             measurementRecord.setMeasurementStatus(MeasurementStatus.ABNORMAL);
-            emailService.sendMeasurementRecordAlert(
-                    patientService.getCareProviderEmailByPatientPersonalNumber(patient.getPersonalNumber()),
-                    patientService.getPatientFullNameByPersonalNumber(patient.getPersonalNumber()),
-                    request.getValue(), typeOfMeasurement.getUnits());
         } else {
             measurementRecord.setMeasurementStatus(MeasurementStatus.NORMAL);
         }
         measurementRecordRepository.save(measurementRecord);
+
+        if (measurementRecord.getMeasurementStatus() == MeasurementStatus.ABNORMAL) {
+            emailService.sendMeasurementRecordAlert(
+                    patientService.getCareProviderEmailByPatientPersonalNumber(patient.getPersonalNumber()),
+                    patientService.getPatientFullNameByPersonalNumber(patient.getPersonalNumber()),
+                    request.getValue(), typeOfMeasurement.getUnits());
+        }
         return mapToMeasurementRecordResponse(measurementRecord);
     }
 
