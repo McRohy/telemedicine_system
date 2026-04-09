@@ -44,8 +44,11 @@ public class PersonalDataService {
             throw new DuplicateException("Personal data with this email already exists");
         }
         PersonalData personalData = mapToPersonalData(request, role);
-        setUpPassword(personalData, request.getEmail());
-        return personalDataRepository.save(personalData);
+        personalData.setPassword(null);
+        personalData.setSetupToken(UUID.randomUUID().toString());
+        PersonalData savedPersonalData = personalDataRepository.save(personalData);
+        emailService.sendEmailWithTokenPassword(request.getEmail(), frontendBaseUrl + "/password/" + personalData.getSetupToken());
+        return savedPersonalData;
     }
 
     /**
@@ -62,14 +65,6 @@ public class PersonalDataService {
        personalData.setSetupToken(null);
        personalDataRepository.save(personalData);
        emailService.sendEmailSuccessfulPasswordSetUp(personalData.getEmail());
-    }
-
-    private void setUpPassword(PersonalData personalData, String email) {
-        personalData.setPassword(null);
-        String token = UUID.randomUUID().toString();
-        personalData.setSetupToken(token);
-        String link = frontendBaseUrl + "/password/" + token;
-        emailService.sendEmailWithTokenPassword(email, link);
     }
 
     private PersonalData mapToPersonalData(PersonalDataRequest request, Role role) {
