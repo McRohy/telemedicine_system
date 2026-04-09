@@ -1,7 +1,7 @@
 package sk.uniza.fri.telemedicine.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,7 +12,11 @@ import lombok.Getter;
 public class PasswordRequest {
     @NotBlank
     private String token;
+
     @NotBlank(message = "Password is mandatory")
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(
+            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{10,}$",
+            message = "Password must be at least 10 characters long, 1 uppercase letter, 1 lowercase letter and 1 number"
+    )
     private String password;
 }
