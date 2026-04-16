@@ -30,7 +30,7 @@ public class MeasurementRecord {
     private Double value;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, nullable = false)
+    @Column(length = 10, nullable = false)
     private MeasurementStatus measurementStatus;
 
     @Column(length = 220)
