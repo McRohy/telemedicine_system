@@ -19,6 +19,9 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
     @Query("SELECT pd.email FROM Patient p JOIN p.doctor d JOIN d.personalData pd WHERE p.personalNumber = :personalNumber")
     Optional<String> findCareProviderEmailByPatientPersonalNumber(String personalNumber);
 
+    @Query("SELECT p.doctor.panNumber FROM Patient p WHERE p.personalNumber = :personalNumber")
+    Optional<String> findDoctorPanNumberByPatientPersonalNumber(String personalNumber);
+
     @Query("SELECT CONCAT(pd.firstName, ' ', pd.lastName) FROM Patient p JOIN p.personalData pd WHERE p.personalNumber = :personalNumber")
     Optional<String> findFullNameByPersonalNumber(String personalNumber);
 

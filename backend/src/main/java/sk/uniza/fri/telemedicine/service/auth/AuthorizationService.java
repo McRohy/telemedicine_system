@@ -31,18 +31,17 @@ public class AuthorizationService {
      */
     public void authorizePatientDataAccess(String personalNumber) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = auth.getName();
+        String myIdentifier = (String) auth.getDetails();
         String role = auth.getAuthorities().iterator().next().getAuthority();
 
         if (role.equals("ROLE_"  + Role.PATIENT.name())) {
-            String myNumber = (String) auth.getDetails();
-            if (!myNumber.equals(personalNumber))
+            if (!myIdentifier.equals(personalNumber))
                 throw new AccessDeniedException(textProvider.get("error.access.denied"));
         } else if (role.equals("ROLE_" + Role.DOCTOR.name())) {
-            String careProviderEmail = patientRepository
-                    .findCareProviderEmailByPatientPersonalNumber(personalNumber)
+            String careProviderPanNumber = patientRepository
+                    .findDoctorPanNumberByPatientPersonalNumber(personalNumber)
                     .orElseThrow(() -> new NotFoundException(textProvider.get("error.patient.notFound")));
-            if (!careProviderEmail.equals(email)) {
+            if (!careProviderPanNumber.equals(myIdentifier)) {
                 throw new AccessDeniedException(textProvider.get("error.access.denied"));
             }
         }
