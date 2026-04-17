@@ -12,6 +12,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,12 @@ import java.util.Map;
  */
 @Slf4j @RestControllerAdvice
 public class SystemExceptionHandler {
+
+    private final TextProvider textProvider;
+
+    public SystemExceptionHandler(TextProvider textProvider) {
+        this.textProvider = textProvider;
+    }
 
     @ExceptionHandler(DuplicateException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -37,19 +44,19 @@ public class SystemExceptionHandler {
             // put overwrites so only one error per field is kept
             fieldErrors.put(error.getField(), error.getDefaultMessage());
         }
-        return new ErrorResponse(400, "Validation failed", fieldErrors);
+        return new ErrorResponse(400, textProvider.get("error.validation.failed"), fieldErrors);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUnreadable(HttpMessageNotReadableException ex) {
-        return new ErrorResponse(400, "Invalid input that cannot be deserialized");
+        return new ErrorResponse(400, textProvider.get("error.request.unreadable"));
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingParam(MissingServletRequestParameterException ex) {
-        return new ErrorResponse(400, "Required parameter '" + ex.getParameterName() + "' is missing");
+        return new ErrorResponse(400, textProvider.get("error.request.missingParam", ex.getParameterName()));
     }
 
     @ExceptionHandler(BusinessRuleException.class)
@@ -67,19 +74,19 @@ public class SystemExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleAuthentication(AuthenticationException ex) {
-        return new ErrorResponse(401, "Invalid email or password");
+        return new ErrorResponse(401, textProvider.get("error.auth.invalidCredentials"));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDenied(AccessDeniedException ex) {
-        return new ErrorResponse(403, "Access denied");
+        return new ErrorResponse(403, textProvider.get("error.access.denied"));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     public ErrorResponse handleMethodNotAllowed(HttpRequestMethodNotSupportedException ex) {
-        return new ErrorResponse(405, "Method '" + ex.getMethod() + "' is not supported for this endpoint");
+        return new ErrorResponse(405, textProvider.get("error.request.methodNotAllowed", ex.getMethod()));
     }
 
     @ExceptionHandler(ArticleException.class)
@@ -92,6 +99,6 @@ public class SystemExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGeneral(Exception ex) {
         log.error("Unexpected error", ex);
-        return new ErrorResponse(500, "Unexpected error happened");
+        return new ErrorResponse(500, textProvider.get("error.unexpected"));
     }
 }
