@@ -14,14 +14,14 @@ import sk.uniza.fri.telemedicine.enumeration.Specialization;
 @Getter @AllArgsConstructor
 public class DoctorRequest {
 
-    @NotBlank(message = "Pan number is mandatory")
-    @Pattern(regexp = "\\d{16}", message = "PAN number must consist from 16 digits")
+    @NotBlank(message = "{validation.pan.mandatory}")
+    @Pattern(regexp = "\\d{16}", message = "{validation.pan.format}")
     private String panNumber;
 
     @Valid
-    @NotNull(message = "Personal data is mandatory")
+    @NotNull(message = "{validation.personalData.mandatory}")
     private PersonalDataRequest personalData;
 
-    @NotNull(message = "Specialization is mandatory")
+    @NotNull(message = "{validation.specialization.mandatory}")
     private Specialization specialization;
 }

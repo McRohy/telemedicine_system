@@ -6,6 +6,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 
 /**
  * Service for sending email notifications.
@@ -20,56 +21,52 @@ public class EmailService {
     @Value("${spring.mail.username}")
     private String fromEmail;
     private final JavaMailSender mailSender;
+    private final TextProvider textProvider;
 
-    public EmailService(JavaMailSender javaMailSender) {
+    public EmailService(JavaMailSender javaMailSender, TextProvider textProvider) {
         this.mailSender = javaMailSender;
+        this.textProvider = textProvider;
     }
 
     @Async
     public void sendMeasurementRecordAlert(String careProviderEmail, String patientFullName, Double value, String units) {
-        String subject = "Upozornenie na meranie mimo normy";
-        String body = "Pacient " + patientFullName + " zaznamenal meranie s hodnotou " + value + " " + units + ", čo je mimo normálneho rozsahu.\n" +
-                "Prosím, skontrolujte meranie pacienta.";
+        String subject = textProvider.get("email.measurement.alert.subject");
+        String body = textProvider.get("email.measurement.alert.body", patientFullName, value, units);
         sendEmail(careProviderEmail, subject, createEmailContent(body));
     }
 
     @Async
     public void sendEmailWithTokenPassword(String to, String passwordUrl) {
-        String subject = "Nastavenie hesla pre váš účet";
-        String body = "Zasielame link pre nastavenie hesla vášho účtu.\n" +
-                "Kliknite na nasledujúci odkaz pre nastavenie hesla:\n" +
-                passwordUrl;
+        String subject = textProvider.get("email.password.setup.subject");
+        String body = textProvider.get("email.password.setup.body", passwordUrl);
         sendEmail(to, subject, createEmailContent(body));
     }
 
     @Async
     public void sendEmailSuccessfulPasswordSetUp(String to) {
-        String subject = "Úspešné nastavenie hesla";
-        String body = "Vaše heslo bolo úspešne nastavené.\n" +
-                "Môžte sa prihlásiť do systému a využívať telemedicínsky systém naplno.";
+        String subject = textProvider.get("email.password.success.subject");
+        String body = textProvider.get("email.password.success.body");
         sendEmail(to, subject, createEmailContent(body));
     }
 
     @Async
     public void sendEmailCreatedPlan(String to) {
-        String subject = "Plán vytvorený";
-        String body = "Váš plán pre vzdialené monitorovanie bol vytvorený.\n" +
-                "Prihláste sa do systému a skontrolujte svoj plán pre vzdialené monitorovanie.";
+        String subject = textProvider.get("email.plan.created.subject");
+        String body = textProvider.get("email.plan.created.body");
         sendEmail(to, subject, createEmailContent(body));
     }
 
     @Async
     public void sendEmailUpdatedPlan(String to) {
-        String subject = "Plán upravený";
-        String body = "Váš plán pre vzdialené monitorovanie bol upravený.\n" +
-                "Skontrolujte si svoj plán pre vzdialené monitorovanie.";
+        String subject = textProvider.get("email.plan.updated.subject");
+        String body = textProvider.get("email.plan.updated.body");
         sendEmail(to, subject, createEmailContent(body));
     }
 
     private String createEmailContent(String body) {
-        return "Dobrý deň,\n\n" +
+        return textProvider.get("email.common.greeting") + "\n\n" +
                 body + "\n\n" +
-                "S pozdravom,\n Tím MediRoh";
+                textProvider.get("email.common.signature");
     }
 
     private void sendEmail(String to, String subject, String content) {

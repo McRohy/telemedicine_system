@@ -10,13 +10,13 @@ import lombok.Getter;
  */
 @Getter @AllArgsConstructor
 public class PasswordRequest {
-    @NotBlank
+    @NotBlank(message = "{validation.token.mandatory}")
     private String token;
 
-    @NotBlank(message = "Password is mandatory")
+    @NotBlank(message = "{validation.password.mandatory}")
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{10,}$",
-            message = "Password must be at least 10 characters long, 1 uppercase letter, 1 lowercase letter and 1 number"
+            message = "{validation.password.strength}"
     )
     private String password;
 }

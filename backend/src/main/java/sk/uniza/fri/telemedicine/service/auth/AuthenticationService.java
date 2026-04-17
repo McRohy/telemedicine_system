@@ -3,6 +3,7 @@ package sk.uniza.fri.telemedicine.service.auth;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.LoginRequest;
 import sk.uniza.fri.telemedicine.dto.response.LoginResponse;
 import sk.uniza.fri.telemedicine.entity.PersonalData;
@@ -27,15 +28,17 @@ public class AuthenticationService {
     private final PersonalDataRepository personalDataRepository;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
+    private final TextProvider textProvider;
 
     public AuthenticationService(AuthenticationManager authManager, JwtUtils jwtUtils,
                                  PersonalDataRepository personalDataRepository, PatientRepository patientRepository,
-                                 DoctorRepository doctorRepository) {
+                                 DoctorRepository doctorRepository, TextProvider textProvider) {
         this.personalDataRepository = personalDataRepository;
         this.authManager = authManager;
         this.jwtUtils = jwtUtils;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
+        this.textProvider = textProvider;
     }
 
     /**
@@ -45,7 +48,7 @@ public class AuthenticationService {
     public LoginResponse login(LoginRequest request) {
         verifyCredentials(request.getEmail(), request.getPassword());
         PersonalData pd = personalDataRepository.findById(request.getEmail())
-                .orElseThrow(() -> new NotFoundException("Personal data not found"));
+                .orElseThrow(() -> new NotFoundException(textProvider.get("error.personalData.notFound")));
 
         String identificationNumber = getNumber(pd);
         return new LoginResponse(
@@ -71,11 +74,11 @@ public class AuthenticationService {
     private String getNumber(PersonalData pd) {
         if (pd.getRole() == Role.PATIENT) {
             return patientRepository.findPersonalNumberByEmail(pd.getEmail())
-                    .orElseThrow(() -> new NotFoundException("Patient not found"));
+                    .orElseThrow(() -> new NotFoundException(textProvider.get("error.patient.notFound")));
         }
         if (pd.getRole() == Role.DOCTOR) {
             return doctorRepository.findPanNumberByEmail(pd.getEmail())
-                    .orElseThrow(() -> new NotFoundException("Doctor not found"));
+                    .orElseThrow(() -> new NotFoundException(textProvider.get("error.doctor.notFound")));
         }
         return null;
     }

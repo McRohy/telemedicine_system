@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.PatientRequest;
 import sk.uniza.fri.telemedicine.dto.response.PatientResponse;
 import sk.uniza.fri.telemedicine.enumeration.Role;
@@ -27,13 +28,15 @@ public class PatientService {
     private final PersonalDataService personalDataService;
     private final DoctorService doctorService;
     private final AuthorizationService authorizationService;
+    private final TextProvider textProvider;
 
     public PatientService(PersonalDataService personalDataService, PatientRepository patientRepository,
-                          DoctorService doctorService, AuthorizationService authorizationService) {
+                          DoctorService doctorService, AuthorizationService authorizationService, TextProvider textProvider) {
         this.personalDataService = personalDataService;
         this.patientRepository = patientRepository;
         this.doctorService = doctorService;
         this.authorizationService = authorizationService;
+        this.textProvider = textProvider;
     }
 
     /**
@@ -43,7 +46,7 @@ public class PatientService {
     @Transactional
     public PatientResponse createPatient(PatientRequest request) {
         if (patientRepository.existsById(request.getPersonalNumber())) {
-            throw new DuplicateException("Patient with this personal number already exists");
+            throw new DuplicateException(textProvider.get("error.patient.duplicate"));
         }
         Doctor doctor = doctorService.getByPanNumber(request.getPanNumber());
         PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData(), Role.PATIENT);
@@ -85,18 +88,18 @@ public class PatientService {
 
     public Patient getByPersonalNumber(String personalNumber) {
         return patientRepository.findById(personalNumber).orElseThrow(
-                () -> new NotFoundException("Patient with personal number not found"));
+                () -> new NotFoundException(textProvider.get("error.patient.notFoundByPersonalNumber")));
     }
 
     public String getCareProviderEmailByPatientPersonalNumber(String personalNumber) {
         return patientRepository.findCareProviderEmailByPatientPersonalNumber(personalNumber).orElseThrow(
-                () -> new NotFoundException("Patient with personal number not found")
+                () -> new NotFoundException(textProvider.get("error.patient.notFoundByPersonalNumber"))
         );
     }
 
     public String getPatientFullNameByPersonalNumber(String personalNumber) {
         return patientRepository.findFullNameByPersonalNumber(personalNumber)
-                .orElseThrow(() -> new NotFoundException("Patient with personal number not found"));
+                .orElseThrow(() -> new NotFoundException(textProvider.get("error.patient.notFoundByPersonalNumber")));
     }
 
     private Patient mapToPatient(PatientRequest request, PersonalData personalData, Doctor doctor) {

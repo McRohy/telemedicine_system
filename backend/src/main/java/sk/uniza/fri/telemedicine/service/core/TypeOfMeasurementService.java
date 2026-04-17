@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
 import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
 import sk.uniza.fri.telemedicine.entity.TypeOfMeasurement;
@@ -22,9 +23,11 @@ import java.util.List;
 @Service
 public class TypeOfMeasurementService {
     private final TypeOfMeasurementRepository typeOfMeasurementRepository;
+    private final TextProvider textProvider;
 
-    public TypeOfMeasurementService(TypeOfMeasurementRepository typeOfMeasurementRepository) {
+    public TypeOfMeasurementService(TypeOfMeasurementRepository typeOfMeasurementRepository, TextProvider textProvider) {
         this.typeOfMeasurementRepository = typeOfMeasurementRepository;
+        this.textProvider = textProvider;
     }
 
     /**
@@ -57,10 +60,10 @@ public class TypeOfMeasurementService {
     @Transactional
     public TypeOfMeasurementResponse createTypeOfMeasurement(TypeOfMeasurementRequest request) {
         if (request.getMinValue() >= request.getMaxValue()) {
-            throw new BusinessRuleException("Min value must be less than max value");
+            throw new BusinessRuleException(textProvider.get("error.typeOfMeasurement.invalidRange"));
         }
         if (typeOfMeasurementRepository.existsByTypeName(request.getTypeName())) {
-            throw new DuplicateException("Type of measurement already exists");
+            throw new DuplicateException(textProvider.get("error.typeOfMeasurement.duplicate"));
         }
         TypeOfMeasurement typeOfMeasurement = mapToTypeOfMeasurement(request);
         typeOfMeasurementRepository.save(typeOfMeasurement);
@@ -70,7 +73,7 @@ public class TypeOfMeasurementService {
 
     public TypeOfMeasurement getTypeOfMeasurementById(Long id) {
         return typeOfMeasurementRepository.findById(id).orElseThrow(
-                () -> new NotFoundException("Type of measurement not found"));
+                () -> new NotFoundException(textProvider.get("error.typeOfMeasurement.notFound")));
     }
 
     private TypeOfMeasurement mapToTypeOfMeasurement(TypeOfMeasurementRequest request) {

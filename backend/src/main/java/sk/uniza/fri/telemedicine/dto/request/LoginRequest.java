@@ -10,9 +10,9 @@ import lombok.Getter;
  */
 @Getter @AllArgsConstructor
 public class LoginRequest {
-    @Email
-    @NotBlank
+    @Email(message = "{validation.email.format}")
+    @NotBlank(message = "{validation.email.mandatory}")
     private  String email;
-    @NotBlank
+    @NotBlank(message = "{validation.password.mandatory}")
     private String password;
 }

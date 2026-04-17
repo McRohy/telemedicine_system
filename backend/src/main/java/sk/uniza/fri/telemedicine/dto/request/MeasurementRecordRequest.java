@@ -10,17 +10,17 @@ import lombok.Getter;
 @Getter @AllArgsConstructor
 public class MeasurementRecordRequest {
 
-    @NotBlank(message = "Personal number is mandatory")
-    @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 10 digits")
+    @NotBlank(message = "{validation.personalNumber.mandatory}")
+    @Pattern(regexp = "\\d{10}", message = "{validation.personalNumber.format}")
     private String personalNumber;
 
-    @NotNull(message = "Type of measurement is mandatory")
+    @NotNull(message = "{validation.typeOfMeasurement.mandatory}")
     private Long typeOfMeasurementId;
 
     @Positive
-    @NotNull(message = "Value is mandatory")
+    @NotNull(message = "{validation.value.mandatory}")
     private Double value;
 
-    @Size(max = 220, message = "Note has maximum 220 characters")
+    @Size(max = 220, message = "{validation.note.size}")
     private String note;
 }

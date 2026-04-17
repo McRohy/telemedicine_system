@@ -11,16 +11,16 @@ import lombok.Getter;
  */
 @Getter @AllArgsConstructor
 public class PersonalDataRequest {
-    @Email
-    @NotBlank(message = "Email is mandatory")
-    @Size(max = 70, message = "Email must be only 70 characters long")
+    @Email(message = "{validation.email.format}")
+    @NotBlank(message = "{validation.email.mandatory}")
+    @Size(max = 70, message = "{validation.email.size}")
     private String email;
 
-    @NotBlank(message = "First name is mandatory")
-    @Size(max = 50)
+    @NotBlank(message = "{validation.firstName.mandatory}")
+    @Size(max = 50, message = "{validation.firstName.size}")
     private String firstName;
 
-    @NotBlank(message = "Last name is mandatory")
-    @Size(max = 50)
+    @NotBlank(message = "{validation.lastName.mandatory}")
+    @Size(max = 50, message = "{validation.lastName.size}")
     private String lastName;
 }

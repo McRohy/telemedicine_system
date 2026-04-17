@@ -4,6 +4,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.enumeration.Role;
 import sk.uniza.fri.telemedicine.exception.NotFoundException;
 import sk.uniza.fri.telemedicine.repository.PatientRepository;
@@ -17,9 +18,11 @@ import sk.uniza.fri.telemedicine.repository.PatientRepository;
 public class AuthorizationService {
 
     private final PatientRepository patientRepository;
+    private final TextProvider textProvider;
 
-    public AuthorizationService(PatientRepository patientRepository) {
+    public AuthorizationService(PatientRepository patientRepository, TextProvider textProvider) {
         this.patientRepository = patientRepository;
+        this.textProvider = textProvider;
     }
 
     /**
@@ -34,13 +37,13 @@ public class AuthorizationService {
         if (role.equals("ROLE_"  + Role.PATIENT.name())) {
             String myNumber = (String) auth.getDetails();
             if (!myNumber.equals(personalNumber))
-                throw new AccessDeniedException("Access denied");
+                throw new AccessDeniedException(textProvider.get("error.access.denied"));
         } else if (role.equals("ROLE_" + Role.DOCTOR.name())) {
             String careProviderEmail = patientRepository
                     .findCareProviderEmailByPatientPersonalNumber(personalNumber)
-                    .orElseThrow(() -> new NotFoundException("Patient not found"));
+                    .orElseThrow(() -> new NotFoundException(textProvider.get("error.patient.notFound")));
             if (!careProviderEmail.equals(email)) {
-                throw new AccessDeniedException("Access denied");
+                throw new AccessDeniedException(textProvider.get("error.access.denied"));
             }
         }
     }
@@ -51,7 +54,7 @@ public class AuthorizationService {
     public void authorizeDoctorIdentity(String panNumber) {
         String myPanNumber = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
         if (!myPanNumber.equals(panNumber)) {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException(textProvider.get("error.access.denied"));
             }
     }
 }

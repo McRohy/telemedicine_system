@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.DoctorRequest;
 import sk.uniza.fri.telemedicine.dto.response.DoctorResponse;
 import sk.uniza.fri.telemedicine.enumeration.Role;
@@ -23,10 +24,12 @@ public class DoctorService {
 
     private final PersonalDataService personalDataService;
     private final DoctorRepository doctorRepository;
+    private final TextProvider textProvider;
 
-    public DoctorService(PersonalDataService personalDataService, DoctorRepository doctorRepository) {
+    public DoctorService(PersonalDataService personalDataService, DoctorRepository doctorRepository, TextProvider textProvider) {
         this.personalDataService = personalDataService;
         this.doctorRepository = doctorRepository;
+        this.textProvider = textProvider;
     }
 
     /**
@@ -36,7 +39,7 @@ public class DoctorService {
     @Transactional
     public DoctorResponse createDoctor(DoctorRequest request) {
         if (doctorRepository.existsById(request.getPanNumber())) {
-            throw new DuplicateException("Doctor with this PAN number already exists");
+            throw new DuplicateException(textProvider.get("error.doctor.duplicate"));
         }
         PersonalData personalData = personalDataService.createPersonalData(request.getPersonalData(), Role.DOCTOR);
         Doctor doctor = mapToDoctor(request, personalData);
@@ -61,7 +64,7 @@ public class DoctorService {
 
     public Doctor getByPanNumber(String panNumber) {
         return doctorRepository.findById(panNumber).orElseThrow(
-                () -> new NotFoundException("Doctor with PAN number not found"));
+                () -> new NotFoundException(textProvider.get("error.doctor.notFoundByPanNumber")));
     }
 
     private Doctor mapToDoctor(DoctorRequest request, PersonalData personalData) {

@@ -10,20 +10,20 @@ import lombok.Getter;
 @Getter @AllArgsConstructor
 public class TypeOfMeasurementRequest {
 
-    @NotBlank(message = "Type name is mandatory")
-    @Size(max=30)
+    @NotBlank(message = "{validation.typeName.mandatory}")
+    @Size(max = 30, message = "{validation.typeName.size}")
     private String typeName;
 
-    @NotBlank(message = "Units are mandatory")
-    @Size(max=4)
+    @NotBlank(message = "{validation.units.mandatory}")
+    @Size(max = 4, message = "{validation.units.size}")
     private String units;
 
     @Positive
-    @NotNull(message = "Minimum value is mandatory")
+    @NotNull(message = "{validation.minValue.mandatory}")
     private Double minValue;
 
     @Positive
-    @NotNull(message = "Maximum value is mandatory")
+    @NotNull(message = "{validation.maxValue.mandatory}")
     private Double maxValue;
 
 }

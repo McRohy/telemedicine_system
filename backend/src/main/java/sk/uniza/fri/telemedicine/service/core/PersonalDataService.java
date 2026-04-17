@@ -3,6 +3,7 @@ package sk.uniza.fri.telemedicine.service.core;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.PasswordRequest;
 import sk.uniza.fri.telemedicine.dto.request.PersonalDataRequest;
 import sk.uniza.fri.telemedicine.dto.response.PersonalDataResponse;
@@ -27,12 +28,14 @@ public class PersonalDataService {
     private final PersonalDataRepository personalDataRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
+    private final TextProvider textProvider;
 
     public PersonalDataService(PersonalDataRepository personalDataRepository, EmailService emailService,
-                               PasswordEncoder passwordEncoder) {
+                               PasswordEncoder passwordEncoder, TextProvider textProvider) {
         this.personalDataRepository = personalDataRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
+        this.textProvider = textProvider;
     }
 
     /**
@@ -41,7 +44,7 @@ public class PersonalDataService {
     @Transactional
     public PersonalData createPersonalData(PersonalDataRequest request, Role role) {
         if (personalDataRepository.existsById(request.getEmail())){
-            throw new DuplicateException("Personal data with this email already exists");
+            throw new DuplicateException(textProvider.get("error.personalData.duplicate"));
         }
         PersonalData personalData = mapToPersonalData(request, role);
         personalData.setPassword(null);
@@ -58,7 +61,7 @@ public class PersonalDataService {
     @Transactional
     public void setPassword(PasswordRequest request) {
        PersonalData personalData = personalDataRepository.findBySetupToken(request.getToken())
-                .orElseThrow(() -> new NotFoundException("Token not found"));
+                .orElseThrow(() -> new NotFoundException(textProvider.get("error.token.notFound")));
 
        String password = passwordEncoder.encode(request.getPassword());
        personalData.setPassword(password);

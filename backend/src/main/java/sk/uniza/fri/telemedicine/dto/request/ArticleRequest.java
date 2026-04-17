@@ -12,15 +12,15 @@ import lombok.Getter;
 @Getter @AllArgsConstructor
 public class ArticleRequest {
 
-    @NotBlank(message = "Pan number is mandatory")
-    @Pattern(regexp = "\\d{16}", message = "PAN number must consist from 16 digits")
+    @NotBlank(message = "{validation.pan.mandatory}")
+    @Pattern(regexp = "\\d{16}", message = "{validation.pan.format}")
     private String panNumber;
 
-    @NotBlank(message = "Title is mandatory")
-    @Size(max=220)
+    @NotBlank(message = "{validation.title.mandatory}")
+    @Size(max = 220, message = "{validation.title.size}")
     private String title;
 
-    @NotBlank(message = "Content is mandatory")
-    @Size(max = 50000, message = "Content must be max 50000 characters")
+    @NotBlank(message = "{validation.content.mandatory}")
+    @Size(max = 50000, message = "{validation.content.size}")
     private String content;
 }

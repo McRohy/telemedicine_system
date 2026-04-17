@@ -2,6 +2,7 @@ package sk.uniza.fri.telemedicine.service.core;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
@@ -33,10 +34,12 @@ public class MeasurementPlanService {
     private final PatientService patientService;
     private final EmailService emailService;
     private final AuthorizationService authorizationService;
+    private final TextProvider textProvider;
 
     public MeasurementPlanService(MeasurementPlanRepository measurementPlanRepository, TypeOfMeasurementService typeOfMeasurementService,
                                   MeasurementTypePlanRepository measurementTypePlanRepository, MeasurementTimePlanRepository measurementTimePlanRepository,
-                                  PatientService patientService, EmailService emailService, AuthorizationService authorizationService) {
+                                  PatientService patientService, EmailService emailService, AuthorizationService authorizationService,
+                                  TextProvider textProvider) {
         this.measurementPlanRepository = measurementPlanRepository;
         this.typeOfMeasurementService = typeOfMeasurementService;
         this.measurementTypePlanRepository = measurementTypePlanRepository;
@@ -44,6 +47,7 @@ public class MeasurementPlanService {
         this.patientService = patientService;
         this.emailService = emailService;
         this.authorizationService = authorizationService;
+        this.textProvider = textProvider;
     }
 
     /**
@@ -53,7 +57,7 @@ public class MeasurementPlanService {
     public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(String personalNumber) {
         authorizationService.authorizePatientDataAccess(personalNumber);
         MeasurementPlan plan = measurementPlanRepository.findActivePlanByPersonalNumber(personalNumber)
-                .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
+                .orElseThrow(() -> new NotFoundException(textProvider.get("error.measurementPlan.notFound")));
 
         List<MeasurementTypePlan> measurementTypes = measurementTypePlanRepository.findAllByPlanId(plan.getPlanId());
         List<MeasurementTimePlan> measurementTimes = measurementTimePlanRepository.findAllByPlanId(plan.getPlanId());
@@ -72,7 +76,7 @@ public class MeasurementPlanService {
         Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
 
         if (measurementPlanRepository.existsActivePlanByPersonalNumber(request.getPersonalNumber())) {
-            throw new DuplicateException("Patient already has an active measurement plan");
+            throw new DuplicateException(textProvider.get("error.measurementPlan.duplicate"));
         }
 
         MeasurementPlan plan = createPlan(request, patient);
@@ -90,14 +94,14 @@ public class MeasurementPlanService {
     public MeasurementPlanResponse updateMeasurementPlan(Long id, MeasurementPlanRequest request) {
         authorizationService.authorizePatientDataAccess(request.getPersonalNumber());
         MeasurementPlan plan = measurementPlanRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Measurement plan not found"));
+                .orElseThrow(() -> new NotFoundException(textProvider.get("error.measurementPlan.notFound")));
 
         if (plan.getValidTo() != null) {
-            throw new BusinessRuleException("Plan is already deactivated");
+            throw new BusinessRuleException(textProvider.get("error.measurementPlan.alreadyDeactivated"));
         }
 
         if (!plan.getPatient().getPersonalNumber().equals(request.getPersonalNumber())) {
-            throw new BusinessRuleException("Plan does not belong to this patient");
+            throw new BusinessRuleException(textProvider.get("error.measurementPlan.wrongPatient"));
         }
 
         validateFrequencyAndTimes(request);
@@ -116,10 +120,10 @@ public class MeasurementPlanService {
 
     public void validateActivePlanAndType(String personalNumber, Long typeId) {
         if (!measurementPlanRepository.existsActivePlanByPersonalNumber(personalNumber)) {
-            throw new NotFoundException("Patient does not have an active measurement plan");
+            throw new NotFoundException(textProvider.get("error.measurementPlan.notActive"));
         }
         if (!measurementTypePlanRepository.existsByActivePlanAndTypeId(personalNumber, typeId)) {
-            throw new BusinessRuleException("Measurement type is not part of the patient's active plan");
+            throw new BusinessRuleException(textProvider.get("error.measurementPlan.typeNotInPlan"));
         }
     }
 
@@ -127,7 +131,7 @@ public class MeasurementPlanService {
         int expected = request.getFrequency().getExpectedTimes();
         int actual = request.getTimesOfPlannedMeasurements().size();
         if (actual != expected) {
-            throw new BusinessRuleException("Frequency do not have required time/ times");
+            throw new BusinessRuleException(textProvider.get("error.measurementPlan.frequencyTimesMismatch"));
         }
     }
 

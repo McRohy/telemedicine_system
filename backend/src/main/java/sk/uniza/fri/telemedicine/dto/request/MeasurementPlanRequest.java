@@ -15,17 +15,17 @@ import java.util.List;
 @Getter @AllArgsConstructor
 public class MeasurementPlanRequest {
 
-    @NotBlank(message = "Personal number is mandatory")
-    @Pattern(regexp = "\\d{10}", message = "Personal number must consist from 10 digits")
+    @NotBlank(message = "{validation.personalNumber.mandatory}")
+    @Pattern(regexp = "\\d{10}", message = "{validation.personalNumber.format}")
     private  String personalNumber;
 
-    @NotNull(message = "Frequency is mandatory")
+    @NotNull(message = "{validation.frequency.mandatory}")
     private Frequency frequency;
 
-    @NotEmpty(message = "Time is mandatory")
+    @NotEmpty(message = "{validation.times.mandatory}")
     @JsonFormat(pattern = "HH:mm") //Jackson map it to LocalTime
     private List<LocalTime> timesOfPlannedMeasurements;
 
-    @NotEmpty(message = "Types are mandatory") //controls null and empty list
+    @NotEmpty(message = "{validation.types.mandatory}") //controls null and empty list
     private List<Long> typeOfMeasurementIds;
 }

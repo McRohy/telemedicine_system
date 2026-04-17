@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.ArticleRequest;
 import sk.uniza.fri.telemedicine.dto.response.ArticleResponse;
 import sk.uniza.fri.telemedicine.entity.Article;
@@ -35,11 +36,13 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final DoctorService doctorService;
     private final AuthorizationService authorizationService;
+    private final TextProvider textProvider;
 
-    public ArticleService(ArticleRepository articleRepository, DoctorService doctorService , AuthorizationService authorizationService) {
+    public ArticleService(ArticleRepository articleRepository, DoctorService doctorService, AuthorizationService authorizationService, TextProvider textProvider) {
         this.articleRepository = articleRepository;
         this.doctorService = doctorService;
         this.authorizationService = authorizationService;
+        this.textProvider = textProvider;
     }
 
     /**
@@ -70,7 +73,7 @@ public class ArticleService {
             Files.writeString(rootPath.resolve(fileName), request.getContent()); //create file, write , close file in one step
 
         } catch (IOException e) {
-            throw new ArticleException("Failed to save article file");
+            throw new ArticleException(textProvider.get("error.article.saveFailed"));
         }
 
         return mapToArticleResponse(article, true);
@@ -103,7 +106,7 @@ public class ArticleService {
      */
     public ArticleResponse getArticleById(Long articleId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new NotFoundException("Article not found"));
+                .orElseThrow(() -> new NotFoundException(textProvider.get("error.article.notFound")));
         return mapToArticleResponse(article, true);
     }
 
@@ -113,14 +116,14 @@ public class ArticleService {
     @Transactional
     public void deleteArticle(Long articleId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new NotFoundException("Article not found"));
+                .orElseThrow(() -> new NotFoundException(textProvider.get("error.article.notFound")));
 
         authorizationService.authorizeDoctorIdentity(article.getDoctor().getPanNumber());
         articleRepository.delete(article);
         try {
             Files.deleteIfExists(Paths.get(storagePath, article.getFilePath()));
         } catch (IOException e) {
-            throw new ArticleException("Failed to delete article file");
+            throw new ArticleException(textProvider.get("error.article.deleteFailed"));
         }
     }
 
@@ -130,7 +133,7 @@ public class ArticleService {
             try {
                 content = Files.readString(Paths.get(storagePath).resolve(article.getFilePath()));
             } catch (IOException e) {
-                throw new ArticleException("Failed to read article content");
+                throw new ArticleException(textProvider.get("error.article.readFailed"));
             }
         }
         return new ArticleResponse(
