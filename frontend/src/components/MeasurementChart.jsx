@@ -18,7 +18,6 @@ export default function MeasurementChart({ personalNumber, plan }) {
   const [pressToShow, setPressToShow] = useState(false);
 
   async function fetchMeasurements() {
-    console.log(period, filterType);
     setLoadingChart(true);
     try {
       const response = await getAllFilteredMeasurements(personalNumber, Number(filterType), period);

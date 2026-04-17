@@ -41,7 +41,6 @@ export default function DetailArticleModal({ opened, onClose, onSuccess, article
       onClose();
       onSuccess();
     } catch (error) {
-      console.log(error.response);
       notifyError(error);
     } finally {
       setLoading(false);

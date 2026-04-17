@@ -69,8 +69,6 @@ export default function MeasurementTable({ personalNumber, plan, refresh }) {
                     </Table.Tr>
                   </Table.Thead>
                   <Table.Tbody>
-                    {console.log(data.content)}
-
                     {data.content.map((m) => (
                       <Table.Tr key={m.id}>
                         <Table.Td>{m.typeName}</Table.Td>

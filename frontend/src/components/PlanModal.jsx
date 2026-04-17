@@ -13,7 +13,6 @@ import { createMeasurementPlan, updateMeasurementPlan } from '../api/measurement
  */
 export default function PlanModal({ opened, onClose, onSuccess, personalNumber, plan }) {
   const isEdit = Boolean(plan ? plan.id : null);
-  console.log('From page:',plan, personalNumber);
 
   const [loading, setLoading] = useState(false);
   const [types, setTypes] = useState([]);
@@ -50,15 +49,12 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
     setLoading(true);
     try {
       if (isEdit) {
-        console.log('Updating plan:', formRequest.values, plan.id);
-
         await updateMeasurementPlan(plan.id, formRequest.values);
         notifySuccess(
           'Plán upravený',
           'Monitorovací plán bol úspešne upravený.',
         );
       } else {
-        console.log('Creating plan:', formRequest.values);
         const res = await createMeasurementPlan(formRequest.values);
         notifySuccess(
           'Plán meraní pridaný',

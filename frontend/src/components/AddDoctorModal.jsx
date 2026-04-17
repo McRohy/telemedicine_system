@@ -42,7 +42,6 @@ export default function AddDoctorModal({ opened, onClose, onSuccess }) {
       onClose();
       onSuccess(); // callback for refreshing data on page
     } catch (error) {
-      console.log(error.response);
       const status = error.response?.status;
 
       if (status === 400) {

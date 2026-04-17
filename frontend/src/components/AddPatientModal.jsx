@@ -44,7 +44,6 @@ export default function AddPatientModal({opened, onClose, onSuccess, doctorPanNu
       onClose();
       onSuccess();
     } catch (error) {
-      console.log(error.response);
       const status = error.response?.status;
 
       if (status === 400) {

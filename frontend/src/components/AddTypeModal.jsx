@@ -37,7 +37,6 @@ export default function AddTypeModal({ opened, onClose, onSuccess }) {
       onClose();
       onSuccess();
     } catch (error) {
-      console.log(error.response);
       const status = error.response?.status;
 
       if (status === 400) {

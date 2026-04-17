@@ -35,7 +35,6 @@ export default function AddArticle({opened, onClose, onSuccess, doctorPanNumber,
       onClose();
       onSuccess();
     } catch (error) {
-      console.log(error.response);
       const status = error.response?.status;
 
       if (status === 400) {

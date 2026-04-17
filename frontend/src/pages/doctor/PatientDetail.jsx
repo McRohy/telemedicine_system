@@ -50,7 +50,6 @@ export default function PatientDetail() {
      try {
       const response = await getPatientByPersonalNumber(personalNumber);
       setPatientData(response.data);
-      console.log(response.data);
     } catch (error) {
       notifyError(error);
     } finally {
