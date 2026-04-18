@@ -1,3 +1,5 @@
+export const PAGINATION_SIZE = 10;
+
 export const FREQUENCIES = [
   { value: 'ONE_TIME_DAILY', label: 'denne' },
   { value: 'TWO_TIMES_DAILY', label: '2x denne' },
@@ -13,10 +15,8 @@ export const SPECIALIZATIONS = [
   { value: 'ONCOLOGIST', label: 'Onkológ' },
 ];
 
-export const PAGINATION_SIZE = 10;
-
-export const ROLES = {
-  ADMIN: 'Administrátor',
-  DOCTOR: 'Lekár',
-  PATIENT: 'Pacient',
-};
+export const ROLES = [
+  { value: 'ADMIN', label: 'Administrátor' },
+  { value: 'DOCTOR', label: 'Lekár' },
+  { value: 'PATIENT', label: 'Pacient' },
+];

@@ -46,7 +46,7 @@ export default function Sidebar({ onClose }) {
             <Text size="md" fw={600}>
               {user?.firstName} {user?.lastName}
             </Text>
-            <Text size="xs">{ROLES[user?.role]}</Text>
+            <Text size="xs">{ROLES.find((r) => r.value === user?.role)?.label}</Text>
           </Stack>
         </Group>
 

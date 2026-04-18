@@ -7,6 +7,7 @@ import { IconSearch, IconArrowUpRight } from '@tabler/icons-react';
 import { useAuth } from '../../context/AuthContext';
 import { notifyError } from '../../helpers/notificationHelper';
 import { getPatientsByPanNumber } from '../../api/patientApi';
+import { GENDERS } from '../../helpers/constants';
 
 /**
  * Doctor dashboard for managing patients.
@@ -91,7 +92,7 @@ export default function DoctorDashboard() {
                   <Table.Tr key={d.personalNumber} cursor="pointer">
                     <Table.Td>{d.personalData.lastName}</Table.Td>
                     <Table.Td>{d.personalData.firstName}</Table.Td>
-                    <Table.Td>{d.gender === 'MALE' ? 'Muž' : 'Žena'}</Table.Td>
+                    <Table.Td>{GENDERS.find((g) => g.value === d?.gender)?.label}</Table.Td>
                     <Table.Td>{d.personalNumber}</Table.Td>
                     <Table.Td>
                       <Anchor

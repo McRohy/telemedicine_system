@@ -10,6 +10,7 @@ import { getMeasurementPlanByPersonalNumber } from '../../api/measurementPlanApi
 import { getPatientByPersonalNumber } from '../../api/patientApi';
 import MeasurementTable from '../../components/MeasurementTable';
 import PlanInfoCard from '../../components/PlanInfoCard';
+import { GENDERS } from '../../helpers/constants';
 
 /**
  * Doctor page for viewing patient details.
@@ -59,7 +60,7 @@ export default function PatientDetail() {
     fetchPatientData();
   }, [personalNumber]);
 
-  if (dataLoading && planLoading)
+  if (dataLoading || planLoading)
     return (
       <Center h="100vh">
         <Loader />
@@ -98,7 +99,7 @@ export default function PatientDetail() {
                 <Group gap={3}>
                   <IconUser size={16} />
                   <Text size="sm">
-                    {patientData?.gender === 'MALE' ? 'Muž' : 'Žena'}
+                    {GENDERS.find((g) => g.value === patientData?.gender)?.label}
                   </Text>
                 </Group>
                 <Group gap={3}>

@@ -5,6 +5,7 @@ import AddDoctorModal from '../../components/AddDoctorModal';
 import { useDisclosure, useDebouncedValue } from '@mantine/hooks';
 import { notifyError } from '../../helpers/notificationHelper';
 import { getDoctors } from '../../api/doctorApi';
+import { SPECIALIZATIONS } from '../../helpers/constants';
 
 /**
  * Admin page for managing doctors.
@@ -82,7 +83,7 @@ export default function DoctorsPage() {
                   <Table.Tr key={d.panNumber}>
                     <Table.Td>{d.personalData.lastName}</Table.Td>
                     <Table.Td>{d.personalData.firstName}</Table.Td>
-                    <Table.Td>{d.specialization}</Table.Td>
+                    <Table.Td>{SPECIALIZATIONS.find((s) => s.value === d.specialization)?.label}</Table.Td>
                     <Table.Td>{d.panNumber}</Table.Td>
                   </Table.Tr>
                 ))}
