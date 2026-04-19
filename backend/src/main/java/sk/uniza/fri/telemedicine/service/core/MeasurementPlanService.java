@@ -81,7 +81,7 @@ public class MeasurementPlanService {
         MeasurementPlan plan = createPlan(request, patient);
         List<MeasurementTimePlan> measurementTimes = createTimeForPlan(plan, request);
         List<MeasurementTypePlan> measurementTypes = createTypesForPlan(plan, request);
-        emailService.sendEmailCreatedPlan(patientService.getEmailByPersonalNumber(patient.getPersonalNumber()));
+        emailService.sendEmailCreatedPlan(patient.getPersonalData().getEmail());
 
         return mapToMeasurementPlanResponse(plan, measurementTypes, measurementTimes);
     }
@@ -104,15 +104,16 @@ public class MeasurementPlanService {
         }
 
         validateFrequencyAndTimes(request);
+        Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
 
         LocalDateTime now = LocalDateTime.now();
         plan.setValidTo(now);
         measurementPlanRepository.save(plan);
 
-        MeasurementPlan newPlan = createPlan(request, plan.getPatient());
+        MeasurementPlan newPlan = createPlan(request, patient);
         List<MeasurementTimePlan> newMeasurementTimes = createTimeForPlan(newPlan, request);
         List<MeasurementTypePlan> newMeasurementTypes = createTypesForPlan(newPlan, request);
-        emailService.sendEmailUpdatedPlan(patientService.getEmailByPersonalNumber(request.getPersonalNumber()));
+        emailService.sendEmailUpdatedPlan(patient.getPersonalData().getEmail());
 
         return mapToMeasurementPlanResponse(newPlan, newMeasurementTypes, newMeasurementTimes);
     }

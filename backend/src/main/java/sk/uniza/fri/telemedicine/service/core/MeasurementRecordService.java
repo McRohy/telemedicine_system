@@ -26,17 +26,20 @@ import java.util.List;
 public class MeasurementRecordService {
 
     private final PatientService patientService;
+    private final DoctorService doctorService;
     private final MeasurementRecordRepository measurementRecordRepository;
     private final MeasurementPlanService measurementPlanService;
     private final TypeOfMeasurementService typeOfMeasurementService;
     private final EmailService emailService;
     private final AuthorizationService authorizationService;
 
-    public MeasurementRecordService(PatientService patientService, MeasurementRecordRepository measurementRecordRepository,
+    public MeasurementRecordService(PatientService patientService, DoctorService doctorService,
+                                    MeasurementRecordRepository measurementRecordRepository,
                                     MeasurementPlanService measurementPlanService,
                                     TypeOfMeasurementService typeOfMeasurementService, EmailService emailService,
                                     AuthorizationService authorizationService) {
         this.patientService = patientService;
+        this.doctorService = doctorService;
         this.measurementRecordRepository = measurementRecordRepository;
         this.measurementPlanService = measurementPlanService;
         this.typeOfMeasurementService = typeOfMeasurementService;
@@ -65,7 +68,7 @@ public class MeasurementRecordService {
 
         if (measurementRecord.getMeasurementStatus() == MeasurementStatus.ABNORMAL) {
             emailService.sendMeasurementRecordAlert(
-                    patientService.getCareProviderEmailByPatientPersonalNumber(patient.getPersonalNumber()),
+                    doctorService.getEmailByPanNumber(patient.getDoctor().getPanNumber()),
                     patientService.getPatientFullNameByPersonalNumber(patient.getPersonalNumber()),
                     request.getValue(), typeOfMeasurement.getUnits());
         }

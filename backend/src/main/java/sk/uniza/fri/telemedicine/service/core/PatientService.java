@@ -91,19 +91,8 @@ public class PatientService {
                 () -> new NotFoundException(textProvider.get("error.patient.notFoundByPersonalNumber")));
     }
 
-    public String getCareProviderEmailByPatientPersonalNumber(String personalNumber) {
-        return patientRepository.findCareProviderEmailByPatientPersonalNumber(personalNumber).orElseThrow(
-                () -> new NotFoundException(textProvider.get("error.patient.notFoundByPersonalNumber"))
-        );
-    }
-
     public String getPatientFullNameByPersonalNumber(String personalNumber) {
         return patientRepository.findFullNameByPersonalNumber(personalNumber)
-                .orElseThrow(() -> new NotFoundException(textProvider.get("error.patient.notFoundByPersonalNumber")));
-    }
-
-    public String getEmailByPersonalNumber(String personalNumber) {
-        return patientRepository.findEmailByPersonalNumber(personalNumber)
                 .orElseThrow(() -> new NotFoundException(textProvider.get("error.patient.notFoundByPersonalNumber")));
     }
 
