@@ -18,11 +18,11 @@ public class TypeOfMeasurementRequest {
     @Size(max = 4, message = "{validation.units.size}")
     private String units;
 
-    @Positive
+    @Positive(message = "{validation.positive}")
     @NotNull(message = "{validation.minValue.mandatory}")
     private Double minValue;
 
-    @Positive
+    @Positive(message = "{validation.positive}")
     @NotNull(message = "{validation.maxValue.mandatory}")
     private Double maxValue;
 

@@ -13,9 +13,8 @@ import java.time.LocalDateTime;
 @Getter @AllArgsConstructor
 public class MeasurementRecordResponse {
         private Long id;
-        private String typeName;
         private Double value;
-        private String units;
+        private TypeOfMeasurementShortResponse typeOfMeasurement;
         @JsonFormat(pattern = "dd.MM.yyyy HH:mm:ss")
         private LocalDateTime timeOfMeasurement;
         private MeasurementStatus status;

@@ -16,9 +16,6 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
     @Query("SELECT p FROM Patient p WHERE p.doctor.panNumber = :panNumber")
     Page<Patient> findAllByPanNumber(String panNumber, Pageable pageable);
 
-    @Query("SELECT pd.email FROM Patient p JOIN p.doctor d JOIN d.personalData pd WHERE p.personalNumber = :personalNumber")
-    Optional<String> findCareProviderEmailByPatientPersonalNumber(String personalNumber);
-
     @Query("SELECT p.doctor.panNumber FROM Patient p WHERE p.personalNumber = :personalNumber")
     Optional<String> findDoctorPanNumberByPatientPersonalNumber(String personalNumber);
 

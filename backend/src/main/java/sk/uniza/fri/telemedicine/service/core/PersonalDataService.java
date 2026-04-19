@@ -50,7 +50,7 @@ public class PersonalDataService {
         personalData.setPassword(null);
         personalData.setSetupToken(UUID.randomUUID().toString());
         PersonalData savedPersonalData = personalDataRepository.save(personalData);
-        emailService.sendEmailWithTokenPassword(request.getEmail(), frontendBaseUrl + "/password/" + personalData.getSetupToken());
+        emailService.sendEmailWithTokenPassword(personalData.getEmail(), frontendBaseUrl + "/password/" + personalData.getSetupToken());
         return savedPersonalData;
     }
 

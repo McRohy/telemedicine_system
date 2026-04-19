@@ -35,9 +35,9 @@ public class MeasurementPlanController {
         return measurementPlanService.updateMeasurementPlan(planId, request);
     }
 
-    @GetMapping("/{personalNumber}")
+    @GetMapping
     @PreAuthorize("hasAnyRole('DOCTOR', 'PATIENT')")
-    public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(@PathVariable String personalNumber) {
+    public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(@RequestParam String personalNumber) {
         return measurementPlanService.getMeasurementPlanByPersonalNumber(personalNumber);
     }
 }

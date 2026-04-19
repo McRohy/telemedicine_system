@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
-import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
 import sk.uniza.fri.telemedicine.entity.*;
 import sk.uniza.fri.telemedicine.exception.BusinessRuleException;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
@@ -105,15 +104,16 @@ public class MeasurementPlanService {
         }
 
         validateFrequencyAndTimes(request);
+        Patient patient = patientService.getByPersonalNumber(request.getPersonalNumber());
 
         LocalDateTime now = LocalDateTime.now();
         plan.setValidTo(now);
         measurementPlanRepository.save(plan);
 
-        MeasurementPlan newPlan = createPlan(request, plan.getPatient());
+        MeasurementPlan newPlan = createPlan(request, patient);
         List<MeasurementTimePlan> newMeasurementTimes = createTimeForPlan(newPlan, request);
         List<MeasurementTypePlan> newMeasurementTypes = createTypesForPlan(newPlan, request);
-        emailService.sendEmailUpdatedPlan(plan.getPatient().getPersonalData().getEmail());
+        emailService.sendEmailUpdatedPlan(patient.getPersonalData().getEmail());
 
         return mapToMeasurementPlanResponse(newPlan, newMeasurementTypes, newMeasurementTimes);
     }
@@ -174,7 +174,7 @@ public class MeasurementPlanService {
                 plan.getPlanId(),
                 plan.getPatient().getPersonalNumber(),
                 plan.getFrequency(),
-                planTypes.stream().map(pt -> new MeasurementPlanTypesResponse(pt.getTypeOfMeasurement().getTypeId(), pt.getTypeOfMeasurement().getTypeName(), pt.getTypeOfMeasurement().getUnits())).toList(),
+                planTypes.stream().map(pt -> typeOfMeasurementService.mapToTypeOfMeasurementShortResponse(pt.getTypeOfMeasurement())).toList(),
                 measurementTimePlans.stream().map(t -> t.getTime()).toList(),
                 plan.getValidFrom()
         );

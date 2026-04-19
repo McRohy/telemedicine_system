@@ -26,17 +26,20 @@ import java.util.List;
 public class MeasurementRecordService {
 
     private final PatientService patientService;
+    private final DoctorService doctorService;
     private final MeasurementRecordRepository measurementRecordRepository;
     private final MeasurementPlanService measurementPlanService;
     private final TypeOfMeasurementService typeOfMeasurementService;
     private final EmailService emailService;
     private final AuthorizationService authorizationService;
 
-    public MeasurementRecordService(PatientService patientService, MeasurementRecordRepository measurementRecordRepository,
+    public MeasurementRecordService(PatientService patientService, DoctorService doctorService,
+                                    MeasurementRecordRepository measurementRecordRepository,
                                     MeasurementPlanService measurementPlanService,
                                     TypeOfMeasurementService typeOfMeasurementService, EmailService emailService,
                                     AuthorizationService authorizationService) {
         this.patientService = patientService;
+        this.doctorService = doctorService;
         this.measurementRecordRepository = measurementRecordRepository;
         this.measurementPlanService = measurementPlanService;
         this.typeOfMeasurementService = typeOfMeasurementService;
@@ -56,7 +59,7 @@ public class MeasurementRecordService {
         TypeOfMeasurement typeOfMeasurement = typeOfMeasurementService.getTypeOfMeasurementById(request.getTypeOfMeasurementId());
         MeasurementRecord measurementRecord = mapToMeasurementRecord(request, patient, typeOfMeasurement);
 
-        if (!checkIfRecordIsInRange(request.getValue(), typeOfMeasurement)) {
+        if (!typeOfMeasurementService.isValueInNormRange(typeOfMeasurement, request.getValue())) {
             measurementRecord.setMeasurementStatus(MeasurementStatus.ABNORMAL);
         } else {
             measurementRecord.setMeasurementStatus(MeasurementStatus.NORMAL);
@@ -65,7 +68,7 @@ public class MeasurementRecordService {
 
         if (measurementRecord.getMeasurementStatus() == MeasurementStatus.ABNORMAL) {
             emailService.sendMeasurementRecordAlert(
-                    patientService.getCareProviderEmailByPatientPersonalNumber(patient.getPersonalNumber()),
+                    doctorService.getEmailByPanNumber(patient.getDoctor().getPanNumber()),
                     patientService.getPatientFullNameByPersonalNumber(patient.getPersonalNumber()),
                     request.getValue(), typeOfMeasurement.getUnits());
         }
@@ -77,8 +80,8 @@ public class MeasurementRecordService {
      */
     public List<MeasurementRecordResponse> getMeasurementRecords(String personalNumber, Long typeId, LocalDate period) {
         authorizationService.authorizePatientDataAccess(personalNumber);
-        LocalDate from = period.withDayOfMonth(1);
-        LocalDate to = period.withDayOfMonth(period.lengthOfMonth());
+        LocalDateTime from = period.atStartOfDay();
+        LocalDateTime to = period.plusMonths(1).atStartOfDay();
         return measurementRecordRepository
                 .findAllByPatientAndTimeBetween(personalNumber, typeId, from, to).stream()
                 .map(record -> mapToMeasurementRecordResponse(record))
@@ -98,10 +101,6 @@ public class MeasurementRecordService {
         return measurementRecordRepository.findByPersonalNumber(personalNumber, pageable).map(record -> mapToMeasurementRecordResponse(record));
     }
 
-    private boolean checkIfRecordIsInRange(Double value, TypeOfMeasurement typeOfMeasurement) {
-        return value >= typeOfMeasurement.getMinValue() && value <= typeOfMeasurement.getMaxValue();
-    }
-
     private MeasurementRecord mapToMeasurementRecord(MeasurementRecordRequest request, Patient patient, TypeOfMeasurement typeOfMeasurement) {
         MeasurementRecord measurementRecord = new MeasurementRecord();
         measurementRecord.setTimeOfMeasurement(LocalDateTime.now());
@@ -115,11 +114,11 @@ public class MeasurementRecordService {
     private MeasurementRecordResponse mapToMeasurementRecordResponse(MeasurementRecord measurementRecord) {
         return new MeasurementRecordResponse(
                 measurementRecord.getRecordId(),
-                measurementRecord.getTypeOfMeasurement().getTypeName(),
                 measurementRecord.getValue(),
-                measurementRecord.getTypeOfMeasurement().getUnits(),
+                typeOfMeasurementService.mapToTypeOfMeasurementShortResponse(measurementRecord.getTypeOfMeasurement()),
                 measurementRecord.getTimeOfMeasurement(),
-                measurementRecord.getMeasurementStatus(), measurementRecord.getNote()
+                measurementRecord.getMeasurementStatus(),
+                measurementRecord.getNote()
         );
     }
 }

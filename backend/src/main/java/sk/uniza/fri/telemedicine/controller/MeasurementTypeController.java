@@ -25,15 +25,15 @@ public class MeasurementTypeController {
         this.typeOfMeasurementService = typeOfMeasurementService;
     }
 
-    @GetMapping("/select")
+    @GetMapping("/list")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
-    public List<TypeOfMeasurementResponse> getTypesOfMeasurement() {
+    public List<TypeOfMeasurementResponse> getListedTypesOfMeasurement() {
         return typeOfMeasurementService.getTypesOfMeasurement();
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public Page<TypeOfMeasurementResponse> getPagedTypesOfMeasurement(
+    public Page<TypeOfMeasurementResponse> getTypesOfMeasurement(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) String searchTypeName) {

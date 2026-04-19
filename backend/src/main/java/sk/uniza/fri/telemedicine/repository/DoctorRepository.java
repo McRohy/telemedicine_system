@@ -18,4 +18,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, String> {
 
     @Query("SELECT d FROM Doctor d JOIN d.personalData pd WHERE LOWER(pd.lastName) LIKE LOWER(CONCAT(:searchLastName, '%'))")
     Page<Doctor> findByPersonalDataLastNameStartingWithIgnoreCase(String searchLastName, Pageable pageable);
+
+    @Query("SELECT pd.email FROM Doctor d JOIN d.personalData pd WHERE d.panNumber = :panNumber")
+    Optional<String> findEmailByPanNumber(String panNumber);
 }
