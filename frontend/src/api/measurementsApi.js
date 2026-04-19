@@ -11,7 +11,7 @@ export function postMeasurement(data) {
 
 export function getAllFilteredMeasurements(personalNumber, filterType, period) {
   return api({
-    url: '/measurements',
+    url: '/measurements/progress',
     method: 'get',
     params: {
       personalNumber,
@@ -23,7 +23,7 @@ export function getAllFilteredMeasurements(personalNumber, filterType, period) {
 
 export function getAllMeasurementsForTable(personalNumber, filterType, page) {
   return api({
-    url: '/measurements/table',
+    url: '/measurements',
     method: 'get',
     params: {
       personalNumber,

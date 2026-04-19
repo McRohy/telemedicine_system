@@ -15,7 +15,7 @@ export function getMeasurementTypes(page, search) {
 
 export function getMeasurementTypesForSelect() {
   return api({
-    url: '/measurement-types/select',
+    url: '/measurement-types/list',
     method: 'get',
   });
 }

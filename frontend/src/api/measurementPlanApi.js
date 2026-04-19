@@ -18,7 +18,8 @@ export function updateMeasurementPlan(planId, data) {
 
 export function getMeasurementPlanByPersonalNumber(personalNumber) {
   return api({
-    url: `/measurement-plans/${personalNumber}`,
+    url: '/measurement-plans',
     method: 'get',
+    params: { personalNumber },
   });
 }
