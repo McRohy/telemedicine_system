@@ -82,7 +82,7 @@ public class MeasurementPlanService {
         MeasurementPlan plan = createPlan(request, patient);
         List<MeasurementTimePlan> measurementTimes = createTimeForPlan(plan, request);
         List<MeasurementTypePlan> measurementTypes = createTypesForPlan(plan, request);
-        emailService.sendEmailCreatedPlan(patient.getPersonalData().getEmail());
+        emailService.sendEmailCreatedPlan(patientService.getEmailByPersonalNumber(patient.getPersonalNumber()));
 
         return mapToMeasurementPlanResponse(plan, measurementTypes, measurementTimes);
     }
@@ -113,7 +113,7 @@ public class MeasurementPlanService {
         MeasurementPlan newPlan = createPlan(request, plan.getPatient());
         List<MeasurementTimePlan> newMeasurementTimes = createTimeForPlan(newPlan, request);
         List<MeasurementTypePlan> newMeasurementTypes = createTypesForPlan(newPlan, request);
-        emailService.sendEmailUpdatedPlan(plan.getPatient().getPersonalData().getEmail());
+        emailService.sendEmailUpdatedPlan(patientService.getEmailByPersonalNumber(request.getPersonalNumber()));
 
         return mapToMeasurementPlanResponse(newPlan, newMeasurementTypes, newMeasurementTimes);
     }

@@ -33,4 +33,7 @@ public interface PatientRepository extends JpaRepository<Patient, String> {
 
     @Query("SELECT p FROM Patient p JOIN p.personalData pd WHERE p.doctor.panNumber = :panNumber AND LOWER(pd.lastName) LIKE LOWER(CONCAT(:searchLastName, '%'))")
     Page<Patient> findByPanNumberAndPersonalDataLastNameStartingWithIgnoreCase(String panNumber, String searchLastName, Pageable pageable);
+
+    @Query("SELECT pd.email FROM Patient p JOIN p.personalData pd WHERE p.personalNumber = :personalNumber")
+    Optional<String> findEmailByPersonalNumber(String personalNumber);
 }

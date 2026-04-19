@@ -102,6 +102,11 @@ public class PatientService {
                 .orElseThrow(() -> new NotFoundException(textProvider.get("error.patient.notFoundByPersonalNumber")));
     }
 
+    public String getEmailByPersonalNumber(String personalNumber) {
+        return patientRepository.findEmailByPersonalNumber(personalNumber)
+                .orElseThrow(() -> new NotFoundException(textProvider.get("error.patient.notFoundByPersonalNumber")));
+    }
+
     private Patient mapToPatient(PatientRequest request, PersonalData personalData, Doctor doctor) {
         Patient patient = new Patient();
         patient.setPersonalNumber(request.getPersonalNumber());
