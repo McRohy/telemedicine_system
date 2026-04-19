@@ -77,6 +77,10 @@ public class TypeOfMeasurementService {
                 () -> new NotFoundException(textProvider.get("error.typeOfMeasurement.notFound")));
     }
 
+    public boolean isValueInNormRange(TypeOfMeasurement type, double value) {
+        return value >= type.getMinValue() && value <= type.getMaxValue();
+    }
+
     public TypeOfMeasurementShortResponse mapToTypeOfMeasurementShortResponse(TypeOfMeasurement typeOfMeasurement) {
         return new TypeOfMeasurementShortResponse(
                 typeOfMeasurement.getTypeId(),

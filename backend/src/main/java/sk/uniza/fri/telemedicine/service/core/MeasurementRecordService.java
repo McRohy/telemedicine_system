@@ -56,7 +56,7 @@ public class MeasurementRecordService {
         TypeOfMeasurement typeOfMeasurement = typeOfMeasurementService.getTypeOfMeasurementById(request.getTypeOfMeasurementId());
         MeasurementRecord measurementRecord = mapToMeasurementRecord(request, patient, typeOfMeasurement);
 
-        if (!checkIfRecordIsInRange(request.getValue(), typeOfMeasurement)) {
+        if (!typeOfMeasurementService.isValueInNormRange(typeOfMeasurement, request.getValue())) {
             measurementRecord.setMeasurementStatus(MeasurementStatus.ABNORMAL);
         } else {
             measurementRecord.setMeasurementStatus(MeasurementStatus.NORMAL);
@@ -96,10 +96,6 @@ public class MeasurementRecordService {
                     .map(record -> mapToMeasurementRecordResponse(record));
         }
         return measurementRecordRepository.findByPersonalNumber(personalNumber, pageable).map(record -> mapToMeasurementRecordResponse(record));
-    }
-
-    private boolean checkIfRecordIsInRange(Double value, TypeOfMeasurement typeOfMeasurement) {
-        return value >= typeOfMeasurement.getMinValue() && value <= typeOfMeasurement.getMaxValue();
     }
 
     private MeasurementRecord mapToMeasurementRecord(MeasurementRecordRequest request, Patient patient, TypeOfMeasurement typeOfMeasurement) {
