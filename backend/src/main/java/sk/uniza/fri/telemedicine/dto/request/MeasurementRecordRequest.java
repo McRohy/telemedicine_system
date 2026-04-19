@@ -17,7 +17,7 @@ public class MeasurementRecordRequest {
     @NotNull(message = "{validation.typeOfMeasurement.mandatory}")
     private Long typeOfMeasurementId;
 
-    @Positive
+    @Positive(message = "{validation.positive}")
     @NotNull(message = "{validation.value.mandatory}")
     private Double value;
 
