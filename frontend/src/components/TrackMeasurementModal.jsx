@@ -29,7 +29,7 @@ export default function TrackMeasurementModal({ opened, onClose, onSuccess, plan
       const res = await postMeasurement(formRequest.values);
       notifySuccess(
         'Meranie zaznamenané',
-        `${res.data.typeName} - ${res.data.value} ${res.data.units} je 
+        `${res.data.typeOfMeasurement.typeName} - ${res.data.value} ${res.data.typeOfMeasurement.units} je 
          ${res.data.status === 'NORMAL' ? 'v norme' : 'mimo normy - lekár bol informovaný notifikáciou'}`,
       );
       formRequest.reset();

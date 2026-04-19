@@ -71,9 +71,9 @@ export default function MeasurementTable({ personalNumber, plan, refresh }) {
                   <Table.Tbody>
                     {data.content.map((m) => (
                       <Table.Tr key={m.id}>
-                        <Table.Td>{m.typeName}</Table.Td>
+                        <Table.Td>{m.typeOfMeasurement.typeName}</Table.Td>
                         <Table.Td>
-                          {m.value} {m.units}
+                          {m.value} {m.typeOfMeasurement.units}
                         </Table.Td>
                         <Table.Td>{m.timeOfMeasurement}</Table.Td>
                         <Table.Td>

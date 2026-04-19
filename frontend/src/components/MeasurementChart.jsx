@@ -84,7 +84,7 @@ export default function MeasurementChart({ personalNumber, plan }) {
               series={[
                 { name: 'value', color: 'orange', label: 'hodnota merania' },
               ]}
-              valueFormatter={(value) => `${value} ${measurements[0].units}`}
+              valueFormatter={(value) => `${value} ${measurements[0].typeOfMeasurement.units}`}
             />
           ) : (
             <Center h="100%">
