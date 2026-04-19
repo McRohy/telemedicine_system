@@ -77,8 +77,8 @@ public class MeasurementRecordService {
      */
     public List<MeasurementRecordResponse> getMeasurementRecords(String personalNumber, Long typeId, LocalDate period) {
         authorizationService.authorizePatientDataAccess(personalNumber);
-        LocalDate from = period.withDayOfMonth(1);
-        LocalDate to = period.withDayOfMonth(period.lengthOfMonth());
+        LocalDateTime from = period.atStartOfDay();
+        LocalDateTime to = period.plusMonths(1).atStartOfDay();
         return measurementRecordRepository
                 .findAllByPatientAndTimeBetween(personalNumber, typeId, from, to).stream()
                 .map(record -> mapToMeasurementRecordResponse(record))
