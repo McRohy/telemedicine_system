@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.MeasurementPlanRequest;
 import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanResponse;
-import sk.uniza.fri.telemedicine.dto.response.MeasurementPlanTypesResponse;
 import sk.uniza.fri.telemedicine.entity.*;
 import sk.uniza.fri.telemedicine.exception.BusinessRuleException;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
@@ -174,7 +173,7 @@ public class MeasurementPlanService {
                 plan.getPlanId(),
                 plan.getPatient().getPersonalNumber(),
                 plan.getFrequency(),
-                planTypes.stream().map(pt -> new MeasurementPlanTypesResponse(pt.getTypeOfMeasurement().getTypeId(), pt.getTypeOfMeasurement().getTypeName(), pt.getTypeOfMeasurement().getUnits())).toList(),
+                planTypes.stream().map(pt -> typeOfMeasurementService.mapToTypeOfMeasurementShortResponse(pt.getTypeOfMeasurement())).toList(),
                 measurementTimePlans.stream().map(t -> t.getTime()).toList(),
                 plan.getValidFrom()
         );

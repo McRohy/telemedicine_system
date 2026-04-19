@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Response DTO containing measurement type details for measurement plans.
+ * Response DTO containing  measurement type without min and max values.
  */
 @Getter @AllArgsConstructor
-public class MeasurementPlanTypesResponse {
+public class TypeOfMeasurementShortResponse {
     private Long id;
     private String typeName;
     private String units;

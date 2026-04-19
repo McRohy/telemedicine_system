@@ -17,7 +17,7 @@ public class MeasurementPlanResponse {
     private Long id;
     private String personalNumber;
     private Frequency frequency;
-    private List<MeasurementPlanTypesResponse> typesOfMeasurements;
+    private List<TypeOfMeasurementShortResponse> typesOfMeasurements;
 
     @JsonFormat(pattern = "HH:mm")
     private List<LocalTime> timesOfPlannedMeasurements;

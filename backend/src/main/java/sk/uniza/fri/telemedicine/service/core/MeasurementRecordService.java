@@ -115,11 +115,11 @@ public class MeasurementRecordService {
     private MeasurementRecordResponse mapToMeasurementRecordResponse(MeasurementRecord measurementRecord) {
         return new MeasurementRecordResponse(
                 measurementRecord.getRecordId(),
-                measurementRecord.getTypeOfMeasurement().getTypeName(),
                 measurementRecord.getValue(),
-                measurementRecord.getTypeOfMeasurement().getUnits(),
+                typeOfMeasurementService.mapToTypeOfMeasurementShortResponse(measurementRecord.getTypeOfMeasurement()),
                 measurementRecord.getTimeOfMeasurement(),
-                measurementRecord.getMeasurementStatus(), measurementRecord.getNote()
+                measurementRecord.getMeasurementStatus(),
+                measurementRecord.getNote()
         );
     }
 }

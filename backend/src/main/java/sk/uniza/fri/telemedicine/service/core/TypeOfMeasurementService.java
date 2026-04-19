@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import sk.uniza.fri.telemedicine.config.TextProvider;
 import sk.uniza.fri.telemedicine.dto.request.TypeOfMeasurementRequest;
 import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementResponse;
+import sk.uniza.fri.telemedicine.dto.response.TypeOfMeasurementShortResponse;
 import sk.uniza.fri.telemedicine.entity.TypeOfMeasurement;
 import sk.uniza.fri.telemedicine.exception.BusinessRuleException;
 import sk.uniza.fri.telemedicine.exception.DuplicateException;
@@ -74,6 +75,14 @@ public class TypeOfMeasurementService {
     public TypeOfMeasurement getTypeOfMeasurementById(Long id) {
         return typeOfMeasurementRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(textProvider.get("error.typeOfMeasurement.notFound")));
+    }
+
+    public TypeOfMeasurementShortResponse mapToTypeOfMeasurementShortResponse(TypeOfMeasurement typeOfMeasurement) {
+        return new TypeOfMeasurementShortResponse(
+                typeOfMeasurement.getTypeId(),
+                typeOfMeasurement.getTypeName(),
+                typeOfMeasurement.getUnits()
+        );
     }
 
     private TypeOfMeasurement mapToTypeOfMeasurement(TypeOfMeasurementRequest request) {
