@@ -36,7 +36,7 @@ export default function MeasurementTable({ personalNumber, plan, refresh }) {
     );
 
   return (
-    <Card shadow="sm" p="md" radius="md" withBorder justify="space-between">
+    <Card shadow="sm" p="md" radius="md" withBorder>
       <Stack>
         <Select
           placeholder="Vyberte typ merania pre filtrovanie tabuľky"
@@ -52,7 +52,7 @@ export default function MeasurementTable({ personalNumber, plan, refresh }) {
 
         <Stack mih={450} justify="space-between">
           {data.content.length === 0 ? (
-            <Text size="sm" align="center" c="dimmed">
+            <Text size="sm" ta="center" c="dimmed">
               Žiadne merania k dispozícii pre zobrazenie v tabuľke
             </Text>
           ) : (

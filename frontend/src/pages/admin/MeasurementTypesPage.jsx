@@ -92,7 +92,6 @@ export default function MeasurementTypesPage() {
           </Table.ScrollContainer>
 
           <Pagination
-            justify="flex-end"
             size="sm"
             total={data.totalPages}
             value={page}

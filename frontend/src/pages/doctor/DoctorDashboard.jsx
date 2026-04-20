@@ -89,7 +89,7 @@ export default function DoctorDashboard() {
               </Table.Thead>
               <Table.Tbody>
                 {data.content.map((d) => (
-                  <Table.Tr key={d.personalNumber} cursor="pointer">
+                  <Table.Tr key={d.personalNumber}>
                     <Table.Td>{d.personalData.lastName}</Table.Td>
                     <Table.Td>{d.personalData.firstName}</Table.Td>
                     <Table.Td>{GENDERS.find((g) => g.value === d?.gender)?.label}</Table.Td>
@@ -110,7 +110,6 @@ export default function DoctorDashboard() {
           </Table.ScrollContainer>
 
           <Pagination
-            justify="flex-end"
             size="sm"
             total={data.totalPages}
             value={page}

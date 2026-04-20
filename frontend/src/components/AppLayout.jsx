@@ -40,7 +40,7 @@ export default function AppLayout() {
         </AppShell.Navbar>
 
         <AppShell.Main>
-          <Outlet /> {/*placeholder for content of child routes */}
+          <Outlet />
         </AppShell.Main>
       </AppShell>
     </>

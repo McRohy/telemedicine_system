@@ -55,7 +55,7 @@ export default function DetailArticleModal({ opened, onClose, onSuccess, article
       size="lg"
       closeOnClickOutside={false}
     >
-      {loading === true ? (
+      {loading ? (
         <Center>
           <Loader />
         </Center>
@@ -63,7 +63,7 @@ export default function DetailArticleModal({ opened, onClose, onSuccess, article
         <Stack gap="md" p="xs">
           <Title order={3}>{article.title}</Title>
           <Text size="xs">{article.timeOfCreation}</Text>
-          <Text align="justify">{article.content}</Text>
+          <Text ta="justify">{article.content}</Text>
           {isDoctorView && (
             <Button
               variant="outline"

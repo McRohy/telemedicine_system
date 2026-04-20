@@ -29,7 +29,7 @@ export default function LoginPage() {
             <Box hiddenFrom="sm"><IconHeartbeat size={48} stroke={1.5}/></Box>
             <Box visibleFrom="sm"><IconHeartbeat size={96} stroke={1.5}/></Box>
             <Title order={1}>MediRoh</Title>
-            <Text align="center">
+            <Text ta="center">
               Vitajte, pre používanie telemedicínskeho systému sa prosím
               prihláste pomocou svojho hesla.
             </Text>
@@ -52,7 +52,6 @@ export default function LoginPage() {
                 ta="left"
                 size="md"
                 {...formRequest.getInputProps('password')}
-                color="gray"
               />
 
               <Button type="submit" size="md" loading={loading}>

@@ -87,7 +87,6 @@ export default function ArticlePage() {
           ))}
 
           <Pagination
-            justify="flex-end"
             size="sm"
             total={data.totalPages}
             value={page}

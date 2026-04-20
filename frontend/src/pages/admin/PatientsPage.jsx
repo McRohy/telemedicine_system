@@ -91,7 +91,6 @@ export default function PatientsPage() {
           </Table.ScrollContainer>
 
           <Pagination
-            justify="flex-end"
             size="sm"
             total={data.totalPages}
             value={page}

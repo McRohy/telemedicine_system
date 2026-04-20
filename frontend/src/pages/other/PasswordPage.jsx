@@ -58,7 +58,7 @@ export default function PasswordPage() {
             <Box hiddenFrom="sm"><IconHeartbeat size={48} stroke={1.5}/></Box>
             <Box visibleFrom="sm"><IconHeartbeat size={96} stroke={1.5}/></Box>
             <Title order={1}>MediRoh</Title>
-            <Text align="center">
+            <Text ta="center">
               Vitajte, pre používanie telemedicínskeho systému si prosím
               nastavte svoje nové heslo.
             </Text>
