@@ -35,7 +35,7 @@ public class JwtUtils {
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationMs))
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
-                .compact();     //build together header.payload.signature
+                .compact();  //build together header.payload.signature
     }
 
     /**
@@ -66,7 +66,7 @@ public class JwtUtils {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload()
-                    .get("role", String.class);  //get role from payload
+                    .get("role", String.class);
         } catch (Exception e) {
             return null;
         }

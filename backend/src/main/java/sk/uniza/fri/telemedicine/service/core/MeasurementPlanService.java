@@ -52,7 +52,7 @@ public class MeasurementPlanService {
     /**
      * Returns the active measurement plan for specific patient.
      */
-    @Transactional(readOnly = true)  //reads in one transaction to keep data consistent
+    @Transactional(readOnly = true) // db reads need to be consistent
     public MeasurementPlanResponse getMeasurementPlanByPersonalNumber(String personalNumber) {
         authorizationService.authorizePatientDataAccess(personalNumber);
         MeasurementPlan plan = measurementPlanRepository.findActivePlanByPersonalNumber(personalNumber)

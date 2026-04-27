@@ -26,5 +26,5 @@ public class PatientRequest {
     private String panNumber;
 
     @NotNull(message = "{validation.gender.mandatory}")
-    private Gender gender; //jackson will deserialize
+    private Gender gender;
 }

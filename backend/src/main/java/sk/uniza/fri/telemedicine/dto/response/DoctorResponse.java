@@ -7,8 +7,7 @@ import sk.uniza.fri.telemedicine.enumeration.Specialization;
 /**
  * Response DTO containing doctor details.
  */
-@Getter //for Json serialization
-@AllArgsConstructor
+@Getter @AllArgsConstructor
 public class DoctorResponse {
         private String panNumber;
         private PersonalDataResponse personalData;

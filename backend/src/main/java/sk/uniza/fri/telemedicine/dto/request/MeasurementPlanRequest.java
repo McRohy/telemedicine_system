@@ -23,9 +23,9 @@ public class MeasurementPlanRequest {
     private Frequency frequency;
 
     @NotEmpty(message = "{validation.times.mandatory}")
-    @JsonFormat(pattern = "HH:mm") //Jackson map it to LocalTime
+    @JsonFormat(pattern = "HH:mm")
     private List<LocalTime> timesOfPlannedMeasurements;
 
-    @NotEmpty(message = "{validation.types.mandatory}") //controls null and empty list
+    @NotEmpty(message = "{validation.types.mandatory}")
     private List<Long> typeOfMeasurementIds;
 }
