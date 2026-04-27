@@ -22,7 +22,7 @@ export default function PlanModal({ opened, onClose, onSuccess, personalNumber, 
       personalNumber: personalNumber,
       frequency: (isEdit ? plan.frequency : null),
       timesOfPlannedMeasurements: (isEdit ? plan.timesOfPlannedMeasurements : []),
-      typeOfMeasurementIds: (isEdit ? plan.typesOfMeasurements.map(t => String(t.id)) : []), //Jackson will transform to integers
+      typeOfMeasurementIds: (isEdit ? plan.typesOfMeasurements.map(t => String(t.id)) : []), // Mantine needs strings, backend needs Long 
     },
     validate: {
       frequency: (value) => (value ? null : 'Povinné pole'),

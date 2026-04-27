@@ -40,7 +40,7 @@ export default function AddDoctorModal({ opened, onClose, onSuccess }) {
       );
       formRequest.reset();
       onClose();
-      onSuccess(); // callback for refreshing data on page
+      onSuccess();
     } catch (error) {
       const status = error.response?.status;
 
